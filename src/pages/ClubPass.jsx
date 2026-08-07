@@ -614,7 +614,7 @@ export default function ClubPass() {
         <div className="cp-container">
           <div className="cp-cta">
             <div className="cp-cta-mascot">
-              <Mascot fallback="/images/Flare.png" />
+              <img src="/images/cat.png" />
             </div>
 
             <span className="cp-cta-bubble">I'll get you home safely! 💜</span>
