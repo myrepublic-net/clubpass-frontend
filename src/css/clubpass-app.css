@@ -494,7 +494,7 @@
 
 .cpm-price-wrap {
   padding-top: 6px;
-  padding-bottom: 32px;
+  padding-bottom: 36px;
 }
 
 .cp-dt {
@@ -642,7 +642,7 @@
 .cpm-trust {
   background: var(--cpm-dark);
   color: #fff;
-  padding: 32px var(--cpm-pad);
+  padding: 36px var(--cpm-pad);
 }
 
 .cpm-trust h2 {
@@ -757,7 +757,7 @@
 /* ---- footer ------------------------------------------------------------ */
 
 .cpm-footer {
-  padding: 24px var(--cpm-pad) 40px;
+  padding: 24px var(--cpm-pad) 36px;
   text-align: center;
   font-size: 12px;
   color: var(--cpm-muted-2);
@@ -880,7 +880,7 @@ a.bt-btn {
   } */
 
   .cpm-shell {
-    border-radius: 26px;
+    /* border-radius: 26px; */
     box-shadow: 0 30px 70px -34px rgba(25, 16, 36, .45);
   }
 }

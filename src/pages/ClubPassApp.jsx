@@ -170,7 +170,7 @@ export default function ClubPassApp() {
         </section>
 
         {/* ================= Other routes ================= */}
-        <section className="cpm-pad" style={{ paddingBottom: 30 }}>
+        <section className="cpm-pad" style={{ paddingBottom: 36 }}>
           <div className="cpm-panel">
             <h2>Not in the East?</h2>
             <p>
