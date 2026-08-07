@@ -1,0 +1,12 @@
+/* Global shell only — page styles live in src/css/clubpass.css and
+   src/css/clubpass-app.css, both scoped to their own page wrapper. */
+
+body {
+  margin: 0;
+  font-family: "Outfit", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  background: #ffffff;
+}
+
+a {
+  text-decoration: none;
+}

@@ -1,0 +1,882 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap');
+
+/* ==========================================================================
+   ClubPass — Home Express (mobile / in-app landing)
+   Mobile-first. Designed for 320–767px; above that the shell is capped and
+   centred so it still reads as an app screen. Everything is scoped under
+   .clubpass-app-page so it cannot leak into the Bootstrap site.
+   ========================================================================== */
+
+
+
+.clubpass-app-page {
+  --cpm-purple: #7C3AED;
+  --cpm-purple-600: #6D28D9;
+  --cpm-purple-700: #5B21B6;
+  --cpm-soft: #A78BFA;
+  --cpm-ink: #191024;
+  --cpm-muted: #6F6880;
+  --cpm-muted-2: #9A93AC;
+  --cpm-line: #EAE5F8;
+  --cpm-lav: #F4F0FE;
+  --cpm-dark: #241539;
+  --cpm-green: #16A34A;
+  --cpm-pad: 20px;
+  --cpm-shell: 600px;
+
+  font-family: "Outfit", ui-sans-serif, system-ui, -apple-system, sans-serif !important;
+  color: var(--cpm-ink);
+  background: #EFEBF7;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+}
+
+.clubpass-app-page *,
+.clubpass-app-page *::before,
+.clubpass-app-page *::after {
+  box-sizing: border-box;
+}
+
+
+.clubpass-app-page h1,
+.clubpass-app-page h2,
+.clubpass-app-page h3 {
+  margin: 0;
+  font-family: "Outfit", ui-sans-serif, system-ui, sans-serif !important;
+  letter-spacing: -0.025em;
+}
+
+.clubpass-app-page ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  /* margin-bottom: 20px; */
+}
+
+.clubpass-app-page a {
+  text-decoration: none;
+  color: inherit;
+}
+
+.cpm-shell {
+  width: 100%;
+  max-width: var(--cpm-shell);
+  margin: 0 auto;
+  background: #fff;
+  overflow: hidden;
+  position: relative;
+  padding-bottom: 90px;
+}
+
+.cpm-pad {
+  padding-left: var(--cpm-pad);
+  padding-right: var(--cpm-pad);
+}
+
+.cpm-h2 {
+  font-size: 20px;
+  font-weight: 900;
+  line-height: 1.25;
+}
+
+.cpm-section {
+  padding-top: 30px;
+  padding-bottom: 30px;
+}
+
+/* ---- buttons ----------------------------------------------------------- */
+
+.cpm-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  border: 0;
+  border-radius: 999px;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  padding: 10px 20px;
+  cursor: pointer;
+  transition: transform .16s ease, background-color .16s ease, opacity .16s ease;
+  white-space: nowrap;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.cpm-btn:active {
+  transform: scale(.975);
+}
+
+.cpm-btn-purple {
+  background: var(--cpm-purple);
+  color: #fff;
+  box-shadow: 0 6px 16px -8px rgba(124, 58, 237, .8);
+}
+
+.cpm-btn-white {
+  background: #fff;
+  color: #4C1D95 !important;
+  box-shadow: 0 10px 26px -12px rgba(0, 0, 0, .35);
+}
+
+.cpm-btn-lg {
+  width: 100%;
+  font-size: 16px;
+  font-weight: 700;
+  padding: 16px 22px;
+}
+
+.cpm-btn-sm {
+  font-size: 12.5px;
+  padding: 8px 16px;
+}
+
+.cpm-btn[disabled] {
+  opacity: .65;
+  cursor: default;
+}
+
+/* ---- hero -------------------------------------------------------------- */
+
+.cpm-hero {
+  position: relative;
+  overflow: hidden;
+  padding: 45px var(--cpm-pad) 30px;
+  background-color: #14061F;
+  background-image:
+    url("/images/cba-banner.jpg"),
+    radial-gradient(65% 70% at 82% 22%, rgba(192, 132, 252, .5) 0%, rgba(192, 132, 252, 0) 62%),
+    radial-gradient(60% 60% at 100% 6%, rgba(236, 72, 153, .3) 0%, rgba(236, 72, 153, 0) 70%),
+    linear-gradient(150deg, #180B28 0%, #2A1140 48%, #3E0C52 100%);
+  background-size: cover, auto, auto, auto;
+  background-position: 62% center, center, center, center;
+  background-repeat: no-repeat;
+}
+
+/* .cpm-hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(12, 4, 22, .74) 0%, rgba(14, 5, 26, .6) 40%, rgba(16, 6, 30, .88) 100%);
+} */
+
+.cpm-hero > * {
+  position: relative;
+  z-index: 2;
+}
+
+.cpm-tag {
+    display: inline-flex;
+    align-items: center;
+    background: rgba(255, 255, 255, .13);
+    border: 1px solid rgba(255, 255, 255, .2);
+    color: #D8C9FA;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 6px 12px;
+    border-radius: 999px;
+    backdrop-filter: blur(8px);
+}
+
+.cpm-hero h1 {
+  margin: 18px 0 0;
+  font-size: 30px;
+  line-height: 40px;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: -0.035em;
+}
+
+.cpm-hero h1 span {
+  color: #B69CFB;
+}
+
+.cpm-hero-text {
+  margin-top: 12px;
+  font-size: 15px;
+  line-height: 1.62;
+  color: rgba(255, 255, 255, .72);
+}
+
+.cpm-hero .cpm-btn-lg {
+  margin-top: 24px;
+  margin-bottom: 12px;
+}
+
+.cpm-hero-notes {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px 16px;
+  margin-top: 16px;
+}
+
+.cpm-hero-notes li {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 500;
+    color: #B9AEDC;
+}
+
+.cpm-live-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #4ADE80;
+  flex: none;
+}
+
+/* ---- stat strip -------------------------------------------------------- */
+
+.cpm-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  padding-top: 20px;
+  padding-bottom: 2px;
+}
+
+.cpm-stat {
+  background: var(--cpm-lav);
+  border-radius: 16px;
+  padding: 15px 8px;
+  text-align: center;
+}
+
+.cpm-stat b {
+  display: block;
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: var(--cpm-purple);
+  line-height: 1;
+      font-family: "Sora", sans-serif !important;
+}
+
+.cpm-stat span {
+  display: block;
+  margin-top: 7px;
+  font-size: 13px;
+  line-height: 16px;
+  color: #5A5170;
+}
+
+/* ---- east route -------------------------------------------------------- */
+
+.cpm-row-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.cpm-pill-live {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: #E4FBEC;
+  color: var(--cpm-green);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 5px 10px;
+  border-radius: 999px;
+  flex: none;
+}
+
+.cpm-pill-live i {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--cpm-green);
+  display: inline-block;
+}
+
+.cpm-card {
+  background: #fff;
+  border: 1px solid var(--cpm-line);
+        border-radius: 0px 0px 20px 20px;
+  overflow: hidden;
+}
+
+.cpm-map {
+  display: block;
+  width: 100%;
+  background: #CFE3EF;
+      border-radius: 20px 20px 0px 0px;
+  overflow: hidden;
+}
+
+.cpm-map svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.cpm-route-body {
+  padding: 20px;
+}
+
+/* pick-up / drop-off timeline */
+.cpm-leg {
+  position: relative;
+  padding-left: 24px;
+}
+
+.cpm-leg + .cpm-leg {
+  margin-top: 14px;
+}
+
+.cpm-leg::before {
+  content: "";
+  position: absolute;
+  left: 6px;
+  top: 12px;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  border: 2px solid var(--cpm-purple);
+  background: #fff;
+  transform: translate(-50%, -50%);
+}
+
+.cpm-leg--drop::before {
+  border-color: var(--cpm-green);
+}
+
+/* connector line between the two legs */
+.cpm-leg--pick::after {
+  content: "";
+  position: absolute;
+  left: 6px;
+  top: 18px;
+  bottom: -26px;
+  width: 2px;
+  transform: translateX(-50%);
+  background: linear-gradient(to bottom, var(--cpm-purple), var(--cpm-green));
+  border-radius: 2px;
+}
+
+.cpm-leg h3 {
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.cpm-leg p {
+  margin-top: 5px;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--cpm-muted);
+}
+.cpm-map img {
+    width: 100%;
+}
+
+.cpm-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-top: 16px;
+}
+
+.cpm-chip {
+  background: var(--cpm-lav);
+  color: var(--cpm-purple-600);
+  font-size: 11.5px;
+  font-weight: 600;
+  padding: 6px 11px;
+  border-radius: 999px;
+}
+
+/* ---- other routes ------------------------------------------------------ */
+
+.cpm-panel {
+    background: #F8F5FE;
+    border-radius: 20px;
+    padding: 20px;
+}
+
+.cpm-panel > h2 {
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.cpm-panel > p {
+  margin-top: 6px;
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--cpm-muted);
+}
+
+.cpm-vote-list {
+  margin-top: 14px;
+  display: grid;
+  gap: 9px;
+}
+
+.cpm-vote {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  background: #fff;
+  border-radius: 12px;
+  padding: 12px 12px 12px 14px;
+}
+
+.cpm-vote h3 {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.cpm-vote small {
+  display: block;
+  margin-top: 3px;
+  font-size: 12px;
+  color: var(--cpm-muted-2);
+}
+
+/* ---- how it works ------------------------------------------------------ */
+
+.cpm-steps {
+  display: grid;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.cpm-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  background: #fff;
+  border: 1px solid var(--cpm-line);
+  border-radius: 14px;
+  padding: 14px 16px;
+  align-items: center;
+}
+
+.cpm-step-num {
+  flex: none;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--cpm-purple);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 1px;
+}
+
+.cpm-step h3 {
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.cpm-step p {
+  margin-top: 4px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--cpm-muted);
+}
+
+/* ---- price card -------------------------------------------------------- */
+
+.cpm-price-wrap {
+  padding-top: 6px;
+  padding-bottom: 32px;
+}
+
+.cp-dt {
+    background: #4C1D95;
+    padding: 24px;
+    border-radius: 0px 0px 20px 20px;
+    z-index: 1;
+    position: relative;
+}
+.cpm-price {
+  position: relative;
+      border-radius: 20px 20px 0px 0px;
+  padding: 24px;
+  color: #fff;
+      background: linear-gradient(155deg, #8B5CF6 0%, #7C3AED 42%, #6D28D9 100%);
+  box-shadow: 0 26px 54px -26px rgba(109, 40, 217, .95);
+  border-bottom: 2px dashed #ffffff78;
+    margin-bottom: 7px;
+}
+
+.cpm-price-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.cpm-price-head span {
+      font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #fff;
+}
+
+.cpm-price-badge {
+  width: 28px;
+  height: 28px;
+  border-radius: 7px;
+  background: rgba(255, 255, 255, .2);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px !important;
+  font-weight: 800;
+  flex: none;
+}
+
+.cpm-price-amount {
+  display: flex;
+  align-items: baseline;
+  gap: 3px;
+  margin-top: 18px;
+}
+
+.cpm-price-amount b {
+  font-size: 42px;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  line-height: 1;
+      font-family: "Sora", sans-serif !important;
+}
+
+.cpm-price-amount i {
+  font-style: normal;
+  font-size: 16px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, .82);
+}
+
+.cpm-price-note {
+  margin-top: 10px;
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: rgba(255, 255, 255, .74);
+}
+
+/* punched ticket divider */
+/* .cpm-perf {
+  position: relative;
+  height: 1px;
+  margin: 0px -20px;
+  background-size: 12px 1px;
+  background-repeat: repeat-x;
+} */
+
+.cpm-perf::before,
+.cpm-perf::after {
+  content: "";
+  position: absolute;
+  bottom: -14%;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #fff;
+  transform: translateY(-50%);
+}
+
+.cpm-perf::before {
+  left: -9px;
+}
+
+.cpm-perf::after {
+  right: -9px;
+}
+
+.cpm-price-list {
+  display: grid;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.cpm-price-list li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, .95);
+}
+
+.cpm-tick {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, .22);
+  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cpm-price-fine {
+  margin-top: 12px;
+  text-align: center;
+  font-size: 10px;
+  color: rgba(255, 255, 255, .7);
+}
+
+/* ---- trust (dark) ------------------------------------------------------ */
+
+.cpm-trust {
+  background: var(--cpm-dark);
+  color: #fff;
+  padding: 32px var(--cpm-pad);
+}
+
+.cpm-trust h2 {
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.3;
+  color: #fff;
+  margin-bottom: 16px;
+}
+
+.cpm-trust-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.cpm-tc {
+  background: rgba(255, 255, 255, .05);
+  border: 1px solid rgba(255, 255, 255, .09);
+  border-radius: 16px;
+  padding: 14px;
+}
+
+.cpm-tc h3 {
+  font-size: 14px;
+  font-weight: 700;
+  color: #fff;
+  line-height: 20px;
+  margin-bottom: 6px;
+}
+
+.cpm-tc p {
+  font-size: 12px;
+  line-height: 1.55;
+  color: rgba(255, 255, 255, .55);
+}
+
+/* ---- accordion --------------------------------------------------------- */
+
+.cpm-acc {
+  display: grid;
+  gap: 9px;
+  margin-top: 14px;
+}
+
+.cpm-acc-item {
+  background: #fff;
+  border: 1px solid var(--cpm-line);
+  border-radius: 14px;
+  overflow: hidden;
+}
+.cpm-price-list {
+    margin-bottom: 20px !important;
+}
+.cpm-acc-item.is-open {
+  border-color: #D9CDF7;
+}
+
+.cpm-acc-btn {
+  width: 100%;
+  background: none;
+  border: 0;
+  padding: 15px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  text-align: left;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--cpm-ink);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.cpm-acc-btn svg {
+  flex: none;
+  color: #6D28D9;
+  transition: transform .24s ease, color .24s ease;
+}
+
+.cpm-acc-item.is-open .cpm-acc-btn svg {
+  transform: rotate(45deg);
+  color: var(--cpm-purple);
+}
+
+.cpm-acc-panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows .26s ease;
+}
+
+.cpm-acc-item.is-open .cpm-acc-panel {
+  grid-template-rows: 1fr;
+}
+
+.cpm-acc-panel > div {
+  overflow: hidden;
+}
+
+.cpm-acc-panel p {
+  font-size: 13px;
+  line-height: 1.65;
+  color: var(--cpm-muted);
+  padding: 0 16px 15px;
+  margin-top: -3px;
+}
+
+/* ---- footer ------------------------------------------------------------ */
+
+.cpm-footer {
+  padding: 24px var(--cpm-pad) 40px;
+  text-align: center;
+  font-size: 12px;
+  color: var(--cpm-muted-2);
+  padding-top: 0;
+}
+
+.cpm-footer a:hover {
+  color: var(--cpm-purple);
+}
+
+.cpm-footer i {
+  font-style: normal;
+  padding: 0 5px;
+  opacity: .55;
+}
+   .clubpass-app-page  {
+    font-family: "Figtree", sans-serif !important;
+}
+.clubpass-app-page :is(h1, h2, h3, h4, h5, h6) {
+  font-family: "Sora", sans-serif !important;
+}
+a.bt-btn {
+    background: #6D28D9;
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-between;
+    color: #fff !important;
+    box-shadow: 0 20px 54px -12px rgb(103 30 218 / 95%);
+}
+.bt-stciky-btn {
+    position: fixed;
+    bottom: 40px;
+    left: 0;
+    width: 100%;
+    z-index: 9999;
+}
+.bt-stciky-btn .bt-btn {
+    width: 100%;
+    max-width: 560px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+/* ==========================================================================
+   Larger phones / landscape phones (up to 767px) and beyond
+   ========================================================================== */
+
+@media (min-width: 480px) {
+  /* .clubpass-app-page {
+    --cpm-pad: 26px;
+  } */
+
+  .cpm-hero {
+    padding-top: 60px;
+    padding-bottom: 40px;
+  }
+
+  .cpm-hero h1 {
+    font-size: 32px;
+  }
+
+  .cpm-h2,
+  .cpm-trust h2 {
+    font-size: 24px;
+  }
+
+  .cpm-section {
+    padding-top: 36px;
+    padding-bottom: 36px;
+  }
+
+  .cpm-stat b {
+    font-size: 24px;
+  }
+
+  .cpm-price-amount b {
+    font-size: 42px;
+  }
+}
+
+/* Landscape phone: hero copy sits beside the CTA, cards go wider */
+@media (min-width: 640px) {
+  .cpm-hero h1 {
+    font-size: 36px;
+  }
+
+  .cpm-hero-text {
+    max-width: 460px;
+  }
+
+  .cpm-trust-grid,
+  .cpm-steps,
+  .cpm-vote-list {
+    gap: 12px;
+  }
+}
+
+/* Short landscape viewports: trim vertical rhythm so the hero still fits */
+@media (max-width: 900px) and (max-height: 480px) and (orientation: landscape) {
+  .cpm-hero {
+    padding-top: 30px;
+    padding-bottom: 30px;
+  }
+
+  .cpm-hero h1 {
+    font-size: 26px;
+  }
+
+  .cpm-hero .cpm-btn-lg {
+    margin-top: 18px;
+    padding: 13px 20px;
+  }
+}
+
+/* Above the mobile range the shell is capped and framed */
+@media (min-width: 768px) {
+  /* .clubpass-app-page {
+    padding: 28px 0;
+  } */
+
+  .cpm-shell {
+    border-radius: 26px;
+    box-shadow: 0 30px 70px -34px rgba(25, 16, 36, .45);
+  }
+}
+
