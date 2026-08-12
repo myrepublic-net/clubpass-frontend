@@ -118,24 +118,22 @@
 }
 
 .cp-btn-purple {
-  background: #FF630D;
+  background: var(--cp-purple);
   color: #fff  !important;
-  box-shadow: 0 8px 20px -8px #FF630D;
+  box-shadow: 0 8px 20px -8px rgba(124, 58, 237, .65);
 }
 
 .cp-btn-purple:hover {
-  background: #FF630D;
+  background: var(--cp-purple-600);
   color: #fff !important;
 }
 
 .cp-btn-white {
-  background: #fff  !important ; 
-  color: #00caca !important;
-  /* box-shadow: 0 8px 20px -8px #fff; */
+  background: #fff !important ; 
+  color: #4C1D95 !important;
+  box-shadow: 0 10px 26px -12px rgba(0, 0, 0, .55);
 }
-.cp-hero-image img {
-    width: 100%;
-}
+
 .cp-btn-white:hover {
   color: var(--cp-ink);
 }
@@ -167,11 +165,9 @@
   position: sticky;
   top: 0;
   z-index: 60;
-  background: #0a0705;
+  background: rgba(255, 255, 255, .92);
   backdrop-filter: blur(12px);
-  /* border-bottom: 1px solid var(--cp-line); */
-      padding-top: 10px;
-    padding-bottom: 10px;
+  border-bottom: 1px solid var(--cp-line);
 }
 
 .cp-header-inner {
@@ -229,12 +225,12 @@
 .cp-nav a {
     font-size: 15px;
     font-weight: 600;
-    color: #fff;
+    color: #4B4160;
     transition: color .15s ease;
 }
 
 .cp-nav a:hover {
-  color: #FF630D;
+  color: var(--cp-purple);
 }
 
 .cp-nav-toggle {
@@ -242,7 +238,7 @@
   background: none;
   border: 0;
   padding: 6px;
-  color: #fff;
+  color: var(--cp-ink);
   cursor: pointer;
 }
 
@@ -251,15 +247,15 @@
 .cp-hero {
   position: relative;
   overflow: hidden;
-  /* min-height: 660px; */
+  min-height: 660px;
   display: flex;
   align-items: center;
-  background-color: #0a0705;
-  /* background-image:
+  background-color: #14061F;
+  background-image:
     url("/images/clubpass-hero.png");
   background-size: cover, auto, auto, auto, auto;
   background-position: center;
-  background-repeat: no-repeat; */
+  background-repeat: no-repeat;
 }
 
 /* darkening scrim so the copy stays readable over any hero photo */
@@ -286,30 +282,20 @@
   position: relative;
   z-index: 2;
   width: 100%;
-  padding: 20px 0;
-  padding-bottom: 0;
-  display: flex;
-    align-items: center;
-    gap: 20px;
-    padding-left: 24px;
+  padding: 96px 0;
 }
 
 .cp-hero-copy {
-  padding-left: calc((100vw - 1120px) / 2);
-  padding-bottom: 64px;
-  width: 50%;
+  max-width: 560px;
 }
 
-.cp-hero-copy, .cp-hero-image {
-  width: 50% ;
-}
 .cp-tag {
   display: inline-flex;
   align-items: center;
   gap: 8px;
   background: rgba(255, 255, 255, .12);
   border: 1px solid rgba(255, 255, 255, .22);
-  color: #6cd7d7;
+  color: #D8C9FA;
   font-size: 13px;
   font-weight: 700;
   letter-spacing: 0.14em;
@@ -329,14 +315,14 @@
 }
 
 .cp-hero h1 .cp-accent {
-  color: #6cd7d7;
+  color: #C4B5FD;
 }
 
 .cp-hero-text {
  max-width: 440px;
     font-size: 18px;
     line-height: 1.75;
-    color: #fff;
+    color: #CBC2E4;
 }
 
 .cp-hero-actions {
@@ -344,7 +330,7 @@
   flex-wrap: wrap;
   gap: 12px;
   margin-top: 40px;
-  /* margin-bottom: 40px; */
+  margin-bottom: 40px;
 }
 
 .cp-hero-notes {
@@ -407,17 +393,18 @@
 }
 
 .cp-card-plain {
-  /* background: #FAF9FC;
+  background: #FAF9FC;
   border: 1px solid var(--cp-line);
-  border-radius: 16px; */
+  border-radius: 16px;
   padding: 26px 26px 28px;
 }
 
 .cp-card-dark {
+  background: linear-gradient(160deg, #2E1C4C 0%, #201238 100%);
   border-radius: 16px;
   padding: 26px 26px 28px;
   color: #fff;
-    border: 2px solid #FF630D;
+  box-shadow: 0 22px 48px -26px rgba(43, 26, 74, .8);
 }
 
 .cp-card-label {
@@ -430,7 +417,7 @@
 }
 
 .cp-card-dark .cp-card-label {
-  color: #FF630D;
+  color: #C4B5FD;
 }
 
 .cp-list li {
@@ -448,6 +435,9 @@
   border-top: 1px solid var(--cp-line);
 }
 
+.cp-card-dark .cp-list li {
+  color: #fff;
+}
 
 .cp-card-dark .cp-list li + li {
   border-top-color: rgba(255, 255, 255, .1);
@@ -470,7 +460,7 @@
 }
 
 .cp-ico-check {
-  background: #FF630D;
+  background: var(--cp-purple);
   color: #fff;
 }
 
@@ -1167,17 +1157,11 @@
 .cp-acc-item:last-child {
     margin-bottom: 0;
 }
-.cp-brand img {
-    width: 180px;
-}
 /* ==========================================================================
    Responsive
    ========================================================================== */
 
 @media (max-width: 991px) {
-  .cp-hero-copy, .cp-hero-image {
-  width: 100%;
-}
   .cp-section {
     padding: 64px 0;
   }
@@ -1195,7 +1179,7 @@
     flex-direction: column;
     align-items: flex-start;
     gap: 0;
-    background: #000;
+    background: #fff;
     border-bottom: 1px solid var(--cp-line);
     padding: 8px 24px 16px;
     box-shadow: 0 18px 30px -22px rgba(25, 16, 36, .4);
@@ -1216,9 +1200,7 @@
   }
 
   .cp-hero-inner {
-    padding-left: 0px;
-    gap: 40px;
-            flex-direction: column-reverse;
+    padding: 72px 0 300px;
   }
 
   .cp-hero h1 {
@@ -1279,19 +1261,9 @@
   .cp-safety-grid-3 {
     grid-template-columns: 1fr;
   }
-     .cp-hero-copy {
-  padding-inline: 18px;
-}
-.cp-hero-image, .cp-hero-copy {
-    width: 100%;
-}
 }
 
 @media (max-width: 575px) {
- 
-  .cp-brand img {
-    width: 120px;
-}
 .clubpass-page section#faq .cp-container {
     padding-top: 64px !important;
 }
@@ -1317,7 +1289,7 @@
 }
 .cp-hero-actions {
   margin-top: 20px;
-  /* margin-bottom: 20px; */
+  margin-bottom: 20px;
 }
   .cp-container {
     padding: 0 18px;
@@ -1327,9 +1299,9 @@
     display: none;
   }
 
-  /* .cp-hero-inner {
+  .cp-hero-inner {
     padding: 56px 0 260px;
-  } */
+  }
 
   .cp-hero h1 {
     font-size: 34px;
@@ -1386,7 +1358,6 @@
 }
 }
 @media (min-width: 576px) {
-
 .cp-stops:before {
   content: "";
     position: absolute;

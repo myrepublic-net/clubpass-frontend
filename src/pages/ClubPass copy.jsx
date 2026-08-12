@@ -27,28 +27,24 @@ const WITH_CLUBPASS = [
 
 const STEPS = [
   {
-    img: "/images/one.png",
     num: "01",
     title: "Open RewardLand",
     text: "Download the app, or open it — if you're in, your account is already there.",
     meta: "30 seconds",
   },
   {
-    img: "/images/two.png",
     num: "02",
     title: "Find ClubPass",
     text: "It lives right inside the app, next to your rewards wallet.",
     meta: "One tap",
   },
   {
-    img: "/images/three.png",
     num: "03",
     title: "Subscribe",
     text: "Pick your membership and pay securely in-app. Cancel anytime.",
     meta: "S$19.90/month",
   },
   {
-    img: "/images/four.png",
     num: "04",
     title: "Ride home",
     text: "Show your boarding QR to the driver, find a seat, ride home.",
@@ -171,12 +167,10 @@ export default function ClubPass() {
       <header className="cp-header">
         <div className="cp-container cp-header-inner">
           <a className="cp-brand" href="#top">
-            {/* <span className="cp-brand-mark">R</span>
+            <span className="cp-brand-mark">R</span>
             <span className="cp-brand-name">reward<label className="cl-color">land</label></span>
-            <span className="cp-brand-sub">ClubPass</span> */}
-            <img src="/images/club-logo.png"/>
+            <span className="cp-brand-sub">ClubPass</span>
           </a>
-
 
           <nav className={`cp-nav${menuOpen ? " is-open" : ""}`}>
             {NAV_LINKS.map((link) => (
@@ -211,7 +205,7 @@ export default function ClubPass() {
       {/* ================= Hero ================= */}
       <section className="cp-hero" id="top">
         <div className="cp-hero-inner">
-      
+          <div className="cp-container">
             <div className="cp-hero-copy">
               <span className="cp-tag">ClubPass · Home Express by RewardLand</span>
 
@@ -240,7 +234,7 @@ export default function ClubPass() {
                 </a>
               </div>
 
-              {/* <ul className="cp-hero-notes">
+              <ul className="cp-hero-notes">
                 <li>
                   <span className="cp-dot" />
                   East Route live
@@ -253,17 +247,14 @@ export default function ClubPass() {
                   <span className="cp-dot" />
                   Cancel anytime
                 </li>
-              </ul> */}
+              </ul>
             </div>
-            <div className="cp-hero-image">
-              <img src="/images/cp-banner.png"/>
-            </div>
-          
+          </div>
         </div>
 
-        {/* <div className="cp-hero-art">
+        <div className="cp-hero-art">
           <Mascot fallback="/images/Flare-Jumping.png" />
-        </div> */}
+        </div>
       </section>
 
       {/* ================= Why ClubPass ================= */}
@@ -324,9 +315,7 @@ export default function ClubPass() {
           <div className="cp-steps">
             {STEPS.map((step) => (
               <div className="cp-step" key={step.num}>
-                <div className="cp-step-num">
-  <img src={step.img} alt={step.title} />
-</div>
+                <div className="cp-step-num">{step.num}</div>
                 <h3>{step.title}</h3>
                 <p>{step.text}</p>
                 <span className="cp-step-meta">{step.meta}</span>
