@@ -1,10 +1,16 @@
-import { useState } from "react";
-import { ArrowRight, Bell, Check, ChevronDown, Menu, X } from "lucide-react";
-
+import React, { useEffect, useState } from "react";
+import { ArrowRight, Bell, Check, Clock, Minus, Plus,  ChevronDown, ChevronRight, Menu, UserRound, X } from "lucide-react";
 import "../css/clubpass.css";
+import "../css/clubpass-new.css";
 
 const APP_LINK = "https://rewardland.onelink.me/EwIe/start";
 const SITE = "https://www.rewardland.sg";
+const IMG = "/images/cpn";
+
+const VOTE_ROUTES = [
+  { key: "west", name: "West Route", count: 18, progress: 64 },
+  { key: "north", name: "North Route", count: 26, progress: 48 },
+];
 
 const NAV_LINKS = [
   { label: "How it works", href: "#how-it-works" },
@@ -117,7 +123,48 @@ const FAQS = [
     a: "Register your interest for West, North or South. Each route unlocks once enough neighbours vote for it — one vote per route, five seconds. We'll notify you the moment yours goes live.",
   },
 ];
+const TOP_EDGE =
+  "C 130 18 260 0 440 0 C 620 0 760 30 900 38 C 1010 45 1080 46 1180 45 C 1300 43 1400 35 1500 26";
+const TOP_EDGE_REVERSED =
+  "C 1400 35 1300 43 1180 45 C 1080 46 1010 45 900 38 C 760 30 620 0 440 0 C 260 0 130 18 0 40";
+const BOTTOM_EDGE_REVERSED =
+  "C 1400 111 1300 119 1180 121 C 1080 122 1010 121 900 114 C 760 106 620 76 440 76 C 260 76 130 94 0 116";
+function Wave({ variant }) {
+  return (
+    <svg
+      className={`cpn-wave cpn-wave--${variant}`}
+      viewBox="0 0 1500 122"
+      preserveAspectRatio="none"
+      aria-hidden="true"
+      focusable="false"
+    >
+      <defs>
+        <linearGradient id={`cpnWaveGrad-${variant}`} x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stopColor="#0d1658" />
+          <stop offset="17%" stopColor="#3d2182" />
+          <stop offset="33%" stopColor="#712eac" />
+          <stop offset="50%" stopColor="#9a54c6" />
+          <stop offset="67%" stopColor="#c181da" />
+          <stop offset="83%" stopColor="#e6a9ee" />
+          <stop offset="100%" stopColor="#f9c6fa" />
+        </linearGradient>
+      </defs>
 
+      {variant === "cap-bottom" && (
+        <path className="cpn-wave-cap" d={`M 0 0 H 1500 V 26 ${TOP_EDGE_REVERSED} Z`} />
+      )}
+      {variant === "cap-top" && (
+        <path className="cpn-wave-cap" d={`M 0 40 ${TOP_EDGE} L 1500 122 H 0 Z`} />
+      )}
+      {variant !== "cap-top" && (
+        <path
+          d={`M 0 40 ${TOP_EDGE} L 1500 102 ${BOTTOM_EDGE_REVERSED} Z`}
+          fill={`url(#cpnWaveGrad-${variant})`}
+        />
+      )}
+    </svg>
+  );
+}
 /**
  * ClubPass mascot. Drop `public/images/clubpass-mascot.png` in to use the
  * ClubPass artwork; until then we fall back to the existing Flare mascot.
@@ -158,8 +205,9 @@ export default function ClubPass() {
     setVotedRoutes((prev) => (prev.includes(route) ? prev : [...prev, route]));
   };
 
+
   return (
-    <div className="clubpass-page">
+    <div className="clubpass-page cpn-page">
       {/* React 19 hoists these into <head> — no Helmet needed. */}
       <title>ClubPass Home Express | RewardLand</title>
       <meta
@@ -208,9 +256,13 @@ export default function ClubPass() {
         </div>
       </header>
 
+
       {/* ================= Hero ================= */}
       <section className="cp-hero" id="top">
-        <div className="cp-hero-inner">
+        
+        <div className="cp-hero-inner" style={{  backgroundImage: "url('./images/cpn/cp-one-banner.png')", backgroundSize: "cover", backgroundPosition: "center",
+    backgroundRepeat: "no-repeat", }}>
+      <div className="cp-container ">
       
             <div className="cp-hero-copy">
               <span className="cp-tag">ClubPass · Home Express by RewardLand</span>
@@ -237,6 +289,7 @@ export default function ClubPass() {
                 </a>
                 <a className="cp-btn cp-btn-ghost" href="#how-it-works">
                   See how it works
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-right" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg>
                 </a>
               </div>
 
@@ -255,10 +308,9 @@ export default function ClubPass() {
                 </li>
               </ul> */}
             </div>
-            <div className="cp-hero-image">
-              <img src="/images/cp-banner.png"/>
-            </div>
+            
           
+        </div>
         </div>
 
         {/* <div className="cp-hero-art">
@@ -267,10 +319,10 @@ export default function ClubPass() {
       </section>
 
       {/* ================= Why ClubPass ================= */}
-      <section className="cp-section">
+      <section className="cp-section why-section">
         <div className="cp-container">
           <div className="cp-why-head cp-center">
-            <p className="cp-eyebrow">Why ClubPass</p>
+            <p className="cp-eyebrow">why clubpass?</p>
             <h2 className="cp-h2">
               Getting home after 2am shouldn't be the hardest part of the night.
             </h2>
@@ -283,7 +335,7 @@ export default function ClubPass() {
                 {WITHOUT_CLUBPASS.map((item) => (
                   <li key={item}>
                     <span className="cp-ico cp-ico-x">
-                      <X size={11} strokeWidth={3} />
+                      <X size={14} strokeWidth={3} />
                     </span>
                     {item}
                   </li>
@@ -297,7 +349,7 @@ export default function ClubPass() {
                 {WITH_CLUBPASS.map((item) => (
                   <li key={item}>
                     <span className="cp-ico cp-ico-check">
-                      <Check size={11} strokeWidth={3} />
+                      <Check size={14} strokeWidth={3} />
                     </span>
                     {item}
                   </li>
@@ -312,13 +364,16 @@ export default function ClubPass() {
       <section className="cp-section" id="how-it-works" style={{ paddingTop: 0 }}>
         <div className="cp-container">
           <div className="cp-split-head">
-            <div>
-              <p className="cp-eyebrow">How it works</p>
-              <h2 className="cp-h2">From dance floor to doorstep</h2>
+            <div className="dj-image">
+              <img class="cpn-dj" alt="" aria-hidden="true" src="/images/dj-decks.png"/>
             </div>
+            <div class="cp-work-text">
+              <p className="cp-eyebrow">How it works</p>
+            <h2 className="cp-h2">From dance floor to doorstep</h2>
             <p className="cp-note">
               Already a RewardLand user? You're signed in automatically — no new account, no new app.
             </p>
+            </div>
           </div>
 
           <div className="cp-steps">
@@ -336,282 +391,274 @@ export default function ClubPass() {
         </div>
       </section>
 
-      {/* ================= Routes ================= */}
-      <section className="cp-section cp-routes" id="routes">
-        <div className="cp-container">
-          <div className="cp-routes-head cp-center">
-            <p className="cp-eyebrow">Routes</p>
-            <h2 className="cp-h2">One island. Four routes.</h2>
-            <p className="cp-lead" style={{ marginTop: 14 }}>
-              East is live today. West, North and South unlock as neighbours register interest — one
-              vote per route, five seconds.
-            </p>
+
+
+  {/* ================= Routes ================= */}
+      <section className="cpn-section cpn-routes" id="routes">
+            
+
+        <div className="cpn-container">
+          <img className="cpn-bus" src={`${IMG}/party-bus.png`} alt="" aria-hidden="true" />
+
+          <p className="cpn-kicker">Routes</p>
+          <h2 className="cpn-h2">One Island. Four Routes.</h2>
+          <p className="cpn-routes-lead">
+            East is live today, West, North and South unlock as neighbours register interest - one
+            vote per route, five seconds.
+          </p>
+
+          <div className="cpn-route-head">
+            <h3>East Route</h3>
+            <span className="cpn-live">Live Now</span>
           </div>
 
-          <div className="cp-route-top">
-            <div className="cp-route-card">
-              <div className="cp-route-card-head">
-                <h3>East Route</h3>
-                <span className="cp-pill-live">
-                  <i />
-                  Live now
-                </span>
-              </div>
-
-              <div className="cp-stops">
-                <div className="cp-stops-col">
-                  <h4>Pick-up loop · City</h4>
-                  <ul>
-                    {PICKUPS.map((stop) => (
-                      <li key={stop}>
-                        <span className="cp-stop-dot" />
-                        {stop}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-
-                <div className="cp-stops-col cp-stops-col--drop">
-                  <h4>Express drop-off · East</h4>
-                  <ul>
-                    {DROPOFFS.map((stop) => (
-                      <li key={stop}>
-                        <span className="cp-stop-dot" />
-                        {stop}
-                      </li>
-                    ))}
-                  </ul>
-                  <p className="cp-stops-note">*Subject to demand. Full timings in the app.</p>
-                </div>
-              </div>
+          <div className="cpn-stops">
+            <div className="cpn-stops-col">
+              <h4>Pick-up Loop - City</h4>
+              <ul>
+                {PICKUPS.map((stop) => (
+                  <li key={stop}>
+                    <span className="cpn-ring" />
+                    {stop}
+                  </li>
+                ))}
+              </ul>
             </div>
 
-            <RouteMap />
+            <span className="cpn-stops-arrow" aria-hidden="true">
+              <svg viewBox="0 0 28 22" width="28" height="22">
+                <path d="M0 7h13V0l15 11-15 11v-7H0z" fill="#c9c9cf" />
+              </svg>
+            </span>
+
+            <div className="cpn-stops-col">
+              <h4>Express Drop-off - East</h4>
+              <ul>
+                {DROPOFFS.map((stop) => (
+                  <li key={stop}>
+                    <span className="cpn-ring" />
+                    {stop}
+                  </li>
+                ))}
+              </ul>
+              <p className="cpn-stops-note">*Subject to demand. Full timings in the app</p>
+            </div>
           </div>
 
-          <div className="cp-route-grid">
-            <div className="cp-route-mini">
-              <h3>West Route</h3>
-              <div className="cp-route-count">18</div>
-              <small>more voters needed</small>
-              <div className="cp-progress">
-                <span style={{ width: "64%" }} />
-              </div>
-              <button
-                type="button"
-                className="cp-btn cp-btn-purple cp-btn-sm cp-btn-block"
-                onClick={() => voteRoute("west")}
-                disabled={votedRoutes.includes("west")}
-              >
-                {votedRoutes.includes("west") ? "Vote counted" : "I want this route"}
-              </button>
-            </div>
+          <div className="cpn-map-wrap">
+            <img className="cpn-squiggle" src={`${IMG}/squiggle.png`} alt="" aria-hidden="true" />
+            <img className="cpn-speaker" src={`${IMG}/speaker.png`} alt="" aria-hidden="true" />
+            <div className="cpn-map">Google map</div>
+          </div>
 
-            <div className="cp-route-mini">
-              <h3>North Route</h3>
-              <div className="cp-route-count">26</div>
-              <small>more voters needed</small>
-              <div className="cp-progress">
-                <span style={{ width: "48%" }} />
+          <div className="cpn-route-grid">
+            {VOTE_ROUTES.map((route) => (
+              <div className="cpn-route-card" key={route.key}>
+                <h4>{route.name}</h4>
+                <div className="cpn-route-count">{route.count}</div>
+                <small>more members needed</small>
+                <div className="cpn-progress">
+                  <span style={{ width: `${route.progress}%` }} />
+                </div>
+                <button
+                  type="button"
+                  className="cpn-btn cpn-btn--outline"
+                  onClick={() => voteRoute(route.key)}
+                  disabled={votedRoutes.includes(route.key)}
+                >
+                  {votedRoutes.includes(route.key) ? "Vote counted" : "I want this route"}
+                </button>
               </div>
-              <button
-                type="button"
-                className="cp-btn cp-btn-purple cp-btn-sm cp-btn-block"
-                onClick={() => voteRoute("north")}
-                disabled={votedRoutes.includes("north")}
-              >
-                {votedRoutes.includes("north") ? "Vote counted" : "I want this route"}
-              </button>
-            </div>
+            ))}
 
-            <div className="cp-route-mini cp-route-mini--soon">
-              <h3>South Route</h3>
-              <p>Coming soon — be the first to know when voting opens.</p>
+            <div className="cpn-route-card">
+              <h4>South Route</h4>
+              <p className="cpn-route-soon">
+                Coming soon - be the first to
+                <br />
+                know when voting opens.
+              </p>
               <button
                 type="button"
-                className="cp-btn cp-btn-purple cp-btn-sm"
+                className="cpn-btn cpn-btn--outline"
                 onClick={() => voteRoute("south")}
                 disabled={votedRoutes.includes("south")}
               >
-                {votedRoutes.includes("south") ? (
-                  "You're on the list"
-                ) : (
-                  <>
-                    <Bell size={13} />
-                    Notify me
-                  </>
-                )}
+                {votedRoutes.includes("south") ? "You're on the list" : "I want this route"}
               </button>
             </div>
           </div>
         </div>
       </section>
+      
+{/* ================= Schedule & safety ================= */}
+      <section className="cpn-safety">
+        {/* <Wave variant="cap-bottom" /> */}
 
-      {/* ================= Schedule & safety ================= */}
-      <section className="cp-section cp-safety">
-        <div className="cp-container">
-          <div className="cp-split-head">
-            <div>
-              <p className="cp-eyebrow cp-on-dark">Schedule &amp; safety</p>
-              <h2 className="cp-h2">
-                Planned like transit.
-                <br />
-                Protected like a members' club.
-              </h2>
-            </div>
-            <p className="cp-note">
+        <div className="cpn-container cpn-safety-inner">
+          <p className="cpn-kicker cpn-kicker--light">Schedule &amp; Safety</p>
+
+          <div className="cpn-safety-head">
+            <h2 className="cpn-h2 cpn-h2--light">
+              Planned like transit.
+              <br />
+              Protected like a members' club.
+            </h2>
+            <p>
               Fixed nights, fixed stops, verified riders. Nothing about your ride home is left to
               chance.
             </p>
           </div>
 
-          <div className="cp-safety-grid">
-            <div className="cp-sc cp-sc-wide">
-              <div className="cp-sc-big">4</div>
+          <div className="cpn-safety-top">
+            <div className="cpn-nights">
+              <img src={`${IMG}/num-4.png`} alt="4" />
               <div>
-                <h3>nights a month — one night a week, every week</h3>
+                <h3>nights a month - one night a week, every week</h3>
                 <p>
                   Departures are fixed and published ahead of time; exact timings live in the app.
-                  Your price never changes — no surge, ever.
+                  Your price never changes - no surge, ever.
                 </p>
               </div>
             </div>
 
-            <div className="cp-sc">
-              <span className="cp-sc-icon">
-                <img src="/images/dot.png" />
+            <div className="cpn-safety-card">
+              <span className="cpn-safety-icon">
+                <Clock size={26} strokeWidth={1.6} />
               </span>
               <h3>On the dot</h3>
-              <p>Departures run on the clock — never "when the bus fills up".</p>
+              <p>Departures run on the clock - never "when the bus fills up"</p>
             </div>
           </div>
 
-          <div className="cp-safety-grid-3">
+          <div className="cpn-safety-grid">
             {SAFETY_CARDS.map((card) => (
-              <div className="cp-sc" key={card.title}>
-                <span className="cp-sc-icon">{card.icon}</span>
+              <div className="cpn-safety-card" key={card.title}>
+                {card.icon && <span className="cpn-safety-icon">{card.icon}</span>}
                 <h3>{card.title}</h3>
                 <p>{card.text}</p>
               </div>
             ))}
           </div>
         </div>
+
+        {/* <Wave variant="cap-top" /> */}
       </section>
 
       {/* ================= Membership ================= */}
-      <section className="cp-section" id="membership">
-        <div className="cp-container">
-          <div className="cp-member-grid">
-            <div className="cp-member-copy">
-              <p className="cp-eyebrow">Membership</p>
-              <h2 className="cp-h2">
-                One simple membership.
-                <br />
-                No surge maths.
-              </h2>
-              <p className="cp-lead">
-                A single monthly subscription inside the RewardLand app. It renews automatically, and
-                you can cancel in two taps — no lock-in, no hidden fees.
-              </p>
-
-              <ul className="cp-member-list">
-                {MEMBER_BENEFITS.map((benefit) => (
-                  <li key={benefit}>
-                    <img src="/images/check.png" />
-                    {/* <span className="cp-tick">
-                      <Check size={10} strokeWidth={3.5} />
-                    </span> */}
-                    {benefit}
-                  </li>
-                ))}
-              </ul>
-            </div>
-              <div className="card-m">
-            <div className="cp-ticket">
-              <div className="cp-ticket-head">
-                <span>ClubPass · Home Express</span>
-                <span className="cp-ticket-badge">R</span>
-              </div>
-
-              <div className="cp-price">
-                <b>S$19.90</b>
-                <i>/month</i>
-              </div>
-
-              <p className="cp-ticket-note">
-                Founder launch price · First 150 members only. Locked in for as long as you stay
-                subscribed.
-              </p>
-
-              
-            </div>
-            <div className="dt-card">
-              <dl className="cp-ticket-stats">
-                <div>
-                  <dt>Status</dt>
-                  <dd>Founder</dd>
+            <section className="cpn-section cpn-membership" id="membership">
+              <div className="cpn-container cpn-membership-grid">
+                <div className="cpn-membership-copy">
+                  <p className="cpn-kicker cpn-kicker--orange">Membership</p>
+                  <h2 className="cpn-h2">
+                    One simple membership.
+                    <br />
+                    No surge maths.
+                  </h2>
+                  <p className="cpn-membership-lead">
+                    A single monthly subscription inside the RewardLand app. It renews automatically, and
+                    you can cancel in two taps - no lock-in, no hidden fees.
+                  </p>
+      
+                  <ul className="cpn-benefits">
+                    {MEMBER_BENEFITS.map((benefit) => (
+                      <li key={benefit}>
+                        <span className="cpn-mark cpn-mark--check">
+                          <Check size={13} strokeWidth={3} />
+                        </span>
+                        {benefit}
+                      </li>
+                    ))}
+                  </ul>
                 </div>
-                <div>
-                  <dt>Rides</dt>
-                  <dd>4 nights / mo</dd>
+      
+                <div className="cpn-ticket-wrap">
+                  <img className="cpn-starburst" src={`${IMG}/starburst.png`} alt="" aria-hidden="true" />
+                  <img className="cpn-skater" src={`${IMG}/skater.png`} alt="" aria-hidden="true" />
+                  <span className="cpn-spark cpn-spark--1" aria-hidden="true" />
+                  <span className="cpn-spark cpn-spark--2" aria-hidden="true" />
+      
+                  <div className="cpn-ticket">
+                    <div className="cpn-ticket-head">Club pass - Home Express</div>
+      
+                    <div className="cpn-ticket-body">
+                      <div className="cpn-price">
+                        SGD$19.90<span>/mth</span>
+                      </div>
+                      <p className="cpn-ticket-note">
+                        Founder launch price - First 150 members only. Locked in for as long as you stay
+                        subscribed.
+                      </p>
+                    </div>
+      
+                    <div className="cpn-ticket-rip" aria-hidden="true" />
+      
+                    <div className="cpn-ticket-foot">
+                      <dl className="cpn-ticket-stats">
+                        <div>
+                          <dt>Status</dt>
+                          <dd>Founder</dd>
+                        </div>
+                        <div>
+                          <dt>Rides</dt>
+                          <dd>4 nights/mth</dd>
+                        </div>
+                        <div>
+                          <dt>Boarding</dt>
+                          <dd>QR in app</dd>
+                        </div>
+                      </dl>
+      
+                      <a
+                        className="cpn-btn cpn-btn--white"
+                        href={APP_LINK}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        Subscribe to RewardLand
+                      </a>
+      
+                      <p className="cpn-ticket-fine">
+                        Auto-renews monthly.
+                        <br />
+                        Cancel anytime in the app.
+                      </p>
+                    </div>
+                  </div>
                 </div>
-                <div>
-                  <dt>Boarding</dt>
-                  <dd>QR in app</dd>
-                </div>
-              </dl>
-
-              <a
-                className="cp-btn cp-btn-white cp-btn-block"
-                href={APP_LINK}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Subscribe in RewardLand
-              </a>
-
-              <p className="cp-ticket-fine">Auto-renews monthly · Cancel anytime in the app</p>
               </div>
-              </div>
-          </div>
-        </div>
-      </section>
+            </section>
 
       {/* ================= FAQ ================= */}
-      <section className="cp-section" id="faq" style={{ paddingTop: 0 }}>
-        <div className="cp-container">
-          <div className="cp-faq-grid">
-            <div>
-              <p className="cp-eyebrow">FAQ</p>
-              <h2 className="cp-h2">
+      <section className="cpn-section cpn-faq" id="faq">
+        <img className="cpn-discoball" src={`${IMG}/discoball.png`} alt="" aria-hidden="true" />
+
+        <div className="cpn-container">
+          <p className="cpn-kicker cpn-kicker--orange">FAQ</p>
+
+          <div className="cpn-faq-grid">
+            <div className="cpn-faq-copy">
+              <h2 className="cpn-h2">
                 Good questions,
                 <br />
                 straight answers
               </h2>
-              <p className="cp-lead" style={{ fontSize: 15 }}>
-                Anything we missed? Full details live in the RewardLand app.
-              </p>
+              <p>Anything we missed? Full details live in the RewardLand app.</p>
             </div>
 
-            <div>
+            <div className="cpn-acc">
               {FAQS.map((faq, index) => (
-                <div
-                  className={`cp-acc-item${openFaq === index ? " is-open" : ""}`}
-                  key={faq.q}
-                >
+                <div className={`cpn-acc-item${openFaq === index ? " is-open" : ""}`} key={faq.q}>
                   <button
                     type="button"
-                    className="cp-acc-btn"
                     aria-expanded={openFaq === index}
-                    onClick={() => toggleFaq(index)}
+                    onClick={() => setOpenFaq((prev) => (prev === index ? null : index))}
                   >
-                    {faq.q}
-                    <ChevronDown size={16} />
+                    <span>{faq.q}</span>
+                    {openFaq === index ? <Minus size={18} /> : <Plus size={18} />}
                   </button>
-                  <div className="cp-acc-panel">
-                    <div>
-                      <p>{faq.a}</p>
-                    </div>
+                  <div className="cpn-acc-panel">
+                    <p>{faq.a}</p>
                   </div>
                 </div>
               ))}
@@ -620,30 +667,25 @@ export default function ClubPass() {
         </div>
       </section>
 
-      {/* ================= Final CTA ================= */}
-      <section className="cp-cta-wrap">
-        <div className="cp-container">
-          <div className="cp-cta">
-            <div className="cp-cta-mascot">
-              <img src="/images/cat.png" />
-            </div>
 
-            <span className="cp-cta-bubble">I'll get you home safely! 💜</span>
-
+     {/* ================= Final CTA ================= */}
+      <section className="cpn-cta-wrap">
+        <div className="cpn-container">
+          <div className="cpn-cta">
+            <img className="cpn-cta-bus" src={`${IMG}/cta-bus.png`} alt="" aria-hidden="true" />
+            <span className="cpn-cta-bubble">I'll get you home safely!</span>
             <h2>Be one of the first 150.</h2>
             <p>
-              Founder pricing ends when the seats are gone. Lock in S$19.90/month and be part of
+              Founder pricing ends when the seats are gone. Lock in SGD$19.90/mth and be part of
               ClubPass from night one.
             </p>
-
             <a
-              className="cp-btn cp-btn-white"
+              className="cpn-btn cpn-btn--dark"
               href={APP_LINK}
               target="_blank"
               rel="noopener noreferrer"
             >
-              Open RewardLand
-              <ArrowRight size={15} />
+              Sign Up Now
             </a>
           </div>
         </div>

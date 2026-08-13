@@ -9,7 +9,7 @@
 
 .cpn-page {
   --cpn-navy: #030f43;
-  --cpn-orange: #ed6d30;
+  --cpn-orange: #FF630D;
   --cpn-orange-dark: #d95c22;
   --cpn-ink: #1a1a1a;
   --cpn-body: #3a3a3a;
@@ -23,7 +23,6 @@
   overflow-x: clip;
   background: #fff;
   color: var(--cpn-ink);
-  font-family: "Figtree", ui-sans-serif, system-ui, -apple-system, sans-serif;
   font-size: 16px;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
@@ -71,18 +70,12 @@
 }
 
 .cpn-section {
-  padding: 84px 0;
+  padding: 60px 0;
 }
 
 /* ---- shared type ------------------------------------------------------- */
 
-.cpn-h2 {
-  font-size: clamp(28px, 3vw, 42px);
-  font-weight: 800;
-  line-height: 1.16;
-  letter-spacing: -0.02em;
-  color: var(--cpn-ink);
-}
+
 
 .cpn-h2--center {
   text-align: center;
@@ -95,7 +88,7 @@
 }
 
 .cpn-kicker {
-  font-size: 20px;
+  font-size: 24px;
   font-weight: 800;
   color: var(--cpn-ink);
   margin-bottom: 12px;
@@ -156,7 +149,7 @@
   border: 2px solid var(--cpn-orange);
   padding: 10px 22px;
   font-size: 15px;
-  box-shadow: 0 4px 16px rgba(237, 109, 48, 0.32);
+ box-shadow: rgb(237 93 41 / 65%) 0px 10px 17px -3px;
 }
 
 .cpn-btn--outline:disabled {
@@ -506,7 +499,6 @@
 
 .cpn-dj {
   width: 100%;
-  max-width: 420px;
 }
 
 .cpn-how-copy {
@@ -586,8 +578,8 @@
 .cpn-routes-lead {
   max-width: 520px;
   margin-top: 12px;
-  font-size: 16px;
-  color: var(--cpn-body);
+  font-size: 18px;
+      color: var(--cp-ink);
 }
 
 .cpn-route-head {
@@ -598,23 +590,23 @@
 }
 
 .cpn-route-head h3 {
-  font-size: clamp(24px, 2.4vw, 34px);
-  font-weight: 800;
+  font-size: 32px;
+  font-weight: 500;
   letter-spacing: -0.02em;
 }
 
+
+
 .cpn-live {
-  display: inline-block;
-  background: var(--cpn-orange);
-  color: #fff;
-  border: 2px solid #fff;
-  border-radius: 999px;
-  padding: 7px 20px;
-  font-size: 15px;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.02em;
-  box-shadow: 0 4px 14px rgba(237, 109, 48, 0.35);
+    display: inline-block;
+    background: #FF630D;
+    color: #fff;
+    padding: 7px 20px;
+    font-size: 15px;
+    font-weight: 800;
+    text-transform: uppercase;
+    box-shadow: 0 3px #993b08;
+    border-radius: 50px;
 }
 
 .cpn-stops {
@@ -644,7 +636,7 @@
   padding: 12px 0;
   border-bottom: 1px dashed #dcdce4;
   font-size: 16.5px;
-  color: var(--cpn-body);
+ color: var(--cpn-body);
 }
 
 .cpn-ring {
@@ -656,12 +648,11 @@
 }
 
 .cpn-stops-note {
-  margin-top: 12px;
-  font-size: 14px;
-  color: var(--cpn-muted);
-  text-align: right;
+    margin-top: 10px !important;
+    font-size: 16px;
+    text-align: center;
+    color: var(--cpn-body);
 }
-
 .cpn-stops-arrow {
   position: relative;
   display: flex;
@@ -702,11 +693,11 @@
 }
 
 .cpn-squiggle {
-  position: absolute;
-  left: -72px;
-  top: -66px;
-  width: 104px;
-  pointer-events: none;
+    position: absolute;
+    left: -40px;
+    top: -40px;
+    width: 80px;
+    pointer-events: none;
 }
 
 .cpn-speaker {
@@ -721,8 +712,8 @@
 .cpn-route-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 28px;
-  margin-top: 48px;
+  gap: 20px;
+  margin-top: 40px;
 }
 
 .cpn-route-card {
@@ -738,7 +729,7 @@
 
 .cpn-route-card h4 {
   font-size: 20px;
-  font-weight: 800;
+  font-weight: 500;
 }
 
 .cpn-route-count {
@@ -755,7 +746,7 @@
 }
 
 .cpn-route-soon {
-  margin-top: 14px;
+  margin-top: 14px !important;
   margin-bottom: 20px;
   font-size: 15px;
   color: var(--cpn-body);
@@ -800,7 +791,8 @@
     #dc9ae9 100%
   );
   color: #fff;
-  padding: clamp(96px, 12vw, 190px) 0 clamp(110px, 13vw, 210px);
+  padding-top: 60px;
+  padding-bottom: 60px;
   overflow: hidden;
 }
 
@@ -817,21 +809,21 @@
 }
 
 .cpn-safety-head p {
-  font-size: 16px;
+  font-size: 18px;
   color: rgba(255, 255, 255, 0.92);
-  text-align: center;
+  text-align: right;
 }
 
 .cpn-safety-top {
   display: grid;
   grid-template-columns: 1.15fr 1fr;
   gap: 40px;
-  margin-top: clamp(48px, 6vw, 86px);
+  margin-top: 40px;
 }
 
 .cpn-nights {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: 14px;
 }
 
@@ -842,9 +834,9 @@
 }
 
 .cpn-nights h3 {
-  font-size: 20px;
-  font-weight: 800;
-  padding-top: 22px;
+  font-size: 17px;
+  font-weight: 500;
+  padding-top: 20px;
 }
 
 .cpn-nights p {
@@ -865,8 +857,8 @@
 }
 
 .cpn-safety-card h3 {
-  font-size: 20px;
-  font-weight: 800;
+  font-size: 18px;
+  font-weight: 500;
 }
 
 .cpn-safety-card p {
@@ -879,7 +871,7 @@
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 40px;
-  margin-top: clamp(44px, 5.5vw, 78px);
+  margin-top: 40px;
   align-items: end;
 }
 
@@ -888,7 +880,7 @@
    ========================================================================== */
 
 .cpn-membership {
-  padding-top: 40px;
+  padding-top: 100px;
 }
 
 .cpn-membership-grid {
@@ -932,7 +924,7 @@
   background: var(--cpn-orange);
   border-radius: 22px;
   color: #fff;
-  box-shadow: 0 22px 50px rgba(237, 109, 48, 0.22);
+  box-shadow: 0 0px 30px rgb(237 109 48 / 85%);
 }
 
 .cpn-ticket-head {
@@ -1025,12 +1017,12 @@
 /* The starburst was cropped flush against the ticket's left edge, so it is
    pinned to that edge (the ticket is 420px wide and right-aligned). */
 .cpn-starburst {
-  position: absolute;
-  right: 418px;
-  top: -86px;
-  width: 118px;
-  z-index: 1;
-  pointer-events: none;
+    position: absolute;
+    top: -60px;
+    left: 20px;
+    z-index: 1;
+    pointer-events: none;
+    width: 220px;
 }
 
 .cpn-skater {
@@ -1312,10 +1304,6 @@
     margin-left: 0;
   }
 
-  .cpn-dj {
-    max-width: 320px;
-  }
-
   .cpn-bus {
     position: relative;
     top: 0;
@@ -1361,7 +1349,7 @@
 
 @media (max-width: 700px) {
   .cpn-section {
-    padding: 56px 0;
+    padding: 60px 0;
   }
 
   .cpn-container {
