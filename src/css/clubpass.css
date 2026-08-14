@@ -1835,8 +1835,8 @@ section.cpn-safety p.cpn-kicker.cpn-kicker--light {
 
 @media (max-width: 767px) {
   .cp-hero-inner {
-    min-height: 550px;
-height: 550px;
+    min-height: 520px;
+height: 520px;
     align-items: flex-start;
 
     background-position:center;
