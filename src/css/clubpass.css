@@ -479,7 +479,7 @@ a.cp-btn.cp-btn-ghost {
 .cp-compare {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 22px;
+  gap: 20px;
 }
 
 .cp-card-plain {
@@ -1462,23 +1462,24 @@ h5.island-text-mobile {
 .cpn-safety-top {
     gap: 40px !important;
 }
-.cp-hero-copy {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
+
 }
 
 @media (max-width: 767px) {
   .cp-work-text, .cp-hero-copy, .cp-eyebrow, .cpn-routes, .cpn-kicker--light, .cpn-h2--light, .cpn-safety-head p {
     text-align: center !important;
 }
+.cp-hero-copy {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
 .cpn-safety-top {
     margin-top: 20px  !important;
 }
 .cpn-cta-wrap {
-    padding-bottom: 60px;
-    padding-top: 60px;
+    padding-bottom: 60px !important;
+    padding-top: 60px !important;
 }
 .cpn-safety-card {
     display: flex;
@@ -1521,7 +1522,11 @@ h5.island-text-mobile {
 }
 
   .cp-card-label {
-    font-size: 14px;
+    font-size: 18px;
+        margin-bottom: 10px !important;
+}
+.cpn-faq .cpn-kicker {
+    margin-bottom: 0px !important;
 }
 .cp-ico {
     flex: none;
