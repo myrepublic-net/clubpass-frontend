@@ -359,7 +359,7 @@ export default function ClubPass() {
           </div>
         </div>
       </section>
-
+<div className="cp-gradient">
       {/* ================= How it works ================= */}
       <section className="cp-section" id="how-it-works" style={{ paddingTop: 0 }}>
         <div className="cp-container">
@@ -396,17 +396,8 @@ export default function ClubPass() {
   {/* ================= Routes ================= */}
       <section className="cpn-section cpn-routes" id="routes">
             
-
+ <img className="cpn-island" src={`${IMG}/island.png`} alt="" aria-hidden="true" />
         <div className="cpn-container">
-          <img className="cpn-bus" src={`${IMG}/party-bus.png`} alt="" aria-hidden="true" />
-
-          <p className="cpn-kicker">Routes</p>
-          <h2 className="cpn-h2">One Island. Four Routes.</h2>
-          <p className="cpn-routes-lead">
-            East is live today, West, North and South unlock as neighbours register interest - one
-            vote per route, five seconds.
-          </p>
-
           <div className="cpn-route-head">
             <h3>East Route</h3>
             <span className="cpn-live">Live Now</span>
@@ -426,9 +417,7 @@ export default function ClubPass() {
             </div>
 
             <span className="cpn-stops-arrow" aria-hidden="true">
-              <svg viewBox="0 0 28 22" width="28" height="22">
-                <path d="M0 7h13V0l15 11-15 11v-7H0z" fill="#c9c9cf" />
-              </svg>
+             <img src="/images/cp-arrow.svg"/>
             </span>
 
             <div className="cpn-stops-col">
@@ -447,8 +436,8 @@ export default function ClubPass() {
 
           <div className="cpn-map-wrap">
             <img className="cpn-squiggle" src={`${IMG}/squiggle.png`} alt="" aria-hidden="true" />
-            <img className="cpn-speaker" src={`${IMG}/speaker.png`} alt="" aria-hidden="true" />
-            <div className="cpn-map">Google map</div>
+            <div className="cpn-map"><img src="/images/cp-route-map.svg"/></div>
+            <img className="cpn-squiggle-bottom" src={`${IMG}/squiggle-bottom.png`} alt="" aria-hidden="true" />
           </div>
 
           <div className="cpn-route-grid">
@@ -505,7 +494,7 @@ export default function ClubPass() {
               Protected like a members' club.
             </h2>
             <p>
-              Fixed nights, fixed stops, verified riders. Nothing about your ride home is left to
+              Fixed nights, fixed stops, verified riders.<br /> Nothing about your ride home is left to
               chance.
             </p>
           </div>
@@ -544,7 +533,7 @@ export default function ClubPass() {
 
         {/* <Wave variant="cap-top" /> */}
       </section>
-
+</div>
       {/* ================= Membership ================= */}
             <section className="cpn-section cpn-membership" id="membership">
               <div className="cpn-container cpn-membership-grid">
@@ -583,7 +572,7 @@ export default function ClubPass() {
       
                     <div className="cpn-ticket-body">
                       <div className="cpn-price">
-                        SGD$19.90<span>/mth</span>
+                        SGD $19.90<span>/mth</span>
                       </div>
                       <p className="cpn-ticket-note">
                         Founder launch price - First 150 members only. Locked in for as long as you stay
@@ -620,7 +609,6 @@ export default function ClubPass() {
       
                       <p className="cpn-ticket-fine">
                         Auto-renews monthly.
-                        <br />
                         Cancel anytime in the app.
                       </p>
                     </div>
@@ -631,19 +619,21 @@ export default function ClubPass() {
 
       {/* ================= FAQ ================= */}
       <section className="cpn-section cpn-faq" id="faq">
-        <img className="cpn-discoball" src={`${IMG}/discoball.png`} alt="" aria-hidden="true" />
+        {/* <img className="cpn-discoball" src={`${IMG}/discoball.png`} alt="" aria-hidden="true" /> */}
 
         <div className="cpn-container">
           <p className="cpn-kicker cpn-kicker--orange">FAQ</p>
-
+              <div className="cpn-faq-copy">
+                            <h2 className="cpn-h2">
+                              Good questions,
+                
+                              straight answers
+                            </h2>
+                            <p>Anything we missed? <br/>Full details live in the RewardLand app.</p>
+                          </div>
           <div className="cpn-faq-grid">
-            <div className="cpn-faq-copy">
-              <h2 className="cpn-h2">
-                Good questions,
-                <br />
-                straight answers
-              </h2>
-              <p>Anything we missed? Full details live in the RewardLand app.</p>
+            <div className="cp-faq-image">
+              <img src="/images/cp-bus.png"/>
             </div>
 
             <div className="cpn-acc">
@@ -672,8 +662,8 @@ export default function ClubPass() {
       <section className="cpn-cta-wrap">
         <div className="cpn-container">
           <div className="cpn-cta">
-            <img className="cpn-cta-bus" src={`${IMG}/cta-bus.png`} alt="" aria-hidden="true" />
-            <span className="cpn-cta-bubble">I'll get you home safely!</span>
+            <img className="cpn-cta-bus" src={`${IMG}/music-girl.png`} alt="" aria-hidden="true" />
+            {/* <span className="cpn-cta-bubble">I'll get you home safely!</span> */}
             <h2>Be one of the first 150.</h2>
             <p>
               Founder pricing ends when the seats are gone. Lock in SGD$19.90/mth and be part of
