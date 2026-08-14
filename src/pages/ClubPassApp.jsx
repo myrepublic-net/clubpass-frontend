@@ -1,9 +1,12 @@
 import { useState } from "react";
 import { Plus } from "lucide-react";
 
+import MembershipPass from "../components/MembershipPass.jsx";
+import SubscribeModal from "../components/SubscribeModal.jsx";
+import { useClubpassUser } from "../components/clubpassUserContext.js";
+import { isPaid } from "../api/clubpassUser.js";
 import "../css/clubpass-app.css";
 
-const APP_LINK = "https://rewardland.onelink.me/EwIe/start";
 const SITE = "https://www.rewardland.sg";
 
 const STATS = [
@@ -75,6 +78,10 @@ function RouteMap() {
 export default function ClubPassApp() {
   const [openFaq, setOpenFaq] = useState(null);
   const [voted, setVoted] = useState([]);
+  const [subscribeOpen, setSubscribeOpen] = useState(false);
+
+  const { user } = useClubpassUser();
+  const paid = isPaid(user);
 
   const toggleFaq = (index) => setOpenFaq((prev) => (prev === index ? null : index));
   const vote = (id) => setVoted((prev) => (prev.includes(id) ? prev : [...prev, id]));
@@ -105,14 +112,17 @@ export default function ClubPassApp() {
             ride.
           </p>
 
-          <a
-            className="cpm-btn cpm-btn-white cpm-btn-lg"
-            href={APP_LINK}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Subscribe now — S$19.90/month
-          </a>
+          {paid ? (
+            <MembershipPass user={user} />
+          ) : (
+            <button
+              type="button"
+              className="cpm-btn cpm-btn-white cpm-btn-lg"
+              onClick={() => setSubscribeOpen(true)}
+            >
+              Subscribe now — S$19.90/month
+            </button>
+          )}
 
           <ul className="cpm-hero-notes">
             <li>
@@ -222,52 +232,47 @@ export default function ClubPassApp() {
         {/* ================= Price card ================= */}
         <section className="cpm-pad cpm-price-wrap">
           <div className="card-m">
-          <div className="cpm-price">
-            <div className="cpm-price-head">
-              <span>ClubPass · Home Express</span>
-              <span className="cpm-price-badge">R</span>
+            <div className="cpm-price">
+              <div className="cpm-price-head">
+                <span>ClubPass · Home Express</span>
+                <span className="cpm-price-badge">R</span>
+              </div>
+              <div className="cpm-price-amount">
+                <b>S$19.90</b>
+                <i>/month</i>
+              </div>
+              <p className="cpm-price-note">
+                Founder launch price · first 150 members only. Locked in while you stay subscribed.
+              </p>
+              <div className="cpm-perf" />
             </div>
-
-            <div className="cpm-price-amount">
-              <b>S$19.90</b>
-              <i>/month</i>
-            </div>
-
-            <p className="cpm-price-note">
-              Founder launch price · first 150 members only. Locked in while you stay subscribed.
-            </p>
-<div className="cpm-perf" />
-           </div>
-         
             <div className="cp-dt"> 
-           
-
-            <ul className="cpm-price-list">
-              {PRICE_INCLUDES.map((item) => (
-                <li key={item}>
-                  <span className="cpm-tick">
-                    <img src="/images/tick.svg"/>
-                    {/* <Check size={10} strokeWidth={3.5} /> */}
-                  </span>
-                  {item}
-                </li>
-              ))}
-            </ul>
-
-            <a
-              className="cpm-btn cpm-btn-white cpm-btn-lg"
-              href={APP_LINK}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Subscribe now
-            </a>
-
-            <p className="cpm-price-fine">
-              Secure PayPal checkout · Auto-renews monthly · Cancel anytime
-            </p>
+              <ul className="cpm-price-list">
+                {PRICE_INCLUDES.map((item) => (
+                  <li key={item}>
+                    <span className="cpm-tick">
+                      <img src="/images/tick.svg"/>
+                      {/* <Check size={10} strokeWidth={3.5} /> */}
+                    </span>
+                    {item}
+                  </li>
+                ))}
+              </ul>
+              <button
+                type="button"
+                className="cpm-btn cpm-btn-white cpm-btn-lg"
+                onClick={() => setSubscribeOpen(true)}
+                disabled={paid}
+              >
+                {paid ? "Subscription active" : "Subscribe now"}
+              </button>
+              <p className="cpm-price-fine">
+                {paid
+                  ? "Renews monthly · Cancel anytime from your membership screen"
+                  : "Secure PayPal checkout · Auto-renews monthly · Cancel anytime"}
+              </p>
+            </div>
           </div>
-           </div>
         </section>
 
         {/* ================= Trust ================= */}
@@ -323,10 +328,14 @@ export default function ClubPassApp() {
           <a href={`${SITE}/privacy-policy`}>Privacy Policy</a>
           
         </footer>
-        <div className=" cpm-pad bt-stciky-btn">
-          <a className="bt-btn cpm-btn cpm-btn-white cpm-btn-lg" href="https://rewardland.onelink.me/EwIe/start" target="_blank" rel="noopener noreferrer"><span>Subscribe now</span><span>S$19.90/mo</span></a>
+        {!paid && (
+          <div className=" cpm-pad bt-stciky-btn">
+            <button type="button" className="bt-btn cpm-btn cpm-btn-white cpm-btn-lg" onClick={() => setSubscribeOpen(true)}><span>Subscribe now</span><span>S$19.90/mo</span></button>
+          </div>
+        )}
       </div>
-      </div>
+
+      <SubscribeModal open={subscribeOpen} onClose={() => setSubscribeOpen(false)} />
     </div>
   );
 }

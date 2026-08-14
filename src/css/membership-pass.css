@@ -1,0 +1,141 @@
+/* ==========================================================================
+   ClubPass — member boarding pass
+   Shown in place of the subscribe CTA once a user has paid. Scoped under .cpp-*.
+   ========================================================================== */
+
+.cpp-pass {
+  width: 100%;
+  max-width: 380px;
+  margin: 6px auto 0;
+  padding: 18px 18px 20px;
+  text-align: center;
+  background: #fff;
+  border-radius: 22px;
+  box-shadow: 0 22px 48px -18px rgba(0, 0, 0, 0.45);
+}
+
+.cpp-pass *,
+.cpp-pass *::before,
+.cpp-pass *::after {
+  box-sizing: border-box;
+}
+
+.cpp-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.cpp-head b {
+  font-size: 14px;
+  font-weight: 700;
+  color: #191024;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cpp-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 11px;
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #15803D;
+  background: #DCFCE7;
+  border-radius: 999px;
+}
+
+.cpp-badge i {
+  width: 6px;
+  height: 6px;
+  background: #16A34A;
+  border-radius: 50%;
+}
+
+/* Seconds until the pass pulls a fresh code — proof it's live, not a screenshot. */
+.cpp-refresh {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 10px;
+  font-size: 11.5px;
+  font-weight: 600;
+  /* Fixed-width digits, so the pill doesn't twitch as it counts down. */
+  font-variant-numeric: tabular-nums;
+  color: #6D28D9;
+  background: #F4F0FE;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.cpp-refresh i {
+  font-size: 12px;
+  font-style: normal;
+  line-height: 1;
+}
+
+.cpp-qr {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 232px;
+  padding: 12px;
+  background: #fff;
+  border: 1px solid #EAE5F8;
+  border-radius: 16px;
+}
+
+.cpq-img {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-width: 232px;
+}
+
+.cpq-fallback {
+  margin: 0;
+  font-size: 13px;
+  color: #7F1D1D;
+}
+
+.cpp-hint {
+  margin: 12px 0 0;
+  font-size: 13px;
+  color: #6F6880;
+}
+
+.cpp-meta {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid #EAE5F8;
+}
+
+.cpp-meta div {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.cpp-meta b {
+  font-size: 17px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: #191024;
+}
+
+.cpp-meta span {
+  font-size: 11.5px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #9A93AC;
+}
