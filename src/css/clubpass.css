@@ -45,7 +45,7 @@
   --cp-purple: #7C3AED;
   --cp-purple-600: #6D28D9;
   --cp-purple-700: #5B21B6;
-  --cp-purple-soft: #A78BFA;
+  --cp-purple-soft: hsl(255, 92%, 76%);
   --cp-ink: #161616;
   --cp-ink-2: #2A1B45;
   --cp-muted: #6F6880;
@@ -54,7 +54,7 @@
   --cp-lav: #F5F1FE;
   --cp-white: #ffffff;
   --cp-green: #16A34A;
-  --cp-container: 1120px;
+  --cp-container: 1200px;
   font-family: "Bricolage Grotesque", sans-serif;
   color: var(--cp-ink);
   background: #fff;
@@ -81,10 +81,10 @@
   margin-top: 10px;
 }
 
-.clubpass-page a {
+/* .clubpass-page a {
   text-decoration: none;
   color: inherit;
-}
+} */
 
 .cp-container {
   width: 100%;
@@ -140,7 +140,7 @@
   color: var(--cp-purple-soft);
 }
 
-.cp-h2 {
+.cp-h2, .cpn-h2, .cpn-cta h2 {
   font-size: 48px;
   line-height: 1.22;
   font-weight: 700;
@@ -174,7 +174,9 @@ section#how-it-works {
   transition: transform .18s ease, box-shadow .18s ease, background-color .18s ease, color .18s ease;
   white-space: nowrap;
 }
-
+img.cpn-island {
+    width: 100%;
+}
 .cp-btn:hover {
   transform: translateY(-1px);
 }
@@ -191,9 +193,14 @@ section#how-it-works {
 }
 
 .cp-btn-white {
-  background: #fff  !important ; 
-  color: #00caca !important;
+      background: #83BCFF !important;
+    color: #161616 !important;
   /* box-shadow: 0 8px 20px -8px #fff; */
+}
+a.cp-btn.cp-btn-ghost {
+    font-weight: 300;
+    text-decoration: underline;
+    backdrop-filter: none;
 }
 .cp-hero-image img {
     width: 100%;
@@ -472,7 +479,7 @@ a.cp-btn.cp-btn-ghost {
 .cp-compare {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 22px;
+  gap: 20px;
 }
 
 .cp-card-plain {
@@ -747,8 +754,9 @@ a.cp-btn.cp-btn-ghost {
   /* min-height: 260px; */
   display: block;
 }
-.cp-map img {
+.cpn-map img {
     width: 100%;
+    border-radius: 26px;
 }
 .cp-map svg {
   display: block;
@@ -1256,19 +1264,69 @@ a.cp-btn.cp-btn-ghost {
     width: 100%;
     text-align: center;
 }
+.cp-gradient {
+    background: radial-gradient(circle, rgba(22, 22, 22, 1) 0%, rgba(12, 22, 94, 1) 40%, rgba(0, 112, 219, 1) 60%, rgba(0, 112, 219, 1) 36%, rgba(255, 255, 255, 1) 85%);
+}
+h5.island-text {
+    position: absolute;
+    right: 20px;
+    color: #fff;
+    max-width: 220px;
+    margin-top: 40px;
+    font-size: 20px;
+    line-height: 28px;
+}
+h5.island-text-mobile {
+    color: #fff;
+    font-size: 18px;
+    line-height: 28px;
+    display: none;
+}
+
+.cpn-safety-top {
+    background: #0e1546;
+    border-radius: 35px;
+    padding: 30px;
+        display: flex;
+    align-items: center;
+}
+.cpn-nights hr {
+    width: 110px;
+    color: #FFFFFF;
+    margin: auto;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
 /* ==========================================================================
    Responsive
    ========================================================================== */
 
 @media (max-width: 991px) {
+  .cpn-safe-grid {
+      grid-template-columns: 1fr !important;
+    margin-top: 20px !important;
+    gap: 60px !important;
+}
+  h5.island-text-mobile {
+    display: block;
+}
+  img.cpn-starburst, h5.island-text {
+    display: none;
+}
+.cpn-membership {
+    padding-top: 60px !important;
+}
+.cpn-membership-grid {
+    gap: 20px  !important;
+}
       .cp-hero-inner {
         padding-top: 60px;
-        padding-bottom: 160px;
+        padding-bottom: 100px;
     }
   .cp-step p {
     min-height: 100px;
 }
-  .cp-work-text h2, .cpn-h2 {
+  .cp-work-text h2, .cpn-h2, .cpn-cta h2 {
     font-size: 32px !important;
     line-height: 40px !important;
     margin-bottom: 10px !important;
@@ -1345,7 +1403,7 @@ a.cp-btn.cp-btn-ghost {
   }
 
   .cp-h2,
-  .cp-cta h2 {
+  .cp-cta h2, .cpn-h2, .cpn-cta h2  {
             font-size: 36px;
         line-height: 44px;
   }
@@ -1404,10 +1462,9 @@ a.cp-btn.cp-btn-ghost {
 .cpn-safety-top {
     gap: 40px !important;
 }
-.cp-hero-copy {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+section.cp-section.why-section {
+    margin-top: 0;
+    border-radius: 0;
 }
 }
 
@@ -1415,8 +1472,17 @@ a.cp-btn.cp-btn-ghost {
   .cp-work-text, .cp-hero-copy, .cp-eyebrow, .cpn-routes, .cpn-kicker--light, .cpn-h2--light, .cpn-safety-head p {
     text-align: center !important;
 }
+.cp-hero-copy {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
 .cpn-safety-top {
     margin-top: 20px  !important;
+}
+.cpn-cta-wrap {
+    padding-bottom: 60px !important;
+    padding-top: 60px !important;
 }
 .cpn-safety-card {
     display: flex;
@@ -1459,7 +1525,11 @@ a.cp-btn.cp-btn-ghost {
 }
 
   .cp-card-label {
-    font-size: 14px;
+    font-size: 18px;
+        margin-bottom: 10px !important;
+}
+.cpn-faq .cpn-kicker {
+    margin-bottom: 0px !important;
 }
 .cp-ico {
     flex: none;
@@ -1478,9 +1548,12 @@ a.cp-btn.cp-btn-ghost {
 .cp-card-plain {
     padding-bottom: 0 !important;
 }
-     .cp-h2, .cp-cta h2 {
-        font-size: 28px;
-        line-height: 38px;
+.cpn-cta-bus {
+    width: 180px !important;
+}
+     .cp-h2, .cp-cta h2, .cpn-h2, .cpn-cta h2  {
+        font-size: 28px !important;
+        line-height: 38px !important;
     }
   .cp-brand img {
     width: 120px;
@@ -1522,7 +1595,41 @@ a.cp-btn.cp-btn-ghost {
   .cp-brand-sub {
     display: none;
   }
+.cpn-safety {
+padding-top: 0 !important;
+padding-bottom: 0 !important;
+}
+.cpn-membership-grid {
+    gap: 0;
+}
+.cpn-kicker {
+    font-size: 22px;
+}
+cpn-safe-grid {
+    gap: 60px;
+}
+.cp-overlay {
+    background: #00000075;
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+.cp-hero-inner .cp-container {
+    z-index: 999;
+}
+.cp-hero-text {
+    font-size: 16px;
+    max-width: 100%;
+}
+section.cpn-safety p.cpn-kicker.cpn-kicker--light {
+    font-size: 20px;
+}
 
+.cpn-dj {
+    margin-bottom: 20px;
+}
   /* .cp-hero-inner {
     padding: 56px 0 260px;
   } */
@@ -1547,6 +1654,9 @@ a.cp-btn.cp-btn-ghost {
 
   .cp-steps {
     gap: 0px;
+  }
+  .cpn-membership-grid {
+    grid-template-columns: 1fr !important;
   }
 .cp-step p {
     min-height: auto;
@@ -1611,4 +1721,142 @@ a.cp-btn.cp-btn-ghost {
         background-position: center;
     }
 
+}
+
+/* =========================================================
+   HERO SLIDER
+========================================================= */
+
+.cp-hero {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+}
+
+.cp-hero-inner {
+  position: relative;
+  width: 100%;
+  min-height: 700px;
+ height: 700px;
+  display: flex;
+  align-items: center;
+
+  transition: background-image 0.6s ease-in-out;
+}
+
+/* .cp-hero .cp-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+
+  background: linear-gradient(
+    90deg,
+    rgba(15, 15, 15, 0.98) 0%,
+    rgba(15, 15, 15, 0.94) 22%,
+    rgba(15, 15, 15, 0.75) 38%,
+    rgba(15, 15, 15, 0.25) 58%,
+    rgba(15, 15, 15, 0) 78%
+  );
+
+  pointer-events: none;
+} */
+
+.cp-hero .cp-container {
+  position: relative;
+  z-index: 2;
+}
+
+.cp-hero-copy {
+  width: 500px;
+  max-width: 100%;
+}
+
+/* Slider dots */
+
+.cp-hero-slider-dots {
+  position: absolute;
+  z-index: 20;
+
+  left: 50%;
+  bottom: 125px;
+
+  transform: translateX(-50%);
+
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.cp-hero-dot {
+  width: 25px;
+  height: 8px;
+
+  padding: 0;
+  margin: 0;
+
+  border: 0;
+  border-radius: 20px;
+
+  background: rgba(255, 255, 255, 0.35);
+
+  cursor: pointer;
+
+  transition:
+    width 0.3s ease,
+    background 0.3s ease;
+}
+
+.cp-hero-dot.active {
+  width: 25px;
+  background: #fff;
+}
+
+.cp-hero-dot:hover {
+  background: #fff;
+}
+
+/* Tablet */
+
+@media (max-width: 991px) {
+  .cp-hero-inner {
+    min-height: 600px;
+  }
+
+  .cp-hero-copy {
+    width: 450px;
+  }
+
+  .cp-hero-slider-dots {
+    bottom: 70px;
+  }
+}
+
+/* Mobile */
+
+@media (max-width: 767px) {
+  .cp-hero-inner {
+    min-height: 520px;
+height: 520px;
+    align-items: flex-start;
+
+    background-position:center;
+  }
+
+  /* .cp-hero .cp-overlay {
+    background: linear-gradient(
+      180deg,
+      rgba(15, 15, 15, 0.98) 0%,
+      rgba(15, 15, 15, 0.92) 38%,
+      rgba(15, 15, 15, 0.55) 68%,
+      rgba(15, 15, 15, 0.15) 100%
+    );
+  } */
+
+  .cp-hero-copy {
+    width: 100%;
+  }
+
+  .cp-hero-slider-dots {
+    bottom: 30px;
+  }
 }
