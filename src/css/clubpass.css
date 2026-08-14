@@ -1317,7 +1317,7 @@ h5.island-text-mobile {
     padding-top: 60px !important;
 }
 .cpn-membership-grid {
-    gap: 20px;
+    gap: 20px  !important;
 }
       .cp-hero-inner {
         padding-top: 60px;
@@ -1604,6 +1604,21 @@ padding-bottom: 0 !important;
 }
 cpn-safe-grid {
     gap: 60px;
+}
+.cp-overlay {
+    background: #00000075;
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+.cp-hero-inner .cp-container {
+    z-index: 999;
+}
+.cp-hero-text {
+    font-size: 16px;
+    max-width: 100%;
 }
 section.cpn-safety p.cpn-kicker.cpn-kicker--light {
     font-size: 20px;

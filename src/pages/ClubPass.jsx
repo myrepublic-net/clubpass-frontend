@@ -267,6 +267,7 @@ export default function ClubPass() {
         
         <div className="cp-hero-inner" style={{  backgroundImage: "url('./images/cpn/cp-one-banner.png')", backgroundSize: "cover", backgroundPosition: "center",
     backgroundRepeat: "no-repeat", }}>
+      <div className="cp-overlay"></div>
       <div className="cp-container ">
       
             <div className="cp-hero-copy">
