@@ -193,9 +193,14 @@ img.cpn-island {
 }
 
 .cp-btn-white {
-  background: #fff  !important ; 
-  color: #00caca !important;
+      background: #83BCFF !important;
+    color: #161616 !important;
   /* box-shadow: 0 8px 20px -8px #fff; */
+}
+a.cp-btn.cp-btn-ghost {
+    font-weight: 300;
+    text-decoration: underline;
+    backdrop-filter: none;
 }
 .cp-hero-image img {
     width: 100%;
@@ -1259,12 +1264,53 @@ a.cp-btn.cp-btn-ghost {
     width: 100%;
     text-align: center;
 }
+.cp-gradient {
+    background: radial-gradient(circle, rgba(22, 22, 22, 1) 0%, rgba(12, 22, 94, 1) 40%, rgba(0, 112, 219, 1) 60%, rgba(0, 112, 219, 1) 36%, rgba(255, 255, 255, 1) 85%);
+}
+h5.island-text {
+    position: absolute;
+    right: 20px;
+    color: #fff;
+    max-width: 220px;
+    margin-top: 40px;
+    font-size: 20px;
+    line-height: 28px;
+}
+h5.island-text-mobile {
+    color: #fff;
+    font-size: 18px;
+    line-height: 28px;
+    display: none;
+}
+
+.cpn-safety-top {
+    background: #0e1546;
+    border-radius: 35px;
+    padding: 30px;
+        display: flex;
+    align-items: center;
+}
+.cpn-nights hr {
+    width: 110px;
+    color: #FFFFFF;
+    margin: auto;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
 /* ==========================================================================
    Responsive
    ========================================================================== */
 
 @media (max-width: 991px) {
-  img.cpn-starburst {
+  .cpn-safe-grid {
+      grid-template-columns: 1fr !important;
+    margin-top: 20px !important;
+    gap: 60px !important;
+}
+  h5.island-text-mobile {
+    display: block;
+}
+  img.cpn-starburst, h5.island-text {
     display: none;
 }
 .cpn-membership {
@@ -1430,6 +1476,10 @@ a.cp-btn.cp-btn-ghost {
 .cpn-safety-top {
     margin-top: 20px  !important;
 }
+.cpn-cta-wrap {
+    padding-bottom: 60px;
+    padding-top: 60px;
+}
 .cpn-safety-card {
     display: flex;
     flex-direction: column;
@@ -1537,7 +1587,26 @@ a.cp-btn.cp-btn-ghost {
   .cp-brand-sub {
     display: none;
   }
+.cpn-safety {
+padding-top: 0 !important;
+padding-bottom: 0 !important;
+}
+.cpn-membership-grid {
+    gap: 0;
+}
+.cpn-kicker {
+    font-size: 22px;
+}
+cpn-safe-grid {
+    gap: 60px;
+}
+section.cpn-safety p.cpn-kicker.cpn-kicker--light {
+    font-size: 20px;
+}
 
+.cpn-dj {
+    margin-bottom: 20px;
+}
   /* .cp-hero-inner {
     padding: 56px 0 260px;
   } */

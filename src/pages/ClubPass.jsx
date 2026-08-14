@@ -74,18 +74,23 @@ const DROPOFFS = ["Paya Lebar MRT", "Bedok MRT", "Tampines MRT", "Pasir Ris MRT*
 
 const SAFETY_CARDS = [
   {
-    icon: <img src="/images/members.png"/>,
-    title: "Members-only boarding",
+    icon: <img src="/images/cp-clock.png"/>,
+    title: "On the dot",
+    text: "Departures run on the clock - never “when the bus fills up",
+  },
+  {
+    icon: <img src="/images/cp-flower.png"/>,
+    title: "Members-only  boarding",
     text: "Every rider is QR-verified before stepping on. No strangers, no walk-ons.",
   },
   {
-    icon: <img src="/images/op.png"/>,
-    title: "Licensed operators",
+    icon: <img src="/images/cp-card.png"/>,
+    title: "Licensed   operators",
     text: "Full-size, air-conditioned coaches with professional drivers — not ad-hoc rides found at 3am.",
   },
   {
-    icon: <img src="/images/ride.png"/>,
-    title: "Ride with your crew",
+    icon: <img src="/images/rl-icon.png"/>,
+    title: "Ride with  your crew",
     text: "Same coach, seats together — the night ends the way it started.",
   },
 ];
@@ -277,6 +282,10 @@ export default function ClubPass() {
                 Singapore's first late-night coach membership. Scheduled departures from the club
                 district straight to the East — for less than one surge-hour ride.
               </p>
+              <a className="cp-btn cp-btn-ghost" href="#how-it-works">
+                  See how it works
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-right" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg>
+                </a>
 
               <div className="cp-hero-actions">
                 <a
@@ -287,10 +296,7 @@ export default function ClubPass() {
                 >
                   Subscribe — S$19.90/month
                 </a>
-                <a className="cp-btn cp-btn-ghost" href="#how-it-works">
-                  See how it works
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-right" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg>
-                </a>
+                
               </div>
 
               {/* <ul className="cp-hero-notes">
@@ -359,14 +365,19 @@ export default function ClubPass() {
           </div>
         </div>
       </section>
+      <div className="cp-container">
+          <div className="cp-split-head">
+      <div className="dj-image">
+              <img class="cpn-dj" alt="" aria-hidden="true" src="/images/dj-decks.png"/>
+            </div>
+            </div>
+            </div>
 <div className="cp-gradient">
       {/* ================= How it works ================= */}
       <section className="cp-section" id="how-it-works" style={{ paddingTop: 0 }}>
         <div className="cp-container">
           <div className="cp-split-head">
-            <div className="dj-image">
-              <img class="cpn-dj" alt="" aria-hidden="true" src="/images/dj-decks.png"/>
-            </div>
+            
             <div class="cp-work-text">
               <p className="cp-eyebrow">How it works</p>
             <h2 className="cp-h2">From dance floor to doorstep</h2>
@@ -395,10 +406,19 @@ export default function ClubPass() {
 
   {/* ================= Routes ================= */}
       <section className="cpn-section cpn-routes" id="routes">
+        <div className="cpn-container">
+          <h5 className="island-text">East is live today,
+West, North and South unlock as neighbours register interest -
+one vote per route, five seconds.</h5>
+        </div>
             
  <img className="cpn-island" src={`${IMG}/island.png`} alt="" aria-hidden="true" />
         <div className="cpn-container">
+          <h5 className="island-text-mobile">East is live today,
+West, North and South unlock as neighbours register interest -
+one vote per route, five seconds.</h5>
           <div className="cpn-route-head">
+            
             <h3>East Route</h3>
             <span className="cpn-live">Live Now</span>
           </div>
@@ -430,7 +450,7 @@ export default function ClubPass() {
                   </li>
                 ))}
               </ul>
-              <p className="cpn-stops-note">*Subject to demand. Full timings in the app</p>
+              <p className="cpn-stops-note">*Subject to demand.<br/> Full timings in the app</p>
             </div>
           </div>
 
@@ -498,12 +518,13 @@ export default function ClubPass() {
               chance.
             </p>
           </div>
-
+            <div className="cpn-safe-grid">
           <div className="cpn-safety-top">
             <div className="cpn-nights">
               <img src={`${IMG}/num-4.png`} alt="4" />
               <div>
                 <h3>nights a month - one night a week, every week</h3>
+                <hr/>
                 <p>
                   Departures are fixed and published ahead of time; exact timings live in the app.
                   Your price never changes - no surge, ever.
@@ -511,13 +532,7 @@ export default function ClubPass() {
               </div>
             </div>
 
-            <div className="cpn-safety-card">
-              <span className="cpn-safety-icon">
-                <Clock size={26} strokeWidth={1.6} />
-              </span>
-              <h3>On the dot</h3>
-              <p>Departures run on the clock - never "when the bus fills up"</p>
-            </div>
+        
           </div>
 
           <div className="cpn-safety-grid">
@@ -529,6 +544,7 @@ export default function ClubPass() {
               </div>
             ))}
           </div>
+        </div>
         </div>
 
         {/* <Wave variant="cap-top" /> */}
