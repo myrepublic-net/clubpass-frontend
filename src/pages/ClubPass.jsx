@@ -895,7 +895,6 @@ export default function ClubPass() {
           <div className="cpn-faq-copy">
             <h2 className="cpn-h2">
               Good questions,
-              <br />
               straight answers
             </h2>
 
@@ -984,7 +983,8 @@ export default function ClubPass() {
       <footer className="cp-footer">
         <div className="cp-container cp-footer-inner">
           <div className="cp-brand">
-            <span className="cp-brand-mark">R</span>
+            <img src="/images/club-logo.png" />
+            {/* <span className="cp-brand-mark">R</span>
 
             <span className="cp-brand-name">
               reward<label className="cl-color">land</label>
@@ -992,7 +992,7 @@ export default function ClubPass() {
 
             <span className="cp-footer-tag">
               Shop. Earn. Redeem. Repeat.
-            </span>
+            </span> */}
           </div>
 
           <div className="cp-footer-links">
