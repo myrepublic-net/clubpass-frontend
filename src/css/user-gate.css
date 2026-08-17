@@ -1,0 +1,120 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap');
+
+/* ==========================================================================
+   ClubPass — user gate (loader / register / error screens)
+   Shown before the landing page while the ?userName= lookup runs. Scoped
+   under .cpg-gate so it can't leak into the Bootstrap site.
+   ========================================================================== */
+
+.cpg-gate {
+  --cpg-purple: #7C3AED;
+  --cpg-ink: #191024;
+  --cpg-muted: #6F6880;
+  --cpg-line: #EAE5F8;
+
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  min-height: 100vh;
+  padding: 32px 24px;
+  font-family: "Outfit", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  color: var(--cpg-ink);
+  text-align: center;
+  background: #EFEBF7;
+  -webkit-font-smoothing: antialiased;
+}
+
+.cpg-gate *,
+.cpg-gate *::before,
+.cpg-gate *::after {
+  box-sizing: border-box;
+}
+
+.cpg-card {
+  width: 100%;
+  max-width: 420px;
+  padding: 32px 24px;
+  background: #fff;
+  border: 1px solid var(--cpg-line);
+  border-radius: 22px;
+  box-shadow: 0 18px 40px rgba(36, 21, 57, 0.08);
+}
+
+.cpg-gate h1 {
+  margin: 0 0 10px;
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: -0.025em;
+}
+
+.cpg-gate p {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--cpg-muted);
+}
+
+.cpg-mark {
+  display: block;
+  width: 56px;
+  height: 56px;
+  margin: 0 auto 18px;
+  border-radius: 18px;
+  background: linear-gradient(135deg, #7C3AED, #5B21B6);
+}
+
+.cpg-cta {
+  display: block;
+  margin-top: 22px;
+  padding: 15px 20px;
+  font-size: 16px;
+  font-weight: 700;
+  color: #fff;
+  text-decoration: none;
+  background: var(--cpg-purple);
+  border: 0;
+  border-radius: 14px;
+  cursor: pointer;
+  width: 100%;
+}
+
+.cpg-cta:hover {
+  background: #6D28D9;
+}
+
+.cpg-fine {
+  margin-top: 14px !important;
+  font-size: 13px !important;
+}
+
+/* --- loader --- */
+
+.cpg-spinner {
+  width: 44px;
+  height: 44px;
+  border: 3px solid var(--cpg-line);
+  border-top-color: var(--cpg-purple);
+  border-radius: 50%;
+  animation: cpg-spin 0.8s linear infinite;
+}
+
+.cpg-loading-text {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--cpg-muted);
+}
+
+@keyframes cpg-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cpg-spinner {
+    animation-duration: 2.4s;
+  }
+}

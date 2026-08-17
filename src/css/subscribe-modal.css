@@ -1,0 +1,282 @@
+/* ==========================================================================
+   ClubPass — subscribe sheet (PayPal checkout)
+   Bottom sheet on phones, centred card above 600px. Scoped under .cps-overlay.
+   ========================================================================== */
+
+.cps-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 0;
+  background: rgba(25, 16, 36, 0.55);
+  backdrop-filter: blur(3px);
+  font-family: "Outfit", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  color: #191024;
+  animation: cps-fade 0.18s ease;
+}
+
+.cps-overlay *,
+.cps-overlay *::before,
+.cps-overlay *::after {
+  box-sizing: border-box;
+}
+
+.cps-sheet {
+  position: relative;
+  width: 100%;
+  max-width: 560px;
+  max-height: 92vh;
+  overflow-y: auto;
+  padding: 28px 22px 32px;
+  background: #fff;
+  border-radius: 24px 24px 0 0;
+  animation: cps-rise 0.24s cubic-bezier(0.2, 0.8, 0.3, 1);
+}
+
+.cps-close {
+  position: absolute;
+  top: 14px;
+  right: 16px;
+  width: 32px;
+  height: 32px;
+  font-size: 22px;
+  line-height: 1;
+  color: #6F6880;
+  background: #F4F0FE;
+  border: 0;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.cps-head {
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.cps-head h2 {
+  margin: 0 0 6px;
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.cps-amount {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 4px;
+}
+
+.cps-amount b {
+  font-size: 34px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+}
+
+.cps-amount i {
+  font-size: 15px;
+  font-style: normal;
+  color: #6F6880;
+}
+
+.cps-head p {
+  margin: 6px 0 0;
+  font-size: 13px;
+  color: #9A93AC;
+}
+
+.cps-paypal {
+  min-height: 52px;
+}
+
+.cps-paypal.is-hidden {
+  display: none;
+}
+
+/* --- states --- */
+
+.cps-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 26px 0;
+}
+
+.cps-state p {
+  margin: 0;
+  font-size: 14px;
+  color: #6F6880;
+}
+
+.cps-spinner {
+  width: 34px;
+  height: 34px;
+  border: 3px solid #EAE5F8;
+  border-top-color: #7C3AED;
+  border-radius: 50%;
+  animation: cps-spin 0.8s linear infinite;
+}
+
+.cps-error {
+  margin: 16px 0 0;
+  padding: 12px 14px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #7F1D1D;
+  background: #FEF2F2;
+  border: 1px solid #FECACA;
+  border-radius: 12px;
+}
+
+.cps-cta {
+  display: block;
+  width: 100%;
+  margin-top: 16px;
+  padding: 15px 20px;
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: 700;
+  color: #fff;
+  background: #7C3AED;
+  border: 0;
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.cps-cta:hover {
+  background: #6D28D9;
+}
+
+/* --- sandbox simulation (dev builds without a PayPal plan) --- */
+
+.cps-sim {
+  padding: 14px 16px 16px;
+  background: #FFFBEB;
+  border: 1px dashed #FDE68A;
+  border-radius: 14px;
+}
+
+.cps-sim p {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: #92400E;
+}
+
+.cps-sim .cps-cta {
+  margin-top: 12px;
+  padding: 12px 18px;
+  font-size: 15px;
+}
+
+/* --- success --- */
+
+.cps-success {
+  text-align: center;
+}
+
+.cps-tick {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  margin: 6px auto 16px;
+  font-size: 26px;
+  font-weight: 700;
+  color: #fff;
+  background: #16A34A;
+  border-radius: 50%;
+}
+
+.cps-success h2 {
+  margin: 0 0 8px;
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.025em;
+}
+
+.cps-success p {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.55;
+  color: #6F6880;
+}
+
+.cps-code {
+  margin: 20px 0 14px;
+  padding: 16px;
+  background: #F4F0FE;
+  border: 1px dashed #C4B5FD;
+  border-radius: 16px;
+}
+
+.cps-code small {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #6F6880;
+}
+
+.cps-code .cpq-img {
+  display: block;
+  width: 100%;
+  max-width: 216px;
+  height: auto;
+  margin: 0 auto;
+  padding: 10px;
+  background: #fff;
+  border-radius: 12px;
+}
+
+.cps-fine {
+  font-size: 13px !important;
+  color: #9A93AC !important;
+}
+
+@keyframes cps-fade {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes cps-rise {
+  from {
+    transform: translateY(24px);
+  }
+}
+
+@keyframes cps-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (min-width: 600px) {
+  .cps-overlay {
+    align-items: center;
+    padding: 24px;
+  }
+
+  .cps-sheet {
+    border-radius: 24px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cps-overlay,
+  .cps-sheet {
+    animation: none;
+  }
+
+  .cps-spinner {
+    animation-duration: 2.4s;
+  }
+}

@@ -3,11 +3,24 @@ import { createBrowserRouter } from "react-router";
 import ClubPass from "./pages/ClubPass.jsx";
 import ClubpassNew from "./pages/ClubpassNew.jsx";
 import ClubPassApp from "./pages/ClubPassApp.jsx";
+import ScanConfirm from "./pages/ScanConfirm.jsx";
+import UserGate from "./components/UserGate.jsx";
 
 const router = createBrowserRouter([
   { path: "/", element: <ClubPass /> },
   { path: "/test", element: <ClubpassNew /> },
-  { path: "/clubpass-app", element: <ClubPassApp /> },
+  // Where a scanned boarding QR lands. Deliberately outside UserGate — the
+  // driver opening it is not the member, and carries no ?userName= of their own.
+  { path: "/scan", element: <ScanConfirm /> },
+  // Only the in-app landing is gated on ?userName= — the public pages stay open.
+  {
+    path: "/clubpass-app",
+    element: (
+      <UserGate>
+        <ClubPassApp />
+      </UserGate>
+    ),
+  },
 ]);
 
 export default router;
