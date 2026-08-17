@@ -166,10 +166,11 @@ export default function ClubPass() {
       {/* ================= Header ================= */}
       <header className="cp-header">
         <div className="cp-container cp-header-inner">
-          <a className="cp-brand" href="#top">
-            <span className="cp-brand-mark">R</span>
+          <a className="cp-brand" href="#top"> 
+            <img src="/images/club-logo.png" />
+            {/* <span className="cp-brand-mark">R</span>
             <span className="cp-brand-name">reward<label className="cl-color">land</label></span>
-            <span className="cp-brand-sub">ClubPass</span>
+            <span className="cp-brand-sub">ClubPass</span> */}
           </a>
 
           <nav className={`cp-nav${menuOpen ? " is-open" : ""}`}>
