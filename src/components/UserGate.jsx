@@ -9,6 +9,18 @@ import "../css/user-gate.css";
 
 const APP_LINK = "https://rewardland.onelink.me/EwIe/start";
 
+/**
+ * Opens /clubpass-app without an SSO token, as a member of your choosing.
+ *
+ * For working on the page itself without a phone and a live rr_sso in hand.
+ * It bypasses the only thing standing between the public and someone else's
+ * pass, so it must be false in anything you deploy — see the note in .env.
+ */
+const SKIP_SSO = import.meta.env.VITE_SKIP_SSO === "true";
+
+/** Who to be while skipping. ?userName= overrides it, so you can switch members. */
+const SKIP_SSO_USERNAME = import.meta.env.VITE_SKIP_SSO_USERNAME ?? "devtester";
+
 /** What we tell the member when their SSO link doesn't get them in. */
 const SSO_MESSAGES = {
   UNAUTHORIZED: "This link has expired. Please try again from the RewardLand app.",
@@ -132,7 +144,16 @@ export default function UserGate({ children }) {
       );
     };
 
-    if (ssoToken) {
+    if (SKIP_SSO) {
+      const userName = searchParams.get("userName")?.trim() || SKIP_SSO_USERNAME;
+
+      console.warn(
+        `[clubpass] VITE_SKIP_SSO is on — signed in as "${userName}" with no RewardLand check. ` +
+          "This must never be on in a deployed build.",
+      );
+
+      loadMember({ username: userName, rrId: "skip-sso", email: "" });
+    } else if (ssoToken) {
       validateOnce(ssoToken).then(
         (profile) => {
           // Spent — don't leave it in the address bar, history or referrer headers.
@@ -162,7 +183,7 @@ export default function UserGate({ children }) {
     return () => {
       cancelled = true;
     };
-  }, [ssoToken]);
+  }, [ssoToken, searchParams]);
 
   if (state.status === "register") return <Register />;
   if (state.status === "failed") return <SsoFailed message={state.message} />;
