@@ -136,6 +136,42 @@
   cursor: default;
 }
 
+/* ---- signed-in bar ------------------------------------------------------ */
+
+/* Sits directly above the hero and shares its background, so the member's name
+   reads as part of the header rather than a strip bolted on top. */
+.cpm-topbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px var(--cpm-pad);
+  background: #14061F;
+  color: #fff;
+}
+
+.cpm-topbar-avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  flex: 0 0 30px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, .14);
+  border: 1px solid rgba(255, 255, 255, .2);
+  font-size: 13px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.cpm-topbar-name {
+  font-size: 14px;
+  font-weight: 700;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 /* ---- hero -------------------------------------------------------------- */
 
 .cpm-hero {

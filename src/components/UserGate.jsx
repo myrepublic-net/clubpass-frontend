@@ -2,13 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router";
 
 import { resolveClubpassUser } from "../api/clubpassUser.js";
-import {
-  SSO_PARAM,
-  clearSsoSession,
-  readSsoSession,
-  stripSsoFromUrl,
-  validateSsoToken,
-} from "../api/sso.js";
+import { SSO_PARAM, stripSsoFromUrl, validateSsoToken } from "../api/sso.js";
 import useScanTokenRefresh from "../hooks/useScanTokenRefresh.js";
 import { ClubpassUserContext, ScanCountdownContext } from "./clubpassUserContext.js";
 import "../css/user-gate.css";
@@ -33,7 +27,7 @@ function Loader() {
   );
 }
 
-/** No token and no session — the member got here outside the app. */
+/** No token — the member got here outside the app. */
 function Register() {
   return (
     <div className="cpg-gate">
@@ -88,10 +82,10 @@ function validateOnce(rrSso) {
 
 /**
  * Gates the ClubPass page on a RewardLand SSO sign-in. The only way in is
- * ?rr_sso= from the app: the token goes to our Lambda, and on success the
- * profile it returns is kept in a session cookie so a reload doesn't need a
- * second token. Either way the token leaves the URL as soon as the Lambda has
- * answered.
+ * ?rr_sso= from the app: the token goes to our Lambda, and the profile it
+ * returns is held in state for the life of the page — nothing is persisted, so
+ * a reload sends the member back to the app for a fresh link. Either way the
+ * token leaves the URL as soon as the Lambda has answered.
  *
  * Once we know who the member is, we show the loader while looking them up in
  * Strapi (creating them if they're new), then the page either way: a failed
@@ -149,9 +143,8 @@ export default function UserGate({ children }) {
           console.error("ClubPass SSO validation failed", error);
 
           // Same clean-up on the way out: a dead token has no business staying
-          // in the URL, and neither has a stale cookie.
+          // in the URL.
           stripSsoFromUrl();
-          clearSsoSession();
 
           if (!cancelled) {
             setState({
@@ -162,12 +155,8 @@ export default function UserGate({ children }) {
         },
       );
     } else {
-      // No token: either the cookie from an earlier arrival still holds, or
-      // they never came through the app at all.
-      const profile = readSsoSession();
-
-      if (profile?.username) loadMember(profile);
-      else setState({ status: "register" });
+      // No token means we have no idea who this is — the app is the only door.
+      setState({ status: "register" });
     }
 
     return () => {

@@ -80,7 +80,8 @@ export default function ClubPassApp() {
   const [voted, setVoted] = useState([]);
   const [subscribeOpen, setSubscribeOpen] = useState(false);
 
-  const { user } = useClubpassUser();
+  // Signed in through RewardLand SSO, so there is always a name to show.
+  const { user, userName } = useClubpassUser();
   const paid = isPaid(user);
 
   const toggleFaq = (index) => setOpenFaq((prev) => (prev === index ? null : index));
@@ -97,6 +98,14 @@ export default function ClubPassApp() {
       <meta name="theme-color" content="#14061F" />
 
       <div className="cpm-shell">
+        {/* ================= Who's signed in ================= */}
+        <header className="cpm-topbar">
+          <span className="cpm-topbar-avatar" aria-hidden="true">
+            {userName.slice(0, 1).toUpperCase()}
+          </span>
+          <span className="cpm-topbar-name">{userName}</span>
+        </header>
+
         {/* ================= Hero ================= */}
         <section className="cpm-hero">
           <span className="cpm-tag">ClubPass · Home Express</span>
