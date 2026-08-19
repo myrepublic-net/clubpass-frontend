@@ -10,7 +10,7 @@ import "../css/clubpass-app.css";
 const SITE = "https://www.rewardland.sg";
 
 const STATS = [
-  { value: "S$0", label: "surge fees, ever" },
+  { value: "SGD $0", label: "surge fees, ever" },
   { value: "4", label: "nights every month" },
   { value: "5", label: "city pick-up stops" },
 ];
@@ -20,7 +20,7 @@ const CHIPS = ["4 nights / month", "Fixed schedule", "Late-night departures"];
 const VOTE_ROUTES = [
   { id: "west", name: "West Route", sub: "18 more members needed", cta: "I want this", done: "Counted" },
   { id: "north", name: "North Route", sub: "26 more members needed", cta: "I want this", done: "Counted" },
-  { id: "south", name: "South Route", sub: "Coming soon", cta: "Notify me", done: "You're on it" },
+  { id: "south", name: "South Route", sub: "26 more members needed", cta: "Notify me", done: "You're on it" },
 ];
 
 const STEPS = [
@@ -70,7 +70,7 @@ function RouteMap() {
       role="img"
       aria-label="Map of the East Route: city pick-up loop through the club district with express drop-offs at Paya Lebar, Bedok, Tampines and Pasir Ris MRT"
     >
-      <img src="/images/route-map.png"/>
+      <img src="/images/route-m.png"/>
     </div>
   );
 }
@@ -100,10 +100,13 @@ export default function ClubPassApp() {
       <div className="cpm-shell">
         {/* ================= Who's signed in ================= */}
         <header className="cpm-topbar">
+          <div className="mb-logo"><img src="/images/cb-app-logo.png"/></div>
+           <div className="mb-user">
           <span className="cpm-topbar-avatar" aria-hidden="true">
             {userName.slice(0, 1).toUpperCase()}
           </span>
           <span className="cpm-topbar-name">{userName}</span>
+          </div>
         </header>
 
         {/* ================= Hero ================= */}
@@ -129,7 +132,7 @@ export default function ClubPassApp() {
               className="cpm-btn cpm-btn-white cpm-btn-lg"
               onClick={() => setSubscribeOpen(true)}
             >
-              Subscribe now — S$19.90/month
+              Subscribe Now — SGD $19.90/mth 
             </button>
           )}
 
@@ -152,9 +155,9 @@ export default function ClubPassApp() {
             </div>
           ))}
         </div>
-
+        
         {/* ================= East Route ================= */}
-        <section className="cpm-pad cpm-section">
+        <section className="cpm-pad cpm-section cpm-route-section" >
           <div className="cpm-row-head">
             <h2 className="cpm-h2">East Route</h2>
             <span className="cpm-pill-live">
@@ -162,12 +165,146 @@ export default function ClubPassApp() {
               Live now
             </span>
           </div>
-
+          <div className="cust-map">
           <RouteMap />
 
           <div className="cpm-card">
             <div className="cpm-route-body">
-              <div className="cpm-leg cpm-leg--pick">
+              <div className="cpm-route-time">
+                  <img src="/images/cp-time.png"/>
+                  <h5>Every Saturday • 2:30 AM Departure from First Pickup</h5>
+              </div>
+               <div class="pickup-card">
+
+    <h2 class="pickup-title">
+      Pick-Up Stops (City Loop) <span>• 5 Stops</span>
+    </h2>
+
+    <div class="pickup-list">
+
+      <div class="pickup-stop">
+        <div class="stop-number">1</div>
+
+        <div class="stop-content">
+          <div class="stop-main">
+            <div class="stop-name">Marina Bay Sands</div>
+            <div class="stop-time">2.30 AM</div>
+          </div>
+          <div class="stop-address">Bayfront Avenue</div>
+        </div>
+      </div>
+
+      <div class="pickup-stop">
+        <div class="stop-number">2</div>
+
+        <div class="stop-content">
+          <div class="stop-main">
+            <div class="stop-name">CÉ LA VI</div>
+            <div class="stop-time">2.40 AM</div>
+          </div>
+          <div class="stop-address">Bayfront Avenue</div>
+        </div>
+      </div>
+
+      <div class="pickup-stop">
+        <div class="stop-number">3</div>
+
+        <div class="stop-content">
+          <div class="stop-main">
+            <div class="stop-name">Clarke Quay</div>
+            <div class="stop-time">2.50 AM</div>
+          </div>
+          <div class="stop-address">River Valley Rd</div>
+        </div>
+      </div>
+
+      <div class="pickup-stop">
+        <div class="stop-number">4</div>
+
+        <div class="stop-content">
+          <div class="stop-main">
+            <div class="stop-name">Boat Quay</div>
+            <div class="stop-time">3.00 AM</div>
+          </div>
+          <div class="stop-address">South Bridge Rd</div>
+        </div>
+      </div>
+
+      <div class="pickup-stop">
+        <div class="stop-number">5</div>
+
+        <div class="stop-content">
+          <div class="stop-main">
+            <div class="stop-name">Zouk</div>
+            <div class="stop-time">3.10 AM</div>
+          </div>
+          <div class="stop-address">3C River Valley Rd</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="pickup-card drop-off">
+
+    <h2 class="pickup-title">
+      Express Drop-Offs  <span>• East</span>
+    </h2>
+
+    <div class="pickup-list">
+
+      <div class="pickup-stop">
+        <div class="stop-number">1</div>
+
+        <div class="stop-content">
+          <div class="stop-main">
+            <div class="stop-name">Paya Lebar MRT</div>
+            <div class="stop-time">3.40 AM</div>
+          </div>
+          <div class="stop-address">Exit B</div>
+        </div>
+      </div>
+
+      <div class="pickup-stop">
+        <div class="stop-number">2</div>
+
+        <div class="stop-content">
+          <div class="stop-main">
+            <div class="stop-name">Bedok MRT</div>
+            <div class="stop-time">3.55 AM</div>
+          </div>
+          <div class="stop-address">Exit A</div>
+        </div>
+      </div>
+
+      <div class="pickup-stop">
+        <div class="stop-number">3</div>
+
+        <div class="stop-content">
+          <div class="stop-main">
+            <div class="stop-name">Tampines MRT</div>
+            <div class="stop-time">4.05 AM</div>
+          </div>
+          <div class="stop-address">Exit D</div>
+        </div>
+      </div>
+
+      <div class="pickup-stop">
+        <div class="stop-number">4</div>
+
+        <div class="stop-content">
+          <div class="stop-main">
+            <div class="stop-name">Pasir Ris MRT</div>
+            <div class="stop-time">4.20 AM</div>
+          </div>
+          <div class="stop-address">Exit A</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+  <div className="time-note"><img src="/images/cp-note.png"/><span>Times may vary depending on traffic conditions.</span></div>
+              {/* <div className="cpm-leg cpm-leg--pick">
                 <h3>City pick-up loop · 5 stops</h3>
                 <p>MBS · CÉ LA VI · Clarke Quay · Boat Quay · Zouk</p>
               </div>
@@ -175,7 +312,7 @@ export default function ClubPassApp() {
               <div className="cpm-leg cpm-leg--drop">
                 <h3>Express drop-offs · East</h3>
                 <p>Paya Lebar · Bedok · Tampines · Pasir Ris*</p>
-              </div>
+              </div> */}
 
               <div className="cpm-chips">
                 {CHIPS.map((chip) => (
@@ -186,10 +323,11 @@ export default function ClubPassApp() {
               </div>
             </div>
           </div>
+          </div>
         </section>
-
+<div class="cpm-gradient">
         {/* ================= Other routes ================= */}
-        <section className="cpm-pad" style={{ paddingBottom: 36 }}>
+        <section className="cpm-pad" style={{ paddingBottom: 50 }}>
           <div className="cpm-panel">
             <h2>Not in the East?</h2>
             <p>
@@ -222,7 +360,7 @@ export default function ClubPassApp() {
         </section>
 
         {/* ================= How it works ================= */}
-        <section className="cpm-pad" style={{ paddingBottom: 30 }}>
+        <section className="cpm-pad" style={{ paddingBottom: 60 }}>
           <h2 className="cpm-h2">How it works</h2>
 
           <div className="cpm-steps">
@@ -240,15 +378,15 @@ export default function ClubPassApp() {
 
         {/* ================= Price card ================= */}
         <section className="cpm-pad cpm-price-wrap">
-          <div className="card-m">
-            <div className="cpm-price">
-              <div className="cpm-price-head">
+          <div className="cpm-price-head">
                 <span>ClubPass · Home Express</span>
-                <span className="cpm-price-badge">R</span>
               </div>
+          <div className="card-m mb-card-in">
+            <div className="cpm-price">
+              <img className="only-image" src="/images/only.png"/>
               <div className="cpm-price-amount">
-                <b>S$19.90</b>
-                <i>/month</i>
+                <b>SGD $19.90</b>
+                <i>/mth</i>
               </div>
               <p className="cpm-price-note">
                 Founder launch price · first 150 members only. Locked in while you stay subscribed.
@@ -260,7 +398,7 @@ export default function ClubPassApp() {
                 {PRICE_INCLUDES.map((item) => (
                   <li key={item}>
                     <span className="cpm-tick">
-                      <img src="/images/tick.svg"/>
+                      <img src="/images/mb-check.svg"/>
                       {/* <Check size={10} strokeWidth={3.5} /> */}
                     </span>
                     {item}
@@ -278,32 +416,61 @@ export default function ClubPassApp() {
               <p className="cpm-price-fine">
                 {paid
                   ? "Renews monthly · Cancel anytime from your membership screen"
-                  : "Secure PayPal checkout · Auto-renews monthly · Cancel anytime"}
+                  : "Auto-renews monthly. Cancel anytime."}
               </p>
+              <p className="cpm-price-fine">T&Cs apply</p>
             </div>
           </div>
         </section>
 
         {/* ================= Trust ================= */}
-        <section className="cpm-trust">
-          <h2>
-            Planned like transit.
-            <br />
-            Protected like a members' club.
-          </h2>
-
-          <div className="cpm-trust-grid">
-            {TRUST.map((card) => (
-              <div className="cpm-tc" key={card.title}>
-                <h3>{card.title}</h3>
-                <p>{card.text}</p>
-              </div>
-            ))}
-          </div>
-        </section>
+       <section className="cpm-trust">
+  <div className="cpm-trust-header">
+    <h2> Planned like transit.<br />Protected like a members' club.</h2>
+    <img src="/images/cpn/skater-m.png" />
+  </div>
+  <div class="cpn-safety-top mb-safety">
+    <div className="cpn-nights">
+      <img alt="4" src="/images/cpn/mb-four.png" />
+      <div className="cpn-nights-text">
+        <h3>nights a month - one night a week, every week</h3>
+        <hr />
+        <p>Scheduled rides. Live bus tracking. No surge pricing. Check departure times and follow your bus in real time
+          through the app.</p>
+      </div>
+    </div>
+  </div>
+<div className="cpn-safety-grid mb-safety-grid">
+    <div className="cpn-safety-card"><span className="cpn-safety-icon"><img src="/images/cp-clock.png"/></span>
+        <h3>On the dot</h3>
+        <p>Fixed departures — never "when it fills up".</p>
+    </div>
+    <div className="cpn-safety-card"><span className="cpn-safety-icon"><img src="/images/cp-card.png"/></span>
+        <h3>Licensed operators</h3>
+        <p>Professional drivers, full-size coaches.</p>
+    </div>
+    <div className="cpn-safety-card"><span className="cpn-safety-icon"><img src="/images/cp-flower.png"/></span>
+        <h3>Members-only boarding</h3>
+        <p>Every rider QR-verified. No walk-ons.</p>
+    </div>
+    
+    <div className="cpn-safety-card"><span className="cpn-safety-icon"><img src="/images/rl-icon.png"/></span>
+        <h3>Ride with your crew</h3>
+        <p>Same coach, seats together.</p>
+    </div>
+</div>
+  {/* <div className="cpm-trust-grid">
+    {TRUST.map((card) => (
+    <div className="cpm-tc" key={card.title}>
+      <h3>{card.title}</h3>
+      <p>{card.text}</p>
+    </div>
+    ))}
+  </div> */}
+</section>
 
         {/* ================= Quick answers ================= */}
-        <section className="cpm-pad cpm-section">
+        <section className="cpm-pad cpm-section cpm-acc-section">
           <h2 className="cpm-h2">Quick answers</h2>
 
           <div className="cpm-acc">
@@ -327,7 +494,7 @@ export default function ClubPassApp() {
             ))}
           </div>
         </section>
-
+</div>
         {/* ================= Footer ================= */}
         <footer className="cpm-footer">
           ClubPass by RewardLand

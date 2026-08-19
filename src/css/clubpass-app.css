@@ -24,7 +24,7 @@
   --cpm-pad: 20px;
   --cpm-shell: 600px;
 
-  font-family: "Outfit", ui-sans-serif, system-ui, -apple-system, sans-serif !important;
+ font-family: "Bricolage Grotesque", sans-serif;
   color: var(--cpm-ink);
   background: #EFEBF7;
   -webkit-font-smoothing: antialiased;
@@ -42,7 +42,7 @@
 .clubpass-app-page h2,
 .clubpass-app-page h3 {
   margin: 0;
-  font-family: "Outfit", ui-sans-serif, system-ui, sans-serif !important;
+  font-family: "Bricolage Grotesque", sans-serif;
   letter-spacing: -0.025em;
 }
 
@@ -108,22 +108,21 @@
 }
 
 .cpm-btn-purple {
-  background: var(--cpm-purple);
-  color: #fff;
-  box-shadow: 0 6px 16px -8px rgba(124, 58, 237, .8);
+  background: #1FDBDA;
+  color: #161616;
 }
 
 .cpm-btn-white {
-  background: #fff;
-  color: #4C1D95 !important;
+  background: #83BCFF;
+  color: #161616 !important;
   box-shadow: 0 10px 26px -12px rgba(0, 0, 0, .35);
 }
 
 .cpm-btn-lg {
   width: 100%;
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 700;
-  padding: 16px 22px;
+  padding: 10px 20px;
 }
 
 .cpm-btn-sm {
@@ -145,10 +144,15 @@
   align-items: center;
   gap: 10px;
   padding: 14px var(--cpm-pad);
-  background: #14061F;
+  background: #161616;
   color: #fff;
+  justify-content: space-between;
 }
-
+.mb-user {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+}
 .cpm-topbar-avatar {
   display: inline-flex;
   align-items: center;
@@ -177,16 +181,13 @@
 .cpm-hero {
   position: relative;
   overflow: hidden;
-  padding: 45px var(--cpm-pad) 30px;
+  padding: 250px var(--cpm-pad) 30px;
   background-color: #14061F;
-  background-image:
-    url("/images/cba-banner.jpg"),
-    radial-gradient(65% 70% at 82% 22%, rgba(192, 132, 252, .5) 0%, rgba(192, 132, 252, 0) 62%),
-    radial-gradient(60% 60% at 100% 6%, rgba(236, 72, 153, .3) 0%, rgba(236, 72, 153, 0) 70%),
-    linear-gradient(150deg, #180B28 0%, #2A1140 48%, #3E0C52 100%);
+     background-image: url(/images/app-banner.svg);
   background-size: cover, auto, auto, auto;
   background-position: 62% center, center, center, center;
   background-repeat: no-repeat;
+  padding-bottom: 80px;
 }
 
 /* .cpm-hero::before {
@@ -206,7 +207,7 @@
     align-items: center;
     background: rgba(255, 255, 255, .13);
     border: 1px solid rgba(255, 255, 255, .2);
-    color: #D8C9FA;
+    color: #6cd7d7;
     font-size: 11px;
     font-weight: 700;
     letter-spacing: 0.15em;
@@ -218,22 +219,22 @@
 
 .cpm-hero h1 {
   margin: 18px 0 0;
-  font-size: 30px;
-  line-height: 40px;
+  font-size: 34px;
+  line-height: 38px;
   font-weight: 800;
   color: #fff;
   letter-spacing: -0.035em;
 }
 
 .cpm-hero h1 span {
-  color: #B69CFB;
+  color: #1FDBDA;
 }
 
 .cpm-hero-text {
   margin-top: 12px;
   font-size: 15px;
   line-height: 1.62;
-  color: rgba(255, 255, 255, .72);
+  color: #fff;
 }
 
 .cpm-hero .cpm-btn-lg {
@@ -262,25 +263,31 @@
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  background: #4ADE80;
+  background: #1FDBDA;
   flex: none;
 }
 
 /* ---- stat strip -------------------------------------------------------- */
 
 .cpm-stats {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
-  padding-top: 20px;
-  padding-bottom: 2px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    padding-top: 30px;
+    padding-bottom: 2px;
+    margin-top: -40px;
+    position: relative;
+    z-index: 1;
+    background: #ffffff;
+    border-radius: 40px 40px 0px 0px;
 }
 
 .cpm-stat {
-  background: var(--cpm-lav);
-  border-radius: 16px;
-  padding: 15px 8px;
-  text-align: center;
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 20px 8px;
+    text-align: center;
+    border: 1.5px solid #1FDBDA;
 }
 
 .cpm-stat b {
@@ -288,9 +295,9 @@
   font-size: 20px;
   font-weight: 800;
   letter-spacing: -0.03em;
-  color: var(--cpm-purple);
+  color: #0C165E;
   line-height: 1;
-      font-family: "Sora", sans-serif !important;
+      font-family: "Bricolage Grotesque", sans-serif;
 }
 
 .cpm-stat span {
@@ -298,9 +305,12 @@
   margin-top: 7px;
   font-size: 13px;
   line-height: 16px;
-  color: #5A5170;
+      color: #0C165E;
 }
-
+.cpm-pad h2.cpm-h2 {
+    color: #0C165E;
+    text-transform: uppercase;
+}
 /* ---- east route -------------------------------------------------------- */
 
 .cpm-row-head {
@@ -312,33 +322,36 @@
 }
 
 .cpm-pill-live {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  background: #E4FBEC;
-  color: var(--cpm-green);
-  font-size: 11px;
-  font-weight: 800;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  padding: 5px 10px;
-  border-radius: 999px;
-  flex: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: #1FDBDA;
+    color: #161616;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 5px 10px;
+    border-radius: 999px;
+    flex: none;
 }
 
-.cpm-pill-live i {
+/* .cpm-pill-live i {
   width: 5px;
   height: 5px;
   border-radius: 50%;
   background: var(--cpm-green);
   display: inline-block;
-}
+} */
 
 .cpm-card {
   background: #fff;
-  border: 1px solid var(--cpm-line);
         border-radius: 0px 0px 20px 20px;
   overflow: hidden;
+}
+.cust-map {
+    border: 1.5px solid #BABABA;
+    border-radius: 20px;
 }
 
 .cpm-map {
@@ -356,9 +369,23 @@
 }
 
 .cpm-route-body {
-  padding: 20px;
+  padding: 20px 10px;
+}
+.cpm-route-time {
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
+.cpm-route-time h5 {
+    font-size: 13px;
+    font-weight: 800;
+    margin-bottom: 0;
+}
+
+.cpm-route-time img {
+    width: 15px;
+}
 /* pick-up / drop-off timeline */
 .cpm-leg {
   position: relative;
@@ -423,32 +450,34 @@
 }
 
 .cpm-chip {
-  background: var(--cpm-lav);
-  color: var(--cpm-purple-600);
-  font-size: 11.5px;
-  font-weight: 600;
-  padding: 6px 11px;
-  border-radius: 999px;
+    background: #ffffff;
+    color: #0C165E;
+    font-size: 11.5px;
+    font-weight: 600;
+    padding: 6px 11px;
+    border-radius: 999px;
+    border: 1.5px solid #1FDBDA;
 }
 
 /* ---- other routes ------------------------------------------------------ */
 
 .cpm-panel {
-    background: #F8F5FE;
+    background: #06439D;
     border-radius: 20px;
     padding: 20px;
 }
 
 .cpm-panel > h2 {
   font-size: 16px;
-  font-weight: 700;
+  font-weight: 800;
+  color: #fff;
 }
 
 .cpm-panel > p {
   margin-top: 6px;
   font-size: 13px;
   line-height: 1.55;
-  color: var(--cpm-muted);
+  color: #fff;
 }
 
 .cpm-vote-list {
@@ -463,13 +492,14 @@
   justify-content: space-between;
   gap: 12px;
   background: #fff;
-  border-radius: 12px;
+  border-radius: 14px;
   padding: 12px 12px 12px 14px;
 }
 
 .cpm-vote h3 {
   font-size: 14px;
   font-weight: 700;
+  color: #0C165E;
 }
 
 .cpm-vote small {
@@ -477,6 +507,7 @@
   margin-top: 3px;
   font-size: 12px;
   color: var(--cpm-muted-2);
+  color: #0C165E;
 }
 
 /* ---- how it works ------------------------------------------------------ */
@@ -490,39 +521,42 @@
 .cpm-step {
   display: flex;
   align-items: flex-start;
-  gap: 12px;
+  gap: 8px;
   background: #fff;
-  border: 1px solid var(--cpm-line);
-  border-radius: 14px;
+  border: 1.5px solid #BABABA;
+  border-radius: 16px;
   padding: 14px 16px;
   align-items: center;
+      z-index: 2;
 }
 
 .cpm-step-num {
-  flex: none;
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  background: var(--cpm-purple);
-  color: #fff;
-  font-size: 14px;
-  font-weight: 700;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  margin-top: 1px;
+    flex: none;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: #ffffff;
+    color: #0C165E;
+    font-size: 14px;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 1px;
+    border: 1.5px solid #1FDBDA;
 }
 
 .cpm-step h3 {
   font-size: 15px;
   font-weight: 700;
+  color: #0C165E;
 }
 
 .cpm-step p {
   margin-top: 4px;
   font-size: 13px;
   line-height: 1.5;
-  color: var(--cpm-muted);
+      color: #5A5170;
   margin-bottom: 0;
 }
 
@@ -534,36 +568,40 @@
 }
 
 .cp-dt {
-    background: #4C1D95;
+    background: #FF630D;
     padding: 24px;
     border-radius: 0px 0px 20px 20px;
-    z-index: 1;
-    position: relative;
 }
 .cpm-price {
   position: relative;
-      border-radius: 20px 20px 0px 0px;
   padding: 24px;
   color: #fff;
-      background: linear-gradient(155deg, #8B5CF6 0%, #7C3AED 42%, #6D28D9 100%);
-  box-shadow: 0 26px 54px -26px rgba(109, 40, 217, .95);
-  border-bottom: 2px dashed #ffffff78;
-    margin-bottom: 7px;
+      border-bottom: 4px dashed #fff;
+          padding-top: 10px;
 }
-
+.cpm-gradient {
+    background: linear-gradient(360deg, rgba(14, 165, 219, 0) 10%, #0070DB 34.44%, #0C165E 50.45%, #000000 63.35%, #0C165E 72.65%, #0070DB 80.51%, rgba(14, 165, 219, 0) 92.65%);
+}
+.cpm-route-section {
+    padding-bottom: 20px;
+}
 .cpm-price-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
+    font-size: 22px;
+    background: #fff;
+    border-radius: 16px 16px 0 0;
+    padding: 12px;
+    text-align: center;
 }
-
+.mb-card-in {
+    background: #FF630D;
+    border-radius: 0px 0px 20px 20px;
+}
 .cpm-price-head span {
-      font-size: 12px;
-    font-weight: 800;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: #fff;
+    font-size: 22px;
+    font-weight: 700;
+    text-transform: capitalize;
+    color: #FF630D;
+    text-align: center;
 }
 
 .cpm-price-badge {
@@ -583,30 +621,32 @@
   display: flex;
   align-items: baseline;
   gap: 3px;
-  margin-top: 18px;
+  justify-content: center;
 }
 
 .cpm-price-amount b {
-  font-size: 42px;
-  font-weight: 800;
+  font-size: 44px;
+  font-weight: 700;
   letter-spacing: -0.04em;
-  line-height: 1;
-      font-family: "Sora", sans-serif !important;
+  line-height: 50px;
+  font-family: "Bricolage Grotesque", sans-serif;
 }
 
 .cpm-price-amount i {
   font-style: normal;
-  font-size: 16px;
+  font-size: 30px;
+  line-height: 50px;
   font-weight: 700;
-  color: rgba(255, 255, 255, .82);
+  color: #fff;
 }
 
 .cpm-price-note {
-  margin-top: 10px;
-  font-size: 12.5px;
-  line-height: 1.55;
-  color: rgba(255, 255, 255, .74);
-  margin-bottom: 0;
+    margin-top: 0px;
+    font-size: 13.5px;
+    line-height: 1.55;
+    color: #fff;
+    margin-bottom: 0;
+    text-align: center;
 }
 
 /* punched ticket divider */
@@ -620,14 +660,14 @@
 
 .cpm-perf::before,
 .cpm-perf::after {
-  content: "";
-  position: absolute;
-  bottom: -14%;
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  background: #fff;
-  transform: translateY(-50%);
+      content: "";
+    position: absolute;
+    bottom: -25%;
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    background: #050611;
+    transform: translateY(-50%);
 }
 
 .cpm-perf::before {
@@ -669,26 +709,33 @@
   margin-top: 12px;
   text-align: center;
   font-size: 10px;
-  color: rgba(255, 255, 255, .7);
+  color: #fff;
   margin-bottom: 0;
+}
+section.cpm-trust {
+    padding-top: 0px;
+        margin-top: -40px;
+}
+
+section.cpm-pad.cpm-price-wrap {
+    padding-bottom: 0px;
 }
 
 /* ---- trust (dark) ------------------------------------------------------ */
 
 .cpm-trust {
-  background: var(--cpm-dark);
   color: #fff;
-  padding: 36px var(--cpm-pad);
+  padding: 30px var(--cpm-pad);
 }
 
 .cpm-trust h2 {
-  font-size: 20px;
-  font-weight: 700;
-  line-height: 1.3;
-  color: #fff;
-  margin-bottom: 16px;
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 1.3;
+    color: #fff;
+    margin-bottom: 0;
+    padding-top: 60px;
 }
-
 .cpm-trust-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -722,12 +769,12 @@
 .cpm-acc {
   display: grid;
   gap: 9px;
-  margin-top: 14px;
+  margin-top: 20px;
 }
 
 .cpm-acc-item {
   background: #fff;
-  border: 1px solid var(--cpm-line);
+  border: 1.5px solid #BABABA;
   border-radius: 14px;
   overflow: hidden;
 }
@@ -751,20 +798,23 @@
   font-family: inherit;
   font-size: 14px;
   font-weight: 700;
-  color: var(--cpm-ink);
+  color: #161616;
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
 }
-
+.cpm-acc-section {
+    padding-bottom: 20px !important;
+        padding-top: 30px !important;
+}
 .cpm-acc-btn svg {
   flex: none;
-  color: #6D28D9;
+  color: #1FDBDA;
   transition: transform .24s ease, color .24s ease;
 }
 
 .cpm-acc-item.is-open .cpm-acc-btn svg {
   transform: rotate(45deg);
-  color: var(--cpm-purple);
+  color: #1FDBDA;
 }
 
 .cpm-acc-panel {
@@ -810,18 +860,18 @@
   opacity: .55;
 }
    .clubpass-app-page  {
-    font-family: "Figtree", sans-serif !important;
+    font-family: "Bricolage Grotesque", sans-serif;
 }
 .clubpass-app-page :is(h1, h2, h3, h4, h5, h6) {
-  font-family: "Sora", sans-serif !important;
+  font-family: "Bricolage Grotesque", sans-serif;
 }
 .bt-btn {
-    background: #6D28D9;
+    background: #1FDBDA;
     margin-top: 20px;
     display: flex;
     justify-content: space-between;
-    color: #fff !important;
-    box-shadow: 0 20px 54px -12px rgb(103 30 218 / 95%);
+    color: #161616 !important;
+   box-shadow: 0 20px 54px -14px #1fdbda;
 }
 .bt-stciky-btn {
     position: fixed;
@@ -838,20 +888,240 @@
     justify-content: space-between;
     align-items: center;
 }
+
+    /* Header */
+   .pickup-title {
+    margin: 32px 0 20px 0 !important;
+    font-size: 13px;
+    line-height: 17px;
+    font-weight: 700;
+    color: #202020;
+}
+
+    .pickup-title span {
+      font-weight: 400;
+    }
+
+    /* Timeline */
+    .pickup-list {
+      position: relative;
+    }
+
+    /* Blue vertical line */
+    .pickup-list::before {
+    content: "";
+    position: absolute;
+    left: 15px;
+    top: 20px;
+    bottom: 30px;
+    width: 2px;
+    background: #0070DB;
+}
+
+    .pickup-stop {
+      position: relative;
+      display: grid;
+      grid-template-columns: 30px 1fr;
+      min-height: 60px;
+    }
+
+    /* Number circle */
+    .stop-number {
+      position: relative;
+      z-index: 2;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+     background: #0070DB;
+      color: #fff;
+      font-size: 14px;
+      font-weight: 700;
+      line-height: 1;
+    }
+
+    /* Content */
+    .stop-content {
+      position: relative;
+      min-width: 0;
+      padding: 5px 0 0 10px;
+    }
+
+    .stop-main {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 15px;
+    }
+
+    .stop-name {
+      font-size: 13px;
+      line-height: 17px;
+      font-weight: 700;
+      color: #202020;
+    }
+
+    .stop-time {
+      flex-shrink: 0;
+      font-size: 13px;
+      line-height: 17px;
+      font-weight: 700;
+      color: #202020;
+      white-space: nowrap;
+    }
+
+    .stop-address {
+      margin-top: 2px;
+      font-size: 11px;
+      line-height: 17px;
+      font-weight: 400;
+      color: #242424;
+    }
+
+    /* Dashed separator */
+  .pickup-stop:not(:last-child) .stop-content::after {
+    content: "";
+    position: absolute;
+    left: 10px;
+    right: 0;
+    bottom: 8px;
+    border-bottom: 1px dashed #c8c8c8;
+}
+
+    /* Last item doesn't need separator */
+    .pickup-stop:last-child {
+      min-height: 54px;
+    }
+
+    .drop-off .stop-number,  .drop-off .pickup-list::before {
+    background: #1FDBDA;
+}
+.time-note {
+    background: #1FDBDA33;
+    padding: 5px 10px;
+    border-radius: 50px;
+    font-size: 11px;
+    line-height: 17px;
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    color: #161616;
+    margin-top: 20px;
+}
+.cpn-safety-top.mb-safety {
+    padding: 20px 15px;
+    background: #0C165E;
+    text-align: center;
+    border-radius: 16px;
+    margin-bottom: 20px;
+}
+.mb-safety .cpn-nights {
+    flex-direction: row;
+}
+.mb-safety .cpn-nights img {
+    width: auto;
+    margin-top: 0;
+}
+.cpn-safety-top.mb-safety h3 {
+    font-size: 16px;
+    font-weight: 700;
+    padding: 0;
+}
+.mb-safety .cpn-nights hr {
+    margin-top: 15px;
+    margin-bottom: 15px;
+}
+.mb-safety p {
+    font-size: 12.5px;
+}
+.mb-safety-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+.mb-safety-grid .cpn-safety-card {
+    padding: 15px 10px;
+        border-radius: 16px;
+}
+.mb-safety-grid .cpn-safety-icon {
+    width: 100%;
+    margin-bottom: 10px;
+    margin-top: 0;
+}
+.mb-safety-grid .cpn-safety-icon img {
+    width: 48px;
+    height: 48px;
+    object-fit: contain;
+}
+.mb-safety-grid .cpn-safety-card h3 {
+    font-size: 14px;
+    font-weight: 700;
+}
+.mb-safety-grid .cpn-safety-card p {
+    font-size: 12.5px;
+        margin-bottom: 0;
+}
+.cpm-trust-header h2 {
+    text-transform: uppercase;
+}
+.cpm-trust-header {
+    display: flex;
+    align-items: center;
+}
+.cpm-trust-header img {
+    width: 48%;
+}
+ .cpm-trust-header h2 {
+    width: 52%;
+}
+.cpm-trust-header img {
+    position: relative;
+    right: -20px;
+        z-index: 2;
+}
+.mb-card-in .cpm-btn-white {
+    background: #ffffff;
+    color: #FF630D !important;
+    box-shadow: none;
+}
+section.cpm-pad.cpm-price-wrap:before {
+    background: url(/images/starburst-mb.png);
+    content: "";
+    height: 150px;
+    width: 150px;
+    position: absolute;
+    background-size: contain;
+    background-position: center;
+    top: -65px;
+    left: -25px;
+    background-repeat: no-repeat;
+    z-index: -1;
+}
+section.cpm-pad.cpm-price-wrap {
+position: relative;
+z-index: 1;
+}
 /* ==========================================================================
    Larger phones / landscape phones (up to 767px) and beyond
    ========================================================================== */
 
 @media (min-width: 480px) {
+  .cpn-safety-top.mb-safety h3 {
+        font-size: 28px;
+  }
+  .mb-safety-grid .cpn-safety-card h3 {
+    font-size: 18px;
+}
+.mb-safety-grid .cpn-safety-card p {
+    font-size: 16px;
+}
+  .mb-safety p {
+    font-size: 16px;
+}
   /* .clubpass-app-page {
     --cpm-pad: 26px;
   } */
-
-  .cpm-hero {
-    padding-top: 60px;
-    padding-bottom: 40px;
-  }
-
   .cpm-hero h1 {
     font-size: 32px;
   }
@@ -888,7 +1158,7 @@
   .cpm-trust-grid,
   .cpm-steps,
   .cpm-vote-list {
-    gap: 12px;
+    gap: 8px;
   }
 }
 
@@ -905,7 +1175,6 @@
 
   .cpm-hero .cpm-btn-lg {
     margin-top: 18px;
-    padding: 13px 20px;
   }
 }
 
