@@ -156,7 +156,14 @@ export default function SubscribeModal({ open, onClose }) {
 
   const fail = useCallback((error, message) => {
     console.error("ClubPass checkout failed", error);
-    setFlow({ status: "error", message: message ?? "That payment didn't go through. Please try again." });
+
+    // The friendly line is for the member; the detail line is what makes a
+    // failure diagnosable without opening a console on someone else's phone.
+    setFlow({
+      status: "error",
+      message: message ?? "That payment didn't go through. Please try again.",
+      detail: [error?.name, error?.message].filter(Boolean).join(": "),
+    });
   }, []);
 
   /** Shared tail of the three wallet/card routes: capture, then hand to Strapi. */
@@ -615,7 +622,10 @@ export default function SubscribeModal({ open, onClose }) {
 
             {flow.status === "error" && (
               <>
-                <p className="cps-error">{flow.message}</p>
+                <p className="cps-error">
+                  {flow.message}
+                  {flow.detail && <small className="cps-error-detail">{flow.detail}</small>}
+                </p>
                 <button type="button" className="cps-cta" onClick={() => setFlow({ status: "idle" })}>
                   Try again
                 </button>

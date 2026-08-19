@@ -263,6 +263,15 @@
   border-radius: 12px;
 }
 
+.cps-error-detail {
+  display: block;
+  margin-top: 8px;
+  font-size: 12px;
+  line-height: 1.45;
+  opacity: .75;
+  word-break: break-word;
+}
+
 .cps-cta {
   display: block;
   width: 100%;
