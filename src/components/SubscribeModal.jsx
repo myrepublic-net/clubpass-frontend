@@ -5,9 +5,11 @@ import {
   activateSubscription,
   captureOrder,
   createOrder,
+  createSetupToken,
   createSubscription,
+  subscribeWithCard,
 } from "../api/subscribe.js";
-import usePaypalSdk, { CURRENCY, IS_SANDBOX } from "../hooks/usePaypalSdk.js";
+import usePaypalSdk, { CURRENCY, IS_SANDBOX, sessionMethods } from "../hooks/usePaypalSdk.js";
 import BoardingQr from "./BoardingQr.jsx";
 import { useClubpassUser } from "./clubpassUserContext.js";
 import "../css/subscribe-modal.css";
@@ -32,6 +34,23 @@ const FIELD_STYLE = {
   ":focus": { color: "#191024" },
   ".invalid": { color: "#DC2626" },
 };
+
+/**
+ * The SDK renamed createPayPalSubscriptionSession under us once already, so
+ * session methods are looked up by any of their known names rather than called
+ * by one — and if none is there, the error says which session and what it does
+ * have instead of "undefined is not a function" from a minified bundle.
+ */
+function pick(session, names, label) {
+  for (const name of names) {
+    if (typeof session[name] === "function") return session[name].bind(session);
+  }
+
+  throw new Error(
+    `${label}: none of ${names.join(" / ")} exist on this session. ` +
+      `It has: ${sessionMethods(session).join(", ")}`,
+  );
+}
 
 const METHOD_LABELS = {
   paypal: "PayPal",
@@ -68,6 +87,15 @@ export default function SubscribeModal({ open, onClose }) {
 
   const cardHostRef = useRef(null);
   const cardSessionRef = useRef(null);
+
+  // The order the card fields are about to submit — onApprove doesn't always
+  // carry it back, and capture needs it.
+  const cardOrderRef = useRef(null);
+
+  // Approval can arrive twice: once through onApprove and once through the
+  // submit() promise. Capturing twice is a second charge, so orders are only
+  // ever captured once.
+  const capturedRef = useRef(new Set());
 
   // PayPal binds its callbacks once, so read the live values through a ref
   // instead of closing over the ones from that render.
@@ -128,12 +156,22 @@ export default function SubscribeModal({ open, onClose }) {
 
   const fail = useCallback((error, message) => {
     console.error("ClubPass checkout failed", error);
-    setFlow({ status: "error", message: message ?? "That payment didn't go through. Please try again." });
+
+    // The friendly line is for the member; the detail line is what makes a
+    // failure diagnosable without opening a console on someone else's phone.
+    setFlow({
+      status: "error",
+      message: message ?? "That payment didn't go through. Please try again.",
+      detail: [error?.name, error?.message].filter(Boolean).join(": "),
+    });
   }, []);
 
   /** Shared tail of the three wallet/card routes: capture, then hand to Strapi. */
   const captureAndActivate = useCallback(
     async (orderId, payMethod) => {
+      if (!orderId || capturedRef.current.has(orderId)) return;
+      capturedRef.current.add(orderId);
+
       setFlow({ status: "processing" });
 
       const { transactionId, email } = await captureOrder({
@@ -142,7 +180,11 @@ export default function SubscribeModal({ open, onClose }) {
         userName: latest.current.userName,
       });
 
-      await activate({ transactionId, email: email || latest.current.profile?.email || "" });
+      await activate({
+        transactionId,
+        email: email || latest.current.profile?.email || "",
+        closeOnSuccess: true,
+      });
     },
     [activate],
   );
@@ -151,7 +193,20 @@ export default function SubscribeModal({ open, onClose }) {
 
   const payWithPayPal = useCallback(async () => {
     try {
-      const session = sdk.createPayPalSubscriptionSession({
+      // The reference documents this as createPayPalSubscriptionSession, but
+      // the shipped SDK names it ...SubscriptionPaymentSession. Accept either,
+      // so a rename in a later release doesn't break checkout again.
+      const create =
+        sdk.createPayPalSubscriptionPaymentSession ?? sdk.createPayPalSubscriptionSession;
+
+      if (typeof create !== "function") {
+        throw new Error(
+          "This PayPal SDK build has no subscription session — see the " +
+            "[paypal] sdk sessions list in the console for what it does have.",
+        );
+      }
+
+      const session = create.call(sdk, {
         onApprove: async (data) => {
           setFlow({ status: "processing" });
           try {
@@ -162,6 +217,7 @@ export default function SubscribeModal({ open, onClose }) {
             await activate({
               transactionId: data.subscriptionId,
               email: email || latest.current.profile?.email || "",
+              closeOnSuccess: true,
             });
           } catch (error) {
             fail(error);
@@ -185,12 +241,49 @@ export default function SubscribeModal({ open, onClose }) {
 
   /* ---- Card fields ------------------------------------------------------ */
 
+  /** Shared tail of the card route: swap the approved setup token for a subscription. */
+  const subscribeWithSavedCard = useCallback(
+    async (setupTokenId) => {
+      if (!setupTokenId || capturedRef.current.has(setupTokenId)) return;
+      capturedRef.current.add(setupTokenId);
+
+      setFlow({ status: "processing" });
+
+      try {
+        const { transactionId, email } = await subscribeWithCard({
+          setupTokenId,
+          userName: latest.current.userName,
+          email: latest.current.profile?.email,
+        });
+
+        await activate({
+          transactionId,
+          email: email || latest.current.profile?.email || "",
+          closeOnSuccess: true,
+        });
+      } catch (error) {
+        fail(error);
+      }
+    },
+    [activate, fail],
+  );
+
   // Mounting is a side effect of picking the card tile: the fields are PayPal
   // iframes and have to live in the DOM before anything can be typed into them.
   useEffect(() => {
     if (method !== "card" || sdkStatus !== "ready" || !cardHostRef.current) return;
 
-    const session = sdk.createCardFieldsOneTimePaymentSession({
+    // A *save* session, not a one-time one: the fields vault the card rather
+    // than buying anything, and the Lambda then starts a PayPal subscription
+    // on the saved card. That's what makes card renew through PayPal itself.
+    const session = sdk.createCardFieldsSavePaymentSession({
+      // Approval arrives here on some builds and through submit() on others —
+      // whichever comes first subscribes, and subscribedRef stops the other.
+      onApprove: (data) => {
+        console.log("[card] onApprove", data);
+        subscribeWithSavedCard(data?.setupTokenId ?? data?.vaultSetupToken ?? cardOrderRef.current);
+      },
+      onCancel: () => setFlow({ status: "idle" }),
       onError: (error) => fail(error),
     });
     cardSessionRef.current = session;
@@ -213,7 +306,7 @@ export default function SubscribeModal({ open, onClose }) {
       host.replaceChildren();
       cardSessionRef.current = null;
     };
-  }, [method, sdkStatus, sdk, fail]);
+  }, [method, sdkStatus, sdk, fail, subscribeWithSavedCard]);
 
   const payWithCard = useCallback(async () => {
     const session = cardSessionRef.current;
@@ -222,35 +315,45 @@ export default function SubscribeModal({ open, onClose }) {
     setFlow({ status: "processing" });
 
     try {
-      const { orderId } = await createOrder({
-        method: "card",
-        userName: latest.current.userName,
-        email: latest.current.profile?.email,
-      });
+      const { setupTokenId } = await createSetupToken({ userName: latest.current.userName });
 
-      const { state } = await session.submit(orderId);
+      cardOrderRef.current = setupTokenId;
+      console.log("[card] submitting setup token", setupTokenId);
+
+      const result = await session.submit(setupTokenId);
+      console.log("[card] submit resolved", result);
+
+      const state = result?.state;
 
       if (state === "canceled") {
         setFlow({ status: "idle" });
         return;
       }
-      if (state !== "succeeded") {
-        fail(new Error(`card submit returned ${state}`), "That card was declined. Try another one.");
+
+      if (state === "failed") {
+        fail(new Error("card submit failed"), "That card was declined. Try another one.");
         return;
       }
 
-      await captureAndActivate(orderId, "card");
+      await subscribeWithSavedCard(setupTokenId);
     } catch (error) {
       fail(error);
     }
-  }, [captureAndActivate, fail]);
+  }, [subscribeWithSavedCard, fail]);
 
   /* ---- Google Pay ------------------------------------------------------- */
 
   const payWithGooglePay = useCallback(async () => {
     try {
       const session = sdk.createGooglePayOneTimePaymentSession();
-      const config = await session.getGooglePayConfig();
+      console.log("[googlepay] session methods:", sessionMethods(session));
+
+      const getConfig = pick(
+        session,
+        ["getGooglePayConfig", "config", "formatConfigForPaymentRequest"],
+        "Google Pay",
+      );
+      const config = await getConfig();
 
       const client = new window.google.payments.api.PaymentsClient({
         environment: IS_SANDBOX ? "TEST" : "PRODUCTION",
@@ -299,7 +402,10 @@ export default function SubscribeModal({ open, onClose }) {
   const payWithApplePay = useCallback(async () => {
     try {
       const session = sdk.createApplePayOneTimePaymentSession();
-      const config = await session.config();
+      console.log("[applepay] session methods:", sessionMethods(session));
+
+      const getConfig = pick(session, ["config", "getApplePayConfig"], "Apple Pay");
+      const config = await getConfig();
 
       const applePay = new window.ApplePaySession(4, {
         countryCode: config.countryCode ?? "SG",
@@ -314,18 +420,31 @@ export default function SubscribeModal({ open, onClose }) {
       // merchant account — this is the handshake that proves it. The SDK does
       // the round trip for us, so there's no endpoint of ours involved.
       applePay.onvalidatemerchant = async (event) => {
+        console.log("[applepay] validating merchant via", event.validationURL);
+
         try {
           const { merchantSession } = await session.validateMerchant({
             validationUrl: event.validationURL,
           });
+          console.log("[applepay] merchant validated");
           applePay.completeMerchantValidation(merchantSession);
         } catch (error) {
+          console.error("[applepay] merchant validation failed", error);
           applePay.abort();
-          fail(error);
+
+          // Nearly always the domain: Apple will only accept a session for a
+          // host PayPal has registered and served the association file for.
+          fail(
+            error,
+            `Apple Pay isn't set up for ${window.location.hostname} yet. ` +
+              "The domain has to be registered with PayPal first.",
+          );
         }
       };
 
       applePay.onpaymentauthorized = async (event) => {
+        console.log("[applepay] payment authorised, creating order");
+
         try {
           setFlow({ status: "processing" });
 
@@ -341,15 +460,27 @@ export default function SubscribeModal({ open, onClose }) {
             billingContact: event.payment.billingContact,
           });
 
+          console.log("[applepay] order confirmed, capturing");
           applePay.completePayment(window.ApplePaySession.STATUS_SUCCESS);
           await captureAndActivate(orderId, "applepay");
         } catch (error) {
+          console.error("[applepay] authorisation failed", error);
           applePay.completePayment(window.ApplePaySession.STATUS_FAILURE);
           fail(error);
         }
       };
 
-      applePay.oncancel = () => setFlow({ status: "idle" });
+      applePay.oncancel = () => {
+        console.log("[applepay] cancelled by buyer");
+        setFlow({ status: "idle" });
+      };
+
+      console.log("[applepay] starting with", {
+        countryCode: config.countryCode ?? "SG",
+        currencyCode: CURRENCY,
+        supportedNetworks: config.supportedNetworks,
+        merchantCapabilities: config.merchantCapabilities,
+      });
 
       applePay.begin();
     } catch (error) {
@@ -447,8 +578,11 @@ export default function SubscribeModal({ open, onClose }) {
 
             {sdkStatus === "error" && <p className="cps-error">{sdkError}</p>}
 
-            {sdkStatus === "ready" && flow.status === "idle" && (
-              <div className="cps-methods">
+            {/* Stays mounted through every state. Unmounting it while a card
+                is being submitted would tear down PayPal's field iframes
+                mid-flight and the submit would never settle. */}
+            {sdkStatus === "ready" && (
+              <div className={`cps-methods${flow.status === "idle" ? "" : " is-hidden"}`}>
                 {available.length === 0 && (
                   <p className="cps-error">No payment method is available in this browser.</p>
                 )}
@@ -488,7 +622,10 @@ export default function SubscribeModal({ open, onClose }) {
 
             {flow.status === "error" && (
               <>
-                <p className="cps-error">{flow.message}</p>
+                <p className="cps-error">
+                  {flow.message}
+                  {flow.detail && <small className="cps-error-detail">{flow.detail}</small>}
+                </p>
                 <button type="button" className="cps-cta" onClick={() => setFlow({ status: "idle" })}>
                   Try again
                 </button>
