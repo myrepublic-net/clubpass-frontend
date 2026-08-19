@@ -5,7 +5,9 @@ import {
   activateSubscription,
   captureOrder,
   createOrder,
+  createSetupToken,
   createSubscription,
+  subscribeWithCard,
 } from "../api/subscribe.js";
 import usePaypalSdk, { CURRENCY, IS_SANDBOX, sessionMethods } from "../hooks/usePaypalSdk.js";
 import BoardingQr from "./BoardingQr.jsx";
@@ -232,18 +234,47 @@ export default function SubscribeModal({ open, onClose }) {
 
   /* ---- Card fields ------------------------------------------------------ */
 
+  /** Shared tail of the card route: swap the approved setup token for a subscription. */
+  const subscribeWithSavedCard = useCallback(
+    async (setupTokenId) => {
+      if (!setupTokenId || capturedRef.current.has(setupTokenId)) return;
+      capturedRef.current.add(setupTokenId);
+
+      setFlow({ status: "processing" });
+
+      try {
+        const { transactionId, email } = await subscribeWithCard({
+          setupTokenId,
+          userName: latest.current.userName,
+          email: latest.current.profile?.email,
+        });
+
+        await activate({
+          transactionId,
+          email: email || latest.current.profile?.email || "",
+          closeOnSuccess: true,
+        });
+      } catch (error) {
+        fail(error);
+      }
+    },
+    [activate, fail],
+  );
+
   // Mounting is a side effect of picking the card tile: the fields are PayPal
   // iframes and have to live in the DOM before anything can be typed into them.
   useEffect(() => {
     if (method !== "card" || sdkStatus !== "ready" || !cardHostRef.current) return;
 
-    const session = sdk.createCardFieldsOneTimePaymentSession({
-      // Approval comes through here, the same as every other v6 session. The
-      // submit() promise below reports it too on some builds — whichever
-      // arrives first captures, and capturedRef stops the other.
+    // A *save* session, not a one-time one: the fields vault the card rather
+    // than buying anything, and the Lambda then starts a PayPal subscription
+    // on the saved card. That's what makes card renew through PayPal itself.
+    const session = sdk.createCardFieldsSavePaymentSession({
+      // Approval arrives here on some builds and through submit() on others —
+      // whichever comes first subscribes, and subscribedRef stops the other.
       onApprove: (data) => {
         console.log("[card] onApprove", data);
-        captureAndActivate(data?.orderId ?? cardOrderRef.current, "card");
+        subscribeWithSavedCard(data?.setupTokenId ?? data?.vaultSetupToken ?? cardOrderRef.current);
       },
       onCancel: () => setFlow({ status: "idle" }),
       onError: (error) => fail(error),
@@ -268,7 +299,7 @@ export default function SubscribeModal({ open, onClose }) {
       host.replaceChildren();
       cardSessionRef.current = null;
     };
-  }, [method, sdkStatus, sdk, fail, captureAndActivate]);
+  }, [method, sdkStatus, sdk, fail, subscribeWithSavedCard]);
 
   const payWithCard = useCallback(async () => {
     const session = cardSessionRef.current;
@@ -277,20 +308,14 @@ export default function SubscribeModal({ open, onClose }) {
     setFlow({ status: "processing" });
 
     try {
-      const { orderId } = await createOrder({
-        method: "card",
-        userName: latest.current.userName,
-        email: latest.current.profile?.email,
-      });
+      const { setupTokenId } = await createSetupToken({ userName: latest.current.userName });
 
-      cardOrderRef.current = orderId;
-      console.log("[card] submitting order", orderId);
+      cardOrderRef.current = setupTokenId;
+      console.log("[card] submitting setup token", setupTokenId);
 
-      const result = await session.submit(orderId);
+      const result = await session.submit(setupTokenId);
       console.log("[card] submit resolved", result);
 
-      // Older builds resolve with { state }; newer ones resolve empty and have
-      // already called onApprove. Only the first reading of it does anything.
       const state = result?.state;
 
       if (state === "canceled") {
@@ -303,11 +328,11 @@ export default function SubscribeModal({ open, onClose }) {
         return;
       }
 
-      await captureAndActivate(orderId, "card");
+      await subscribeWithSavedCard(setupTokenId);
     } catch (error) {
       fail(error);
     }
-  }, [captureAndActivate, fail]);
+  }, [subscribeWithSavedCard, fail]);
 
   /* ---- Google Pay ------------------------------------------------------- */
 
@@ -388,18 +413,31 @@ export default function SubscribeModal({ open, onClose }) {
       // merchant account — this is the handshake that proves it. The SDK does
       // the round trip for us, so there's no endpoint of ours involved.
       applePay.onvalidatemerchant = async (event) => {
+        console.log("[applepay] validating merchant via", event.validationURL);
+
         try {
           const { merchantSession } = await session.validateMerchant({
             validationUrl: event.validationURL,
           });
+          console.log("[applepay] merchant validated");
           applePay.completeMerchantValidation(merchantSession);
         } catch (error) {
+          console.error("[applepay] merchant validation failed", error);
           applePay.abort();
-          fail(error);
+
+          // Nearly always the domain: Apple will only accept a session for a
+          // host PayPal has registered and served the association file for.
+          fail(
+            error,
+            `Apple Pay isn't set up for ${window.location.hostname} yet. ` +
+              "The domain has to be registered with PayPal first.",
+          );
         }
       };
 
       applePay.onpaymentauthorized = async (event) => {
+        console.log("[applepay] payment authorised, creating order");
+
         try {
           setFlow({ status: "processing" });
 
@@ -415,15 +453,27 @@ export default function SubscribeModal({ open, onClose }) {
             billingContact: event.payment.billingContact,
           });
 
+          console.log("[applepay] order confirmed, capturing");
           applePay.completePayment(window.ApplePaySession.STATUS_SUCCESS);
           await captureAndActivate(orderId, "applepay");
         } catch (error) {
+          console.error("[applepay] authorisation failed", error);
           applePay.completePayment(window.ApplePaySession.STATUS_FAILURE);
           fail(error);
         }
       };
 
-      applePay.oncancel = () => setFlow({ status: "idle" });
+      applePay.oncancel = () => {
+        console.log("[applepay] cancelled by buyer");
+        setFlow({ status: "idle" });
+      };
+
+      console.log("[applepay] starting with", {
+        countryCode: config.countryCode ?? "SG",
+        currencyCode: CURRENCY,
+        supportedNetworks: config.supportedNetworks,
+        merchantCapabilities: config.merchantCapabilities,
+      });
 
       applePay.begin();
     } catch (error) {

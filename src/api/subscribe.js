@@ -56,8 +56,24 @@ export function activateSubscription({ subscriptionId, userName }) {
 }
 
 /**
- * Card / Google Pay / Apple Pay route. Wallets can't fund a PayPal subscription,
- * so this is a one-month order that *vaults* the payment method — the Lambda's
+ * Card, step 1: an empty setup token for the hosted card fields to fill in.
+ * The card number goes from the fields straight to PayPal.
+ */
+export function createSetupToken({ userName }) {
+  return call("create-setup-token", { userName });
+}
+
+/**
+ * Card, step 2: the Lambda turns the approved setup token into a saved card and
+ * starts a real PayPal subscription on it, so PayPal does the monthly billing.
+ */
+export function subscribeWithCard({ setupTokenId, userName, email }) {
+  return call("subscribe-with-card", { setupTokenId, userName, email });
+}
+
+/**
+ * Google Pay / Apple Pay route. Wallets can't fund a PayPal subscription, so
+ * this is a one-month order that *vaults* the payment method — the Lambda's
  * renewal job charges the saved method every month from then on.
  */
 export function createOrder({ method, userName, email }) {
