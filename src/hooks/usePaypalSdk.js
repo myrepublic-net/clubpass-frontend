@@ -37,6 +37,43 @@ const COMPONENTS = [
   "applepay-payments",
 ];
 
+/**
+ * Subscriptions moved. Some v6 releases ship them as their own component,
+ * others fold them into paypal-payments and reject the name outright — so ask
+ * for it, and drop it if the SDK objects rather than losing every method.
+ */
+const SUBSCRIPTIONS_COMPONENT = "paypal-subscriptions";
+
+async function instantiate(auth) {
+  const options = { ...auth, pageType: "checkout" };
+
+  try {
+    return await window.paypal.createInstance({
+      ...options,
+      components: [...COMPONENTS, SUBSCRIPTIONS_COMPONENT],
+    });
+  } catch (error) {
+    console.warn(
+      `[paypal] "${SUBSCRIPTIONS_COMPONENT}" was rejected, retrying without it:`,
+      error?.message ?? error,
+    );
+    return window.paypal.createInstance({ ...options, components: COMPONENTS });
+  }
+}
+
+/** Every method an SDK instance or session actually has, own properties and prototype alike. */
+export function sessionMethods(sdk) {
+  const names = new Set();
+
+  for (let object = sdk; object && object !== Object.prototype; object = Object.getPrototypeOf(object)) {
+    for (const key of Object.getOwnPropertyNames(object)) {
+      if (key !== "constructor" && typeof sdk[key] === "function") names.add(key);
+    }
+  }
+
+  return [...names].sort();
+}
+
 export const CURRENCY = import.meta.env.VITE_PAYPAL_CURRENCY ?? "SGD";
 
 const scripts = new Map();
@@ -101,23 +138,57 @@ function createSdk() {
       }),
     ]);
 
-    const sdk = await window.paypal.createInstance({
-      ...auth,
-      components: COMPONENTS,
-      pageType: "checkout",
-    });
+    const sdk = await instantiate(auth);
+
+    // The one list that settles "is not a function" questions.
+    console.log(
+      "[paypal] sdk sessions:",
+      sessionMethods(sdk).filter((name) => name.startsWith("create")),
+    );
 
     const methods = await sdk.findEligibleMethods({ currencyCode: CURRENCY });
 
-    return {
-      sdk,
-      eligible: {
-        paypal: methods.isEligible("paypal"),
-        card: methods.isEligible("card"),
-        googlepay: methods.isEligible("googlepay") && Boolean(window.google?.payments),
-        applepay: methods.isEligible("applepay") && Boolean(window.ApplePaySession?.canMakePayments?.()),
-      },
+    // An unknown key throws rather than returning false, and the set PayPal
+    // accepts has changed between v6 releases — so ask defensively.
+    const can = (name) => {
+      try {
+        return Boolean(methods.isEligible(name));
+      } catch {
+        return false;
+      }
     };
+
+    // Two different card integrations share the word "card": `advanced_cards`
+    // is the hosted card-fields path this app uses, `card` is PayPal's basic
+    // guest-card page. Only the first one tells us the fields will work.
+    const eligible = {
+      paypal: can("paypal"),
+      card: can("advanced_cards"),
+      googlepay: can("googlepay") && Boolean(window.google?.payments),
+      applepay: can("applepay") && Boolean(window.ApplePaySession?.canMakePayments?.()),
+    };
+
+    // What PayPal said, before our own browser gating — the only way to tell a
+    // method the account can't do from one this browser can't show.
+    console.log("[paypal] merchant eligibility:", {
+      paypal: can("paypal"),
+      advanced_cards: can("advanced_cards"),
+      card: can("card"),
+      googlepay: can("googlepay"),
+      applepay: can("applepay"),
+      paylater: can("paylater"),
+      venmo: can("venmo"),
+    });
+    console.log("[paypal] this browser:", {
+      googlePayScript: Boolean(window.google?.payments),
+      applePaySession: Boolean(window.ApplePaySession),
+      applePayCanMakePayments: Boolean(window.ApplePaySession?.canMakePayments?.()),
+      currency: CURRENCY,
+      env: IS_SANDBOX ? "sandbox" : "live",
+    });
+    console.log("[paypal] showing:", eligible);
+
+    return { sdk, eligible };
   })();
 
   instancePromise.catch(() => {

@@ -181,6 +181,17 @@
   display: none;
 }
 
+/* Hidden while a payment is in flight, but deliberately NOT display:none —
+   PayPal's card-field iframes have to stay in the document and keep their
+   layout for the submit they're in the middle of. */
+.cps-methods.is-hidden {
+  position: absolute;
+  height: 0;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+}
+
 .cps-card-fields {
   display: grid;
   grid-template-columns: 1fr 1fr;
