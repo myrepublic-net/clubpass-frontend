@@ -1,0 +1,219 @@
+/* ==========================================================================
+   Driver console — sign-in and the camera scanner.
+   Scoped under .drv-page so it can't reach the member-facing pages.
+   ========================================================================== */
+
+.drv-page {
+  --drv-ink: #191024;
+  --drv-muted: #6F6880;
+  --drv-line: #EAE5F8;
+  --drv-purple: #7C3AED;
+
+  font-family: "Outfit", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  color: var(--drv-ink);
+  background: #EFEBF7;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.drv-page *,
+.drv-page *::before,
+.drv-page *::after {
+  box-sizing: border-box;
+}
+
+.drv-card {
+  width: 100%;
+  max-width: 420px;
+  background: #fff;
+  border-radius: 20px;
+  padding: 24px;
+  box-shadow: 0 20px 50px -30px rgba(25, 16, 36, .5);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.drv-card h1 {
+  margin: 0;
+  font-size: 21px;
+  font-weight: 900;
+}
+
+.drv-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.drv-sub {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--drv-muted);
+}
+
+.drv-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.drv-field span {
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.drv-field input {
+  height: 48px;
+  padding: 0 14px;
+  border: 1px solid var(--drv-line);
+  border-radius: 12px;
+  font-family: inherit;
+  font-size: 16px; /* 16px keeps iOS from zooming the page on focus */
+  color: inherit;
+  background: #fff;
+}
+
+.drv-field input:focus {
+  outline: 2px solid var(--drv-purple);
+  outline-offset: 1px;
+  border-color: transparent;
+}
+
+.drv-btn {
+  width: 100%;
+  border: 0;
+  border-radius: 999px;
+  padding: 16px 22px;
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: 700;
+  color: #fff;
+  background: var(--drv-purple);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.drv-btn:active {
+  transform: scale(.985);
+}
+
+.drv-btn[disabled] {
+  opacity: .65;
+  cursor: default;
+}
+
+.drv-btn-quiet {
+  background: #F4F0FE;
+  color: #4C1D95;
+}
+
+.drv-link {
+  border: 0;
+  background: none;
+  padding: 0;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--drv-purple);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.drv-error {
+  margin: 0;
+  padding: 12px 14px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #7F1D1D;
+  background: #FEF2F2;
+  border: 1px solid #FECACA;
+  border-radius: 12px;
+}
+
+/* --- camera --- */
+
+.drv-viewport {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  border-radius: 16px;
+  overflow: hidden;
+  background: #14061F;
+}
+
+.drv-viewport.is-hidden {
+  display: none;
+}
+
+.drv-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Where to hold the pass. Purely a sighting aid — decoding uses the whole frame. */
+.drv-reticle {
+  position: absolute;
+  inset: 18%;
+  border: 3px solid rgba(255, 255, 255, .9);
+  border-radius: 14px;
+  box-shadow: 0 0 0 100vmax rgba(0, 0, 0, .35);
+}
+
+/* Decoding surface for browsers without BarcodeDetector. Never displayed. */
+.drv-canvas {
+  display: none;
+}
+
+/* --- result --- */
+
+.drv-result {
+  text-align: center;
+  padding: 6px 0 0;
+}
+
+.drv-result h2 {
+  margin: 10px 0 4px;
+  font-size: 20px;
+  font-weight: 900;
+}
+
+.drv-name {
+  margin: 0 0 2px;
+  font-size: 16px;
+  font-weight: 700;
+  word-break: break-word;
+}
+
+.drv-tick,
+.drv-cross {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  font-size: 30px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.drv-tick {
+  color: #15803D;
+  background: #DCFCE7;
+}
+
+.drv-cross {
+  color: #B91C1C;
+  background: #FEE2E2;
+}
+
+.drv-result .drv-btn {
+  margin-top: 16px;
+}

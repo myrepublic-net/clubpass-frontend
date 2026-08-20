@@ -4,12 +4,15 @@ import { useSearchParams } from "react-router";
 import { readScanToken, verifyScan } from "../api/clubpassUser.js";
 import "../css/scan-confirm.css";
 
-const SCAN_NAMES = {
-  firstScan: "1st night",
-  secondScan: "2nd night",
-  thirdScan: "3rd night",
-  fourthScan: "4th night",
-};
+/**
+ * Which night this was, worked out from what's left. Boardings are rows in
+ * clubpass-scan now rather than four named columns, so the response no longer
+ * names the night — but four minus the remainder still does.
+ */
+function nightUsed(tripLeft) {
+  const used = 4 - Number(tripLeft ?? 0);
+  return ["1st night", "2nd night", "3rd night", "4th night"][used - 1] ?? "—";
+}
 
 const timeFormat = new Intl.DateTimeFormat("en-SG", {
   day: "numeric",
@@ -68,6 +71,14 @@ export default function ScanConfirm() {
       setFlow({ status: "done", result });
     } catch (error) {
       console.error("ClubPass scan failed", error);
+
+      // Scanning is driver-only now. Send them to sign in rather than showing
+      // "not boarded", which would read as the member's pass being at fault.
+      if (error.code === "NO_DRIVER") {
+        setFlow({ status: "needsDriver", message: error.message });
+        return;
+      }
+
       setFlow({ status: "failed", message: error.message });
     }
   }, [userName, token]);
@@ -89,7 +100,7 @@ export default function ScanConfirm() {
         <dl className="cpv-facts">
           <div>
             <dt>Night used</dt>
-            <dd>{SCAN_NAMES[flow.result?.scan] ?? "—"}</dd>
+            <dd>{nightUsed(left)}</dd>
           </div>
           <div>
             <dt>Remaining</dt>
@@ -98,6 +109,20 @@ export default function ScanConfirm() {
         </dl>
         {left === 0 && <p className="cpv-note">That was the last night on this pass.</p>}
         <p className="cpv-fine">{formatTime(flow.result?.scannedAt)}</p>
+      </Screen>
+    );
+  }
+
+  if (flow.status === "needsDriver") {
+    const back = `${window.location.pathname}${window.location.search}`;
+
+    return (
+      <Screen tone="bad" mark="!" title="Driver sign-in needed">
+        <p>{flow.message}</p>
+        <a className="cpv-cta" href={`/driver?next=${encodeURIComponent(back)}`}>
+          Go to driver sign-in
+        </a>
+        <p className="cpv-fine">Sign in once and this link will work for the rest of your shift.</p>
       </Screen>
     );
   }

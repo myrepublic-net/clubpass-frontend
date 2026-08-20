@@ -1,3 +1,8 @@
+import { driverToken, signOutDriver } from "./driverAuth.js";
+
+/** The exact message the Strapi verify route's policy replies with. */
+const DRIVER_REQUIRED = "Driver sign-in required";
+
 const BASE_URL =
   import.meta.env.VITE_STRAPI_URL ?? "https://exciting-flower-bc33aab938.strapiapp.com";
 const TOKEN = import.meta.env.VITE_STRAPI_TOKEN;
@@ -119,12 +124,52 @@ export function readScanToken(token) {
   }
 }
 
-/** Spends one trip. Rejects when the token is expired, reused or already spent. */
+/**
+ * Spends one trip. Rejects when the token is expired, reused or already spent.
+ *
+ * The only call here that doesn't use the site's API token: a scan is a write
+ * against someone's membership, so it goes out as the signed-in driver and
+ * Strapi decides whether that driver is allowed to make it.
+ */
 export async function verifyScan({ userName, token }) {
-  const body = await request("/clubpass-users/verify", {
+  const jwt = driverToken();
+
+  if (!jwt) {
+    throw Object.assign(new Error("Sign in as a driver to scan boarding passes."), {
+      code: "NO_DRIVER",
+    });
+  }
+
+  const res = await fetch(`${BASE_URL}/api/clubpass-users/verify`, {
     method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${jwt}`,
+    },
     body: JSON.stringify({ userName, token }),
   });
+
+  const body = await res.json().catch(() => null);
+
+  // An expired *scan* token is also a 401, so the two can't be told apart by
+  // status. These two messages are the only ones about the driver's own
+  // sign-in: one from our route policy, one from Strapi's JWT check.
+  const message = body?.error?.message ?? "";
+  const signInRejected =
+    message === DRIVER_REQUIRED || message.toLowerCase().includes("credentials");
+
+  if (signInRejected) {
+    // A shift that has run past its JWT — drop it, so the driver is asked to
+    // sign in again rather than tapping a button that silently does nothing.
+    signOutDriver();
+    throw Object.assign(new Error("Your driver sign-in has expired. Please sign in again."), {
+      code: "NO_DRIVER",
+    });
+  }
+
+  if (!res.ok) {
+    throw new Error(body?.error?.message ?? `Scan failed (${res.status})`);
+  }
 
   return body?.data ?? null;
 }
