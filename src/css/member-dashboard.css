@@ -124,6 +124,15 @@
   color: var(--cmd-muted);
 }
 
+.cmd-note-warn {
+  margin: 14px 0 0;
+  padding: 11px 13px;
+  color: #854D0E;
+  background: #FEFCE8;
+  border: 1px solid #FDE68A;
+  border-radius: 12px;
+}
+
 .cmd-error {
   margin: 0 0 12px;
   padding: 11px 13px;

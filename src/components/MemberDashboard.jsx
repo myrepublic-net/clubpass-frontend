@@ -37,12 +37,14 @@ function membershipStatus(user) {
     case "cancelled":
       return { label: "Cancelled", tone: "off" };
     case "lapsed":
-      return { label: "Payment issue", tone: "bad" };
-    case "manual-renewal":
-      // Paid, but nothing saved to charge next month — a payment issue that
-      // hasn't happened yet, and telling them now beats a surprise later.
+      // A charge that actually failed — the membership is at risk.
       return { label: "Payment issue", tone: "bad" };
     default:
+      // "manual-renewal" lands here on purpose: the payment went through and
+      // the membership is running. Nothing was saved to charge next month,
+      // which is a renewal problem, not a payment one — saying "payment issue"
+      // straight after a successful payment reads as "your money didn't
+      // arrive". The subscription card carries the actual caveat.
       return { label: "Active", tone: "good" };
   }
 }
@@ -76,6 +78,9 @@ export default function MemberDashboard({ onRestart }) {
 
   const status = membershipStatus(user);
   const cancelled = user?.billingStatus === "cancelled";
+
+  // Paid up, but with no saved payment method behind it.
+  const noAutoRenew = user?.billingStatus === "manual-renewal";
 
   const cancel = useCallback(async () => {
     setCancelState({ status: "working" });
@@ -227,6 +232,13 @@ export default function MemberDashboard({ onRestart }) {
                 <dd>{status.label}</dd>
               </div>
             </dl>
+
+            {noAutoRenew && (
+              <p className="cmd-note cmd-note-warn">
+                Auto-renew isn't set up for this payment method, so this month won't renew on its
+                own. Subscribe again before it runs out to keep your nights.
+              </p>
+            )}
           </div>
         </Section>
 
