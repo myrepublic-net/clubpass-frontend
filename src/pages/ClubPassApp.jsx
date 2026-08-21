@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Plus } from "lucide-react";
 
-import MembershipPass from "../components/MembershipPass.jsx";
+import MemberDashboard from "../components/MemberDashboard.jsx";
 import SubscribeModal from "../components/SubscribeModal.jsx";
 import { useClubpassUser } from "../components/clubpassUserContext.js";
 import { isPaid } from "../api/clubpassUser.js";
@@ -87,6 +87,18 @@ export default function ClubPassApp() {
   const toggleFaq = (index) => setOpenFaq((prev) => (prev === index ? null : index));
   const vote = (id) => setVoted((prev) => (prev.includes(id) ? prev : [...prev, id]));
 
+  // Once they've paid, the sales page has nothing left to say — this is their
+  // dashboard from then on. SubscribeModal stays mounted so a cancelled member
+  // can restart from inside it.
+  if (paid) {
+    return (
+      <>
+        <MemberDashboard onRestart={() => setSubscribeOpen(true)} />
+        <SubscribeModal open={subscribeOpen} onClose={() => setSubscribeOpen(false)} />
+      </>
+    );
+  }
+
   return (
     <div className="clubpass-app-page">
       {/* React 19 hoists these into <head> — no Helmet needed. */}
@@ -124,9 +136,7 @@ export default function ClubPassApp() {
             ride.
           </p>
 
-          {paid ? (
-            <MembershipPass user={user} />
-          ) : (
+          {paid ? null : (
             <button
               type="button"
               className="cpm-btn cpm-btn-white cpm-btn-lg"

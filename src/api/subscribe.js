@@ -56,6 +56,14 @@ export function activateSubscription({ subscriptionId, userName }) {
 }
 
 /**
+ * Stops the renewal. The member keeps the nights already paid for — the Lambda
+ * returns the date access runs out.
+ */
+export function cancelSubscription({ subscriptionId, userName }) {
+  return call("cancel-subscription", { subscriptionId, userName });
+}
+
+/**
  * Card, step 1: an empty setup token for the hosted card fields to fill in.
  * The card number goes from the fields straight to PayPal.
  */
