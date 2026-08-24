@@ -57,7 +57,7 @@
   font-weight: 700;
   color:#fff;
   text-align: center;
-      font-family: "Bricolage Grotesque", sans-serif;
+  margin-bottom: 10px;
 }
 
 .drv-head {
@@ -145,7 +145,7 @@
   font-family: inherit;
   font-size: 13px;
   font-weight: 700;
-  color: var(--drv-purple);
+  color: #fff;
   cursor: pointer;
   white-space: nowrap;
 }
