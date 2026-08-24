@@ -831,7 +831,7 @@ export default function ClubPass() {
 
             <div className="cpn-ticket">
               <div className="cpn-ticket-head">
-                Club pass - Home Express
+                Clubpass - Home Express
               </div>
 
               <div className="cpn-ticket-body">

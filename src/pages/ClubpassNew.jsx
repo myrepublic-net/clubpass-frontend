@@ -589,7 +589,7 @@ export default function ClubpassNew() {
             <span className="cpn-spark cpn-spark--2" aria-hidden="true" />
 
             <div className="cpn-ticket">
-              <div className="cpn-ticket-head">Club pass - Home Express</div>
+              <div className="cpn-ticket-head">Clubpass - Home Express</div>
 
               <div className="cpn-ticket-body">
                 <div className="cpn-price">
