@@ -20,13 +20,26 @@
   gap: 18px;
   min-height: 100vh;
   padding: 32px 24px;
-  font-family: "Outfit", ui-sans-serif, system-ui, -apple-system, sans-serif;
+   font-family: "Bricolage Grotesque", sans-serif;
   color: var(--cpg-ink);
   text-align: center;
   background: #EFEBF7;
   -webkit-font-smoothing: antialiased;
+  background-image: url(/images/cpn/cp-one-banner.png);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    position: relative;
 }
-
+.cpg-gate-overlay {
+    position: absolute;
+    background: #000000ab;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    top: 0;
+    left: 0;
+}
 .cpg-gate *,
 .cpg-gate *::before,
 .cpg-gate *::after {
@@ -34,27 +47,38 @@
 }
 
 .cpg-card {
-  width: 100%;
-  max-width: 420px;
-  padding: 32px 24px;
-  background: #fff;
-  border: 1px solid var(--cpg-line);
-  border-radius: 22px;
-  box-shadow: 0 18px 40px rgba(36, 21, 57, 0.08);
+      z-index: 1;
+    width: 100%;
+    max-width: 420px;
+    background: #06439D;
+    border-radius: 20px;
+    padding: 24px;
+    box-shadow: 0 20px 50px -30px rgba(25, 16, 36, .5);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    z-index: 1;
+}
+
+.cpg-card .cp-logo {
+ width: 180px;
+     margin: auto;
 }
 
 .cpg-gate h1 {
-  margin: 0 0 10px;
+  margin: 0 0 0px;
   font-size: 24px;
-  font-weight: 800;
+  font-weight: 700;
   letter-spacing: -0.025em;
+  color: #fff;
 }
 
 .cpg-gate p {
   margin: 0;
   font-size: 15px;
   line-height: 1.55;
-  color: var(--cpg-muted);
+  color: #fff;
+      margin-top: 0 !important;
 }
 
 .cpg-mark {
@@ -67,23 +91,20 @@
 }
 
 .cpg-cta {
-  display: block;
-  margin-top: 22px;
-  padding: 15px 20px;
-  font-size: 16px;
-  font-weight: 700;
-  color: #fff;
-  text-decoration: none;
-  background: var(--cpg-purple);
-  border: 0;
-  border-radius: 14px;
-  cursor: pointer;
-  width: 100%;
+width: 100%;
+    border: 0;
+    border-radius: 999px;
+    padding: 10px 20px;
+    font-family: inherit;
+    font-size: 18px;
+    font-weight: 700;
+    color: #161616;
+    background: #1FDBDA;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    margin-top: 30px;
 }
 
-.cpg-cta:hover {
-  background: #6D28D9;
-}
 
 .cpg-fine {
   margin-top: 14px !important;

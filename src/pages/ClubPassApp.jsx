@@ -112,7 +112,7 @@ export default function ClubPassApp() {
       <div className="cpm-shell">
         {/* ================= Who's signed in ================= */}
         <header className="cpm-topbar">
-          <div className="mb-logo"><img src="/images/cb-app-logo.png"/></div>
+          <div className="mb-logo"><img src="/images/cp-rw-logo.png"/></div>
            <div className="mb-user">
           <span className="cpm-topbar-avatar" aria-hidden="true">
             {userName.slice(0, 1).toUpperCase()}
