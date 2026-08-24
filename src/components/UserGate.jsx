@@ -33,6 +33,7 @@ const SSO_FALLBACK_MESSAGE =
 function Loader() {
   return (
     <div className="cpg-gate">
+      <div className="cpg-gate-overlay"></div>
       <div className="cpg-spinner" role="status" aria-label="Loading your Clubpass" />
       <p className="cpg-loading-text">Loading your Clubpass…</p>
     </div>
@@ -43,8 +44,10 @@ function Loader() {
 function Register() {
   return (
     <div className="cpg-gate">
+      <div className="cpg-gate-overlay"></div>
       <div className="cpg-card">
-        <span className="cpg-mark" aria-hidden="true" />
+         <img className="cp-logo" src="/images/cp-rw-logo.png"/>
+        {/* <span className="cpg-mark" aria-hidden="true" /> */}
         <h1>Register with RewardLand</h1>
         <p>Clubpass lives inside the RewardLand app. Create your account first, then open Clubpass from there.</p>
         <a className="cpg-cta" href={APP_LINK} target="_blank" rel="noopener noreferrer">
@@ -60,6 +63,7 @@ function Register() {
 function SsoFailed({ message }) {
   return (
     <div className="cpg-gate">
+      <div className="cpg-gate-overlay"></div>
       <div className="cpg-card">
         <span className="cpg-mark" aria-hidden="true" />
         <h1>Please try again</h1>

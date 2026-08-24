@@ -312,7 +312,7 @@ export default function ClubPass() {
       <header className="cp-header">
         <div className="cp-container cp-header-inner">
           <a className="cp-brand" href="#top">
-            <img src="/images/club-logo.png" />
+            <img src="/images/cp-rw-logo.png" />
           </a>
 
           <nav className={`cp-nav${menuOpen ? " is-open" : ""}`}>
@@ -983,7 +983,7 @@ export default function ClubPass() {
       <footer className="cp-footer">
         <div className="cp-container cp-footer-inner">
           <div className="cp-brand">
-            <img src="/images/club-logo.png" />
+            <img src="/images//cp-rw-logo.png" />
             {/* <span className="cp-brand-mark">R</span>
 
             <span className="cp-brand-name">

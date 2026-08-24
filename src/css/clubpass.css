@@ -1214,6 +1214,7 @@ a.cp-btn.cp-btn-ghost {
 .cp-footer {
   border-top: 1px solid var(--cp-line);
   padding: 26px 0;
+  background-color: #0a0705;
 }
 
 .cp-footer-inner {
@@ -1240,12 +1241,10 @@ a.cp-btn.cp-btn-ghost {
 
 .cp-footer-links a {
   font-size: 12px;
-  color: var(--cp-muted);
+  color: #fff;
 }
 
-.cp-footer-links a:hover {
-  color: var(--cp-purple);
-}
+
 
 .clubpass-page section#faq .cp-container {
     padding-top: 88px !important;

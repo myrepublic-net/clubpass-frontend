@@ -57,6 +57,7 @@ function SignIn({ onSignedIn }) {
 
   return (
     <form className="drv-card" onSubmit={submit}>
+      <img className="cp-logo" src="/images/cp-rw-logo.png"/>
       <h1>Driver sign-in</h1>
       <p className="drv-sub">Sign in to scan boarding passes.</p>
 
@@ -322,6 +323,7 @@ export default function DriverScan() {
 
   return (
     <div className="drv-page">
+      <div className="drv-overlay"></div>
       <title>Driver scanner | Clubpass</title>
       {driver ? <Scanner driver={driver} onSignOut={signOut} /> : <SignIn onSignedIn={signedIn} />}
     </div>
