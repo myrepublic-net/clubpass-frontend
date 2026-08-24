@@ -26,7 +26,7 @@ export const PICKUPS = [
     time: "01:00",
     photo: "/images/pickups/mbs.jpg",
     instructions:
-      "Taxi bay outside the Event Plaza, by the waterfront steps. The coach waits in the second bay — look for the ClubPass sign in the windscreen.",
+      "Taxi bay outside the Event Plaza, by the waterfront steps. The coach waits in the second bay — look for the Clubpass sign in the windscreen.",
     mapUrl: "https://maps.google.com/?q=Marina+Bay+Sands+Event+Plaza+Singapore",
   },
   {
@@ -84,7 +84,7 @@ export const SUPPORT_URL =
 
 /** The plan, as shown on the subscription card. Matches the PayPal billing plan. */
 export const PLAN = {
-  name: "ClubPass · Home Express",
+  name: "Clubpass · Home Express",
   price: import.meta.env.VITE_CLUBPASS_PRICE ?? "19.90",
   currency: import.meta.env.VITE_PAYPAL_CURRENCY ?? "SGD",
   cycle: "Monthly",

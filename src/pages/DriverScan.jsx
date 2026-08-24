@@ -322,7 +322,7 @@ export default function DriverScan() {
 
   return (
     <div className="drv-page">
-      <title>Driver scanner | ClubPass</title>
+      <title>Driver scanner | Clubpass</title>
       {driver ? <Scanner driver={driver} onSignOut={signOut} /> : <SignIn onSignedIn={signedIn} />}
     </div>
   );

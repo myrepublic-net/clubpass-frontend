@@ -107,12 +107,12 @@ export default function MemberDashboard({ onRestart }) {
 
   return (
     <div className="cmd-page">
-      <title>Your ClubPass | Home Express</title>
+      <title>Your Clubpass | Home Express</title>
 
       <div className="cmd-shell">
         {/* ============ 1. Welcome ============ */}
         <header className="cmd-hero">
-          <p className="cmd-eyebrow">ClubPass · Home Express</p>
+          <p className="cmd-eyebrow">Clubpass · Home Express</p>
           <h1>Welcome back, {userName}</h1>
 
           <span className={`cmd-status cmd-status--${status.tone}`}>

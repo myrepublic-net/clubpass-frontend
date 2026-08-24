@@ -34,7 +34,7 @@ const STEPS = [
   },
   {
     num: "02",
-    title: "Find ClubPass",
+    title: "Find Clubpass",
     text: "It lives right inside the app, next to your rewards wallet.",
     meta: "One tap",
   },
@@ -89,7 +89,7 @@ const MEMBER_BENEFITS = [
 
 const FAQS = [
   {
-    q: "What is ClubPass Home Express?",
+    q: "What is Clubpass Home Express?",
     a: "A monthly membership for scheduled late-night coaches: a pick-up loop through the city's nightlife spots, then express drop-offs in the East. Fixed schedule, fixed price — no surge, no waiting for a driver at 3am.",
   },
   {
@@ -102,7 +102,7 @@ const FAQS = [
   },
   {
     q: "Do I need a new account or app?",
-    a: "No. ClubPass sits inside the RewardLand app you already have. If you're an existing user you're signed in automatically — no new account, no second app to download.",
+    a: "No. Clubpass sits inside the RewardLand app you already have. If you're an existing user you're signed in automatically — no new account, no second app to download.",
   },
   {
     q: "How does billing and cancellation work?",
@@ -157,7 +157,7 @@ export default function ClubPass() {
   return (
     <div className="clubpass-page">
       {/* React 19 hoists these into <head> — no Helmet needed. */}
-      <title>ClubPass Home Express | RewardLand</title>
+      <title>Clubpass Home Express | RewardLand</title>
       <meta
         name="description"
         content="Singapore's first late-night coach membership. Scheduled departures from the club district straight to the East — S$19.90/month, no surge, cancel anytime."
@@ -208,7 +208,7 @@ export default function ClubPass() {
         <div className="cp-hero-inner">
           <div className="cp-container">
             <div className="cp-hero-copy">
-              <span className="cp-tag">ClubPass · Home Express by RewardLand</span>
+              <span className="cp-tag">Clubpass · Home Express by RewardLand</span>
 
               <h1>
                 The night is yours.
@@ -262,7 +262,7 @@ export default function ClubPass() {
       <section className="cp-section">
         <div className="cp-container">
           <div className="cp-why-head cp-center">
-            <p className="cp-eyebrow">Why ClubPass</p>
+            <p className="cp-eyebrow">Why Clubpass</p>
             <h2 className="cp-h2">
               Getting home after 2am shouldn't be the hardest part of the night.
             </h2>
@@ -270,7 +270,7 @@ export default function ClubPass() {
 
           <div className="cp-compare">
             <div className="cp-card-plain">
-              <p className="cp-card-label">Tonight, without ClubPass</p>
+              <p className="cp-card-label">Tonight, without Clubpass</p>
               <ul className="cp-list">
                 {WITHOUT_CLUBPASS.map((item) => (
                   <li key={item}>
@@ -284,7 +284,7 @@ export default function ClubPass() {
             </div>
 
             <div className="cp-card-dark">
-              <p className="cp-card-label">Tonight, with ClubPass</p>
+              <p className="cp-card-label">Tonight, with Clubpass</p>
               <ul className="cp-list">
                 {WITH_CLUBPASS.map((item) => (
                   <li key={item}>
@@ -519,7 +519,7 @@ export default function ClubPass() {
               <div className="card-m">
             <div className="cp-ticket">
               <div className="cp-ticket-head">
-                <span>ClubPass · Home Express</span>
+                <span>Clubpass · Home Express</span>
                 <span className="cp-ticket-badge">R</span>
               </div>
 
@@ -623,7 +623,7 @@ export default function ClubPass() {
             <h2>Be one of the first 150.</h2>
             <p>
               Founder pricing ends when the seats are gone. Lock in S$19.90/month and be part of
-              ClubPass from night one.
+              Clubpass from night one.
             </p>
 
             <a

@@ -20,7 +20,7 @@ const HERO_SLIDES = [
   {
     id: "night",
     art: `${IMG}/hero-art.jpg`,
-    alt: "ClubPass party bus rolling through Singapore",
+    alt: "Clubpass party bus rolling through Singapore",
     lines: ["The night is yours."],
     accent: ["The ride home", "is ours."],
     text: "Singapore’s first late-night coach membership. Scheduled departures from the club district straight to the East — for less than one surge-hour ride.",
@@ -29,7 +29,7 @@ const HERO_SLIDES = [
   {
     id: "schedule",
     art: "/images/clubpass-hero.png",
-    alt: "ClubPass Home Express coach at Marina Bay",
+    alt: "Clubpass Home Express coach at Marina Bay",
     lines: ["Four nights a month."],
     accent: ["Always on the clock."],
     text: "Departures are fixed and published ahead of time — never “when the bus fills up”. One night a week, every week, at a price that never surges.",
@@ -38,7 +38,7 @@ const HERO_SLIDES = [
   {
     id: "members",
     art: "/images/cba-banner.jpg",
-    alt: "ClubPass members boarding the Home Express",
+    alt: "Clubpass members boarding the Home Express",
     lines: ["Members only."],
     accent: ["Verified at the door."],
     text: "Every seat is booked to a verified RewardLand member and boarding is QR-verified. Licensed operators, professional drivers, no walk-ons.",
@@ -67,7 +67,7 @@ const STEPS = [
   },
   {
     num: 2,
-    title: "Find ClubPass",
+    title: "Find Clubpass",
     text: "It lives right inside the app, next to your rewards wallet.",
     meta: "One tap",
   },
@@ -127,7 +127,7 @@ const MEMBER_BENEFITS = [
 
 const FAQS = [
   {
-    q: "What is ClubPass Home Express?",
+    q: "What is Clubpass Home Express?",
     a: "A monthly membership for scheduled late-night coaches: a pick-up loop through the city's nightlife spots, then express drop-offs in the East. Fixed schedule, fixed price - no surge, no waiting for a driver at 3am.",
   },
   {
@@ -140,7 +140,7 @@ const FAQS = [
   },
   {
     q: "Do I need a new account or app?",
-    a: "No. ClubPass sits inside the RewardLand app you already have. If you're an existing user you're signed in automatically - no new account, no second app to download.",
+    a: "No. Clubpass sits inside the RewardLand app you already have. If you're an existing user you're signed in automatically - no new account, no second app to download.",
   },
   {
     q: "How does billing and cancellation work?",
@@ -224,7 +224,7 @@ export default function ClubpassNew() {
   return (
     <div className="cpn-page">
       {/* React 19 hoists these into <head>. */}
-      <title>ClubPass Home Express | RewardLand</title>
+      <title>Clubpass Home Express | RewardLand</title>
       <meta
         name="description"
         content="Singapore's first late-night coach membership. Scheduled departures from the club district straight to the East — SGD$19.90/month, no surge, cancel anytime."
@@ -234,7 +234,7 @@ export default function ClubpassNew() {
       <header className="cpn-header">
         <div className="cpn-header-inner">
           <a className="cpn-logo" href="#top">
-            <img src={`${IMG}/logo.jpg`} alt="ClubPass by RewardLand" />
+            <img src={`${IMG}/logo.jpg`} alt="Clubpass by RewardLand" />
           </a>
 
           <nav className={`cpn-nav${menuOpen ? " is-open" : ""}`}>
@@ -686,7 +686,7 @@ export default function ClubpassNew() {
             <h2>Be one of the first 150.</h2>
             <p>
               Founder pricing ends when the seats are gone. Lock in SGD$19.90/mth and be part of
-              ClubPass from night one.
+              Clubpass from night one.
             </p>
             <a
               className="cpn-btn cpn-btn--dark"

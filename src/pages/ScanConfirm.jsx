@@ -85,7 +85,7 @@ export default function ScanConfirm() {
 
   if (!valid) {
     return (
-      <Screen tone="bad" mark="!" title="This isn't a ClubPass link">
+      <Screen tone="bad" mark="!" title="This isn't a Clubpass link">
         <p>Scan the QR code shown in the member's RewardLand app.</p>
       </Screen>
     );
@@ -139,7 +139,7 @@ export default function ScanConfirm() {
   const expired = countdown <= 0;
 
   return (
-    <Screen tone="neutral" mark="" title="ClubPass">
+    <Screen tone="neutral" mark="" title="Clubpass">
       <p className="cpv-name">{userName}</p>
       <p className="cpv-left">{nights(payload.tripLeft ?? 0)} left</p>
 
@@ -162,7 +162,7 @@ export default function ScanConfirm() {
 function Screen({ tone, mark, title, children }) {
   return (
     <main className="cpv-page">
-      <title>ClubPass boarding</title>
+      <title>Clubpass boarding</title>
       <meta name="theme-color" content="#14061F" />
 
       <div className={`cpv-card cpv-card--${tone}`}>

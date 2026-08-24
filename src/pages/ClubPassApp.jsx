@@ -102,7 +102,7 @@ export default function ClubPassApp() {
   return (
     <div className="clubpass-app-page">
       {/* React 19 hoists these into <head> — no Helmet needed. */}
-      <title>ClubPass Home Express | RewardLand</title>
+      <title>Clubpass Home Express | RewardLand</title>
       <meta
         name="description"
         content="Late-night coaches from the club district straight to the East. S$19.90/month, no surge, cancel anytime — inside the RewardLand app."
@@ -123,7 +123,7 @@ export default function ClubPassApp() {
 
         {/* ================= Hero ================= */}
         <section className="cpm-hero">
-          <span className="cpm-tag">ClubPass · Home Express</span>
+          <span className="cpm-tag">Clubpass · Home Express</span>
 
           <h1>
             The night is yours.
@@ -389,7 +389,7 @@ export default function ClubPassApp() {
         {/* ================= Price card ================= */}
         <section className="cpm-pad cpm-price-wrap">
           <div className="cpm-price-head">
-                <span>ClubPass · Home Express</span>
+                <span>Clubpass · Home Express</span>
               </div>
           <div className="card-m mb-card-in">
             <div className="cpm-price">
@@ -507,7 +507,7 @@ export default function ClubPassApp() {
 </div>
         {/* ================= Footer ================= */}
         <footer className="cpm-footer">
-          ClubPass by RewardLand
+          Clubpass by RewardLand
           <i>·</i>
           <a href={`${SITE}/terms-and-conditions`}>Terms of Use</a>
           <i>·</i>

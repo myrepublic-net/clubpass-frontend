@@ -80,7 +80,7 @@ const STEPS = [
   {
     img: "/images/two.png",
     num: "02",
-    title: "Find ClubPass",
+    title: "Find Clubpass",
     text: "It lives right inside the app, next to your rewards wallet.",
     meta: "One tap",
   },
@@ -147,7 +147,7 @@ const MEMBER_BENEFITS = [
 
 const FAQS = [
   {
-    q: "What is ClubPass Home Express?",
+    q: "What is Clubass Home Express?",
     a: "A monthly membership for scheduled late-night coaches: a pick-up loop through the city's nightlife spots, then express drop-offs in the East. Fixed schedule, fixed price — no surge, no waiting for a driver at 3am.",
   },
   {
@@ -160,7 +160,7 @@ const FAQS = [
   },
   {
     q: "Do I need a new account or app?",
-    a: "No. ClubPass sits inside the RewardLand app you already have. If you're an existing user you're signed in automatically — no new account, no second app to download.",
+    a: "No. Clubpass sits inside the RewardLand app you already have. If you're an existing user you're signed in automatically — no new account, no second app to download.",
   },
   {
     q: "How does billing and cancellation work?",
@@ -300,7 +300,7 @@ export default function ClubPass() {
 
   return (
     <div className="clubpass-page cpn-page">
-      <title>ClubPass Home Express | RewardLand</title>
+      <title>Clubpass Home Express | RewardLand</title>
 
       <meta
         name="description"
@@ -372,7 +372,7 @@ export default function ClubPass() {
           <div className="cp-container">
             <div className="cp-hero-copy">
               <span className="cp-tag">
-                ClubPass · Home Express by RewardLand
+                Clubpass · Home Express by RewardLand
               </span>
 
               <h1>
@@ -457,7 +457,7 @@ export default function ClubPass() {
           <div className="cp-compare">
             <div className="cp-card-plain">
               <p className="cp-card-label">
-                Tonight, without ClubPass
+                Tonight, without Clubpass
               </p>
 
               <ul className="cp-list">
@@ -475,7 +475,7 @@ export default function ClubPass() {
 
             <div className="cp-card-dark">
               <p className="cp-card-label">
-                Tonight, with ClubPass
+                Tonight, with Clubpass
               </p>
 
               <ul className="cp-list">
@@ -962,7 +962,7 @@ export default function ClubPass() {
 
             <p>
               Founder pricing ends when the seats are gone. Lock
-              in SGD$19.90/mth and be part of ClubPass from night
+              in SGD$19.90/mth and be part of Clubpass from night
               one.
             </p>
 

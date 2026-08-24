@@ -15,7 +15,7 @@ import { useClubpassUser } from "./clubpassUserContext.js";
 import "../css/subscribe-modal.css";
 
 const PRICE = import.meta.env.VITE_CLUBPASS_PRICE ?? "19.90";
-const PRICE_LABEL = "ClubPass · Home Express";
+const PRICE_LABEL = "Clubpass · Home Express";
 
 // Without a Lambda to talk to there is no checkout at all, so dev builds get a
 // simulated approval that runs the identical Strapi activation. Setting
@@ -519,7 +519,7 @@ export default function SubscribeModal({ open, onClose }) {
         className="cps-sheet"
         role="dialog"
         aria-modal="true"
-        aria-label="Subscribe to ClubPass"
+        aria-label="Subscribe to Clubpass"
         onClick={(event) => event.stopPropagation()}
       >
         <button type="button" className="cps-close" onClick={onClose} aria-label="Close">
@@ -532,7 +532,7 @@ export default function SubscribeModal({ open, onClose }) {
               ✓
             </span>
             <h2>You're in, {userName}</h2>
-            <p>Your ClubPass is active — 4 nights loaded and ready.</p>
+            <p>Your Clubpass is active — 4 nights loaded and ready.</p>
 
             {user?.token && (
               <div className="cps-code">
@@ -549,7 +549,7 @@ export default function SubscribeModal({ open, onClose }) {
         ) : (
           <>
             <header className="cps-head">
-              <h2>ClubPass · Home Express</h2>
+              <h2>Clubpass · Home Express</h2>
               <div className="cps-amount">
                 <b>S${PRICE}</b>
                 <i>/month</i>
