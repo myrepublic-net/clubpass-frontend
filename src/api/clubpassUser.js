@@ -131,7 +131,7 @@ export function readScanToken(token) {
  * against someone's membership, so it goes out as the signed-in driver and
  * Strapi decides whether that driver is allowed to make it.
  */
-export async function verifyScan({ userName, token }) {
+export async function verifyScan({ userName, token, pickupPoint, route }) {
   const jwt = driverToken();
 
   if (!jwt) {
@@ -146,7 +146,8 @@ export async function verifyScan({ userName, token }) {
       "Content-Type": "application/json",
       Authorization: `Bearer ${jwt}`,
     },
-    body: JSON.stringify({ userName, token }),
+    // The stop is recorded on the scan; Strapi stores null when it's absent.
+    body: JSON.stringify({ userName, token, pickupPoint, route }),
   });
 
   const body = await res.json().catch(() => null);

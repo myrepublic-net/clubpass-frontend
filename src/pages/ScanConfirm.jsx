@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router";
 
 import { readScanToken, verifyScan } from "../api/clubpassUser.js";
+import { readStop } from "../api/driverStop.js";
 import "../css/scan-confirm.css";
 
 /**
@@ -67,7 +68,15 @@ export default function ScanConfirm() {
     setFlow({ status: "verifying" });
 
     try {
-      const result = await verifyScan({ userName, token });
+      // Whatever stop the driver picked in the console, if it hasn't expired.
+      const stop = readStop();
+
+      const result = await verifyScan({
+        userName,
+        token,
+        pickupPoint: stop?.pickupPoint,
+        route: stop?.route,
+      });
       setFlow({ status: "done", result });
     } catch (error) {
       console.error("ClubPass scan failed", error);

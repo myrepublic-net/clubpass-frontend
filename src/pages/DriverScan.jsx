@@ -4,6 +4,8 @@ import jsQR from "jsqr";
 
 import { verifyScan } from "../api/clubpassUser.js";
 import { readDriverSession, signInDriver, signOutDriver } from "../api/driverAuth.js";
+import { readStop, saveStop } from "../api/driverStop.js";
+import StopPicker from "../components/StopPicker.jsx";
 import "../css/driver.css";
 
 /**
@@ -95,6 +97,22 @@ function SignIn({ onSignedIn }) {
 }
 
 function Scanner({ driver, onSignOut }) {
+  // Route and pick-up point, restored from the 10-minute cookie if it's still
+  // alive. Read inside the scan callback through a ref as well, since the
+  // animation loop closes over its first render.
+  const [stop, setStop] = useState(() => readStop() ?? { route: "", pickupPoint: "" });
+
+  const stopRef = useRef(stop);
+  stopRef.current = stop;
+
+  const chooseStop = useCallback((next) => {
+    setStop(next);
+
+    // Only a complete choice is worth remembering; a half-made one would come
+    // back as a route with no stop.
+    if (next.route && next.pickupPoint) saveStop(next);
+  }, []);
+
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const streamRef = useRef(null);
@@ -122,7 +140,12 @@ function Scanner({ driver, onSignOut }) {
       stopCamera();
 
       try {
-        const result = await verifyScan({ userName, token });
+        const result = await verifyScan({
+          userName,
+          token,
+          pickupPoint: stopRef.current.pickupPoint,
+          route: stopRef.current.route,
+        });
         setState({ status: "boarded", result });
       } catch (error) {
         if (error.code === "NO_DRIVER") {
@@ -198,7 +221,15 @@ function Scanner({ driver, onSignOut }) {
       <header className="drv-head">
         <div>
           <h1>Boarding scanner</h1>
-          <p className="drv-sub">Signed in as {driver.username}</p>
+          <p className="drv-sub">
+            Signed in as {driver.username}
+            {stop.pickupPoint && (
+              <>
+                <br />
+                {stop.route} · {stop.pickupPoint}
+              </>
+            )}
+          </p>
         </div>
         <button type="button" className="drv-link" onClick={onSignOut}>
           Sign out
@@ -215,8 +246,17 @@ function Scanner({ driver, onSignOut }) {
 
       {state.status === "idle" && (
         <>
-          <p className="drv-sub">Point the camera at a member's boarding QR.</p>
-          <button type="button" className="drv-btn" onClick={scan}>
+          <StopPicker stop={stop} onChange={chooseStop} />
+
+          <p className="drv-sub">
+            {stop.pickupPoint
+              ? "Point the camera at a member's boarding QR."
+              : "Choose your route and pick-up point to start scanning."}
+          </p>
+
+          {/* Gated on the stop: a scan with no pick-up point recorded can't be
+              attributed to anywhere afterwards. */}
+          <button type="button" className="drv-btn" onClick={scan} disabled={!stop.pickupPoint}>
             Scan boarding pass
           </button>
         </>
@@ -240,7 +280,10 @@ function Scanner({ driver, onSignOut }) {
           <span className="drv-tick" aria-hidden="true">✓</span>
           <h2>Boarded</h2>
           <p className="drv-name">{state.result?.userName}</p>
-          <p className="drv-sub">{state.result?.tripLeft} trip(s) left</p>
+          <p className="drv-sub">
+            {state.result?.tripLeft} trip(s) left
+            {state.result?.pickupPoint ? ` · ${state.result.pickupPoint}` : ""}
+          </p>
           <button type="button" className="drv-btn" onClick={scan}>
             Scan next
           </button>
