@@ -4,6 +4,7 @@ import { Plus } from "lucide-react";
 import MemberDashboard from "../components/MemberDashboard.jsx";
 import SubscribeModal from "../components/SubscribeModal.jsx";
 import { useClubpassUser } from "../components/clubpassUserContext.js";
+import useRouteVoting from "../hooks/useRouteVoting.js";
 import { isPaid } from "../api/clubpassUser.js";
 import "../css/clubpass-app.css";
 
@@ -17,11 +18,6 @@ const STATS = [
 
 const CHIPS = ["4 nights / month", "Fixed schedule", "Late-night departures"];
 
-const VOTE_ROUTES = [
-  { id: "west", name: "West Route", sub: "18 more members needed", cta: "I want this", done: "Counted" },
-  { id: "north", name: "North Route", sub: "26 more members needed", cta: "I want this", done: "Counted" },
-  { id: "south", name: "South Route", sub: "26 more members needed", cta: "Notify me", done: "You're on it" },
-];
 
 const STEPS = [
   { title: "Subscribe", text: "Secure PayPal checkout — takes a minute." },
@@ -77,15 +73,16 @@ function RouteMap() {
 
 export default function ClubPassApp() {
   const [openFaq, setOpenFaq] = useState(null);
-  const [voted, setVoted] = useState([]);
   const [subscribeOpen, setSubscribeOpen] = useState(false);
 
   // Signed in through RewardLand SSO, so there is always a name to show.
-  const { user, userName } = useClubpassUser();
+  const { user, userName, setUser } = useClubpassUser();
   const paid = isPaid(user);
 
+  const { routes, status: routesStatus, votedRoute, vote, error: voteError } =
+    useRouteVoting({ user, setUser });
+
   const toggleFaq = (index) => setOpenFaq((prev) => (prev === index ? null : index));
-  const vote = (id) => setVoted((prev) => (prev.includes(id) ? prev : [...prev, id]));
 
   // Once they've paid, the sales page has nothing left to say — this is their
   // dashboard from then on. SubscribeModal stays mounted so a cancelled member
@@ -346,25 +343,37 @@ export default function ClubPassApp() {
             </p>
 
             <div className="cpm-vote-list">
-              {VOTE_ROUTES.map((route) => {
-                const isVoted = voted.includes(route.id);
+              {routesStatus === "loading" && <small>Loading routes…</small>}
+              {routesStatus === "error" && <small>Routes are unavailable right now.</small>}
+
+              {routes.map((route) => {
+                const isMine = votedRoute === route.name;
+
                 return (
                   <div className="cpm-vote" key={route.id}>
                     <div>
-                      <h3>{route.name}</h3>
-                      <small>{route.sub}</small>
+                      <h3>{route.name} Route</h3>
+                      <small>
+                        {!route.open
+                          ? "Coming soon"
+                          : `${route.remaining} more members needed`}
+                      </small>
                     </div>
                     <button
                       type="button"
                       className="cpm-btn cpm-btn-purple cpm-btn-sm"
-                      onClick={() => vote(route.id)}
-                      disabled={isVoted}
+                      onClick={() => vote(route)}
+                      // One vote per member, spent on one route — so every
+                      // button locks once any of them is used.
+                      disabled={Boolean(votedRoute) || !route.open}
                     >
-                      {isVoted ? route.done : route.cta}
+                      {isMine ? "Counted" : votedRoute ? "Voted" : "I want this"}
                     </button>
                   </div>
                 );
               })}
+
+              {voteError && <small className="cpm-vote-error">{voteError}</small>}
             </div>
           </div>
         </section>

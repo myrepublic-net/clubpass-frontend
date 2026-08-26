@@ -1190,3 +1190,12 @@ z-index: 1;
   }
 }
 
+
+/* A vote Strapi refused — shown under the list rather than as an alert. */
+.cpm-vote-error {
+  display: block;
+  margin-top: 10px;
+  color: #B91C1C;
+  font-size: 12.5px;
+  line-height: 1.5;
+}

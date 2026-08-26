@@ -4,6 +4,7 @@ import BoardingQr from "./BoardingQr.jsx";
 import PickupSheet from "./PickupSheet.jsx";
 import { useClubpassUser, useScanCountdown } from "./clubpassUserContext.js";
 import { cancelSubscription } from "../api/subscribe.js";
+import useRouteVoting from "../hooks/useRouteVoting.js";
 import {
   DROPOFFS,
   PICKUPS,
@@ -71,6 +72,8 @@ function Section({ title, children, action }) {
 export default function MemberDashboard({ onRestart }) {
   const { userName, user, setUser } = useClubpassUser();
   const secondsToRefresh = useScanCountdown();
+
+  const { routes, votedRoute, vote, error: voteError } = useRouteVoting({ user, setUser });
 
   const [openPickup, setOpenPickup] = useState(null);
   const [manageOpen, setManageOpen] = useState(false);
@@ -296,6 +299,43 @@ export default function MemberDashboard({ onRestart }) {
             )}
           </div>
         </Section>
+
+        {/* ============ Other routes ============ */}
+        {routes.length > 0 && (
+          <Section title="Not in the East?">
+            <div className="cmd-card">
+              <p className="cmd-note">
+                New routes launch once enough members ask for them. One vote each — Founders board
+                first.
+              </p>
+
+              <ul className="cmd-votes">
+                {routes.map((route) => (
+                  <li key={route.id}>
+                    <div>
+                      <b>{route.name} Route</b>
+                      <small>
+                        {!route.open
+                          ? "Coming soon"
+                          : `${route.remaining} more members needed`}
+                      </small>
+                    </div>
+                    <button
+                      type="button"
+                      className="cmd-btn cmd-btn-quiet cmd-btn-sm"
+                      onClick={() => vote(route)}
+                      disabled={Boolean(votedRoute) || !route.open}
+                    >
+                      {votedRoute === route.name ? "Counted" : votedRoute ? "Voted" : "I want this"}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+
+              {voteError && <p className="cmd-error">{voteError}</p>}
+            </div>
+          </Section>
+        )}
 
         {/* ============ 7. Help ============ */}
         <Section title="Help & support">

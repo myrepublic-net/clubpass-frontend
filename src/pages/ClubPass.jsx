@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 
 import "../css/clubpass.css";
+import useRouteVoting from "../hooks/useRouteVoting.js";
 import "../css/clubpass-new.css";
 
 const APP_LINK = "https://rewardland.onelink.me/EwIe/start";
@@ -45,10 +46,6 @@ const HERO_SLIDES = [
   },
 ];
 
-const VOTE_ROUTES = [
-  { key: "west", name: "West Route", count: 18, progress: 64 },
-  { key: "north", name: "North Route", count: 26, progress: 48 },
-];
 
 const NAV_LINKS = [
   { label: "How it works", href: "#how-it-works" },
@@ -268,7 +265,8 @@ function RouteMap() {
 export default function ClubPass() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [openFaq, setOpenFaq] = useState(0);
-  const [votedRoutes, setVotedRoutes] = useState([]);
+  // Live tallies from Strapi. No user here, so nothing votes — see voteRoute.
+  const { routes } = useRouteVoting();
 
   /* =========================================
      HERO SLIDER STATE
@@ -292,10 +290,11 @@ export default function ClubPass() {
     setOpenFaq((prev) => (prev === index ? null : index));
   };
 
-  const voteRoute = (route) => {
-    setVotedRoutes((prev) =>
-      prev.includes(route) ? prev : [...prev, route]
-    );
+  // Nobody is signed in on the public page, so a tap can't be counted here —
+  // voting needs a membership record to spend the vote against. Send them to
+  // the app, which is where ClubPass lives anyway.
+  const voteRoute = () => {
+    window.open(APP_LINK, "_blank", "noopener,noreferrer");
   };
 
   return (
@@ -649,15 +648,15 @@ export default function ClubPass() {
             </div>
 
             <div className="cpn-route-grid">
-              {VOTE_ROUTES.map((route) => (
+              {routes.filter((route) => route.open).map((route) => (
                 <div
                   className="cpn-route-card"
-                  key={route.key}
+                  key={route.id}
                 >
-                  <h4>{route.name}</h4>
+                  <h4>{route.name} Route</h4>
 
                   <div className="cpn-route-count">
-                    {route.count}
+                    {route.remaining}
                   </div>
 
                   <small>more members needed</small>
@@ -673,12 +672,9 @@ export default function ClubPass() {
                   <button
                     type="button"
                     className="cpn-btn cpn-btn--outline"
-                    onClick={() => voteRoute(route.key)}
-                    disabled={votedRoutes.includes(route.key)}
+                    onClick={voteRoute}
                   >
-                    {votedRoutes.includes(route.key)
-                      ? "Vote counted"
-                      : "I want this route"}
+                    I want this route
                   </button>
                 </div>
               ))}
@@ -695,12 +691,9 @@ export default function ClubPass() {
                 <button
                   type="button"
                   className="cpn-btn cpn-btn--outline"
-                  onClick={() => voteRoute("south")}
-                  disabled={votedRoutes.includes("south")}
+                  onClick={voteRoute}
                 >
-                  {votedRoutes.includes("south")
-                    ? "You're on the list"
-                    : "I want this route"}
+                  I want this route
                 </button>
               </div>
             </div>
