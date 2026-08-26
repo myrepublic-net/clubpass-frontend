@@ -1,0 +1,95 @@
+/* ==========================================================================
+   404 — same palette as the app, deliberately quiet.
+   ========================================================================== */
+
+.cp404-page {
+  --cp404-purple: #7C3AED;
+
+  font-family: "Outfit", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  color: #fff;
+  background-color: #14061F;
+  background-image:
+    radial-gradient(65% 70% at 82% 18%, rgba(192, 132, 252, .38) 0%, rgba(192, 132, 252, 0) 62%),
+    radial-gradient(60% 60% at 4% 96%, rgba(236, 72, 153, .26) 0%, rgba(236, 72, 153, 0) 70%),
+    linear-gradient(150deg, #180B28 0%, #2A1140 48%, #3E0C52 100%);
+}
+
+.cp404-page *,
+.cp404-page *::before,
+.cp404-page *::after {
+  box-sizing: border-box;
+}
+
+.cp404-card {
+  width: 100%;
+  max-width: 460px;
+  text-align: center;
+}
+
+.cp404-code {
+  display: inline-block;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: .22em;
+  color: #D8C9FA;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, .1);
+  border: 1px solid rgba(255, 255, 255, .18);
+}
+
+.cp404-line {
+  display: block;
+  width: 100%;
+  max-width: 260px;
+  height: auto;
+  margin: 26px auto 22px;
+  color: #C4B5FD;
+}
+
+.cp404-card h1 {
+  margin: 0 0 12px;
+  font-size: 26px;
+  font-weight: 900;
+  line-height: 1.2;
+}
+
+.cp404-card p {
+  margin: 0 0 26px;
+  font-size: 15px;
+  line-height: 1.6;
+  color: #CFC6E4;
+}
+
+.cp404-btn {
+  display: block;
+  width: 100%;
+  padding: 16px 22px;
+  border-radius: 999px;
+  background: #fff;
+  color: #4C1D95;
+  font-size: 16px;
+  font-weight: 700;
+  text-decoration: none;
+  box-shadow: 0 10px 26px -12px rgba(0, 0, 0, .5);
+}
+
+.cp404-btn:active {
+  transform: scale(.985);
+}
+
+.cp404-quiet {
+  display: inline-block;
+  margin-top: 16px;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #D8C9FA;
+  text-decoration: none;
+  border-bottom: 1px solid rgba(216, 201, 250, .4);
+  padding-bottom: 1px;
+}

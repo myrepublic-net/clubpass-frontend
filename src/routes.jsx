@@ -6,6 +6,7 @@ import ClubPassApp from "./pages/ClubPassApp.jsx";
 import ScanConfirm from "./pages/ScanConfirm.jsx";
 import DriverScan from "./pages/DriverScan.jsx";
 import UserGate from "./components/UserGate.jsx";
+import NotFound from "./pages/NotFound.jsx";
 
 const router = createBrowserRouter([
   { path: "/", element: <ClubPass /> },
@@ -25,6 +26,10 @@ const router = createBrowserRouter([
       </UserGate>
     ),
   },
+  // Catch-all, last: anything the routes above didn't claim. Without it a bad
+  // URL renders React Router's own error screen, which talks about routing
+  // rather than to the person reading it.
+  { path: "*", element: <NotFound /> },
 ]);
 
 export default router;
