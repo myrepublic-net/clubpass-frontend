@@ -10,7 +10,7 @@ import NotFound from "./pages/NotFound.jsx";
 
 const router = createBrowserRouter([
   { path: "/", element: <ClubPass /> },
-  { path: "/test", element: <ClubpassNew /> },
+  // { path: "/test", element: <ClubpassNew /> },
   // Where a scanned boarding QR lands. Deliberately outside UserGate — the
   // driver opening it is not the member, and carries no ?userName= of their own.
   { path: "/scan", element: <ScanConfirm /> },
