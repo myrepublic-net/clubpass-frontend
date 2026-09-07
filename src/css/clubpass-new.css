@@ -89,9 +89,12 @@
 .cpn-kicker {
   font-size: 28px;
   font-weight: 600;
-  color: var(--cpn-ink);
+  color: #161616;
   margin-bottom: 12px;
   text-transform: uppercase;
+}
+.cpn-membership h2 {
+    color: #fff;
 }
 .cpn-safety .cpn-kicker, .cpn-safety .cpn-h2--light {
     text-align: center;
@@ -583,20 +586,18 @@
       color: var(--cp-ink);
 }
 
-.cpn-route-head {
-  display: flex;
-  align-items: center;
-  gap: 18px;
-}
 
 .cpn-route-head h3 {
-  font-size: 32px;
-  font-weight: 500;
-  letter-spacing: -0.02em;
-  color: #fff;
+    font-size: 48px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: #fff;
+    margin-bottom: 10px;
 }
-
-
+.cpn-route-head p {
+    color: #fff;
+    font-size: 20px;
+}
 
 .cpn-live {
     display: inline-block;
@@ -610,12 +611,15 @@
 }
 
 .cpn-stops {
-  display: grid;
-  grid-template-columns: 1fr 160px 1fr;
-  gap: 0;
-  align-items: stretch;
-  margin-top: 32px;
-  position: relative;
+    display: grid;
+    grid-template-columns: 1.5fr 0.5fr;
+    gap: 0;
+    margin-top: 60px;
+    position: relative;
+    align-items: flex-end;
+    border-bottom: 2px solid #1FDBDA;
+    border-left: 2px solid #1FDBDA;
+    border-radius: 0 20px;
 }
 
 .cpn-stops-col h4 {
@@ -623,6 +627,8 @@
     font-weight: 700;
     color: #1FDBDA;
     margin-bottom: 18px;
+    margin-left: 30px;
+        text-align: left;
 }
 .cpn-stops-col ul {
   display: grid;
@@ -631,9 +637,10 @@
 .cpn-stops-col li {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 10px;
   padding: 10px 0;
-  font-size: 20px;
+  font-size: 28px;
+  font-weight: 600;
  color: #fff;
  text-align: left;
 }
@@ -644,8 +651,14 @@
     height: 25px;
     border: 2px solid #1FDBDA;
     border-radius: 50%;
+    position: relative;
+    left: -14px;
+        background: #0f1643;
 }
 
+.cpn-stops-col {
+    margin-bottom: 20px;
+}
 .cpn-stops-note {
     margin-top: 10px !important;
     font-size: 16px;
@@ -913,10 +926,23 @@ img.cpn-squiggle-bottom {
    ========================================================================== */
 
 .cpn-membership {
-  padding-top: 100px;
-  padding-bottom: 100px;
+    padding-top: 0px;
+    padding-bottom: 0px;
 }
-
+.cpn-membership .tt-membership {
+      padding-top: 60px;
+    padding-bottom: 60px;
+    background: #0C165E;
+}
+.cpn-membership .tt-top {
+    width: 100%;
+    height: 300px;
+        margin-bottom: -1px;
+}
+img.tt-top.tt-bottom {
+    transform: rotate(180deg);
+    margin-top: -1px;
+}
 .cpn-membership-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -926,12 +952,38 @@ img.cpn-squiggle-bottom {
 
 .cpn-membership-lead {
   margin-top: 16px;
-  max-width: 430px;
-  font-size: 16px;
-  color: var(--cpn-body);
+  max-width: 450px;
+  font-size: 20px;
+  color: #fff;
   margin-bottom: 20px;
 }
+ul.col-mb-list {
+    display: grid;
+    gap: 15px;
+    justify-content: space-between;
+    margin-top: 30px;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+}
 
+ul.col-mb-list li {
+    background: #fff;
+    padding: 15px;
+    border-radius: 15px;
+}
+
+ul.col-mb-list li p {
+    font-size: 16px;
+    font-weight: 300;
+    color: #0C165E;
+    line-height: 25px;
+    margin-top: 10px;
+}
+ul.col-mb-list li img {
+    width: 50px;
+    height: 50px;
+    object-fit: contain;
+    margin: auto;
+}
 .cpn-benefits {
   display: grid;
   gap: 22px;
@@ -970,11 +1022,14 @@ img.cpn-squiggle-bottom {
   text-align: center;
   font-size: 22px;
   font-weight: 800;
+      display: flex;
+    justify-content: space-between;
+    gap: 20px;
 }
 
 .cpn-ticket-body {
-  padding: 15px 30px 26px;
-  text-align: center;
+    padding: 20px 30px 35px;
+    text-align: center;
 }
 
 .cpn-price {
@@ -1010,7 +1065,7 @@ img.cpn-squiggle-bottom {
   width: 34px;
   height: 34px;
   border-radius: 50%;
-  background: #fff;
+  background: #0d165d;
   transform: translateY(-50%);
 }
 
@@ -1023,16 +1078,32 @@ img.cpn-squiggle-bottom {
 }
 
 .cpn-ticket-foot {
-  padding: 26px 30px 40px;
-  text-align: center;
+    padding: 35px 30px 40px;
+    text-align: center;
 }
 
 .cpn-ticket-stats {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
-  margin-bottom: 22px;
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 22px;
+    align-items: center;
 }
+span.ticket-price {
+    font-weight: 500;
+    font-size: 20px;
+    text-align: left;
+    line-height: 30px;
+}
+span.ticket-active {
+    border: 1px solid #fff;
+    padding: 2px 15px;
+    font-size: 15px;
+    border-radius: 50px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
 
 .cpn-ticket-stats dt {
   font-size: 16px;
@@ -1062,13 +1133,27 @@ img.cpn-squiggle-bottom {
 
 .cpn-skater {
     position: absolute;
-    right: -15px;
-    bottom: -190px;
+    bottom: -150px;
     width: 300px;
     z-index: 3;
     pointer-events: none;
+    right: -120px;
 }
-
+ .locked-text p {
+    color: #BABABA;
+    font-size: 12px;
+}
+.locked-text {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-top: 14px;
+        max-width: 420px;
+    margin-left: auto;
+}
+.locked-text img {
+    opacity: 0.7;
+}
 .cpn-spark {
   position: absolute;
   width: 26px;
@@ -1232,7 +1317,9 @@ img.cpn-squiggle-bottom {
     font-size: 20px;
     color: rgba(255, 255, 255, 0.95);
 }
-
+.cpn-routes .cp-work-text h2, .cpn-routes .cp-work-text p {
+    color: #0C165E;
+}
 /* ==========================================================================
    Responsive
    ========================================================================== */
@@ -1251,7 +1338,15 @@ img.cpn-squiggle-bottom {
     box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
     display: none;
   }
-
+ul.col-mb-list {
+    grid-template-columns: 1fr 1fr;
+}
+ul.col-mb-list li p {
+    text-align: center;
+}
+.cpn-ticket-foot {
+    padding: 35px 15px 40px;
+}
   .cpn-nav.is-open {
     display: flex;
   }
@@ -1361,11 +1456,11 @@ img.cpn-squiggle-bottom {
     width: 92px;
   }
 
-  .cpn-skater {
-    right: -20px;
-    bottom: -120px;
-    width: 220px;
-  }
+     .cpn-skater {
+        right: -70px;
+        bottom: -80px;
+        width: 220px;
+    }
 
   .cpn-discoball {
     width: 240px;
@@ -1376,7 +1471,15 @@ img.cpn-squiggle-bottom {
 
 @media (max-width: 700px) {
   .cpn-section {
-    padding: 60px 0;
+    padding: 40px 0;
+  }
+.cpn-mark {
+    width: 20px;
+    height: 20px;
+
+}
+  .cpn-membership {
+   padding: 0 !important;
   }
 
   .cpn-container {

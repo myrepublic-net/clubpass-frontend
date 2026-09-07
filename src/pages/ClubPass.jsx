@@ -28,9 +28,9 @@ const IMG = "/images/cpn";
 const HERO_SLIDES = [
   {
     image: `${IMG}/cp-one-banner.png`,
-    title: "The night is yours.",
-    accent: "The ride home is ours.",
-    text: "Singapore's first late-night coach membership. Scheduled departures from the club district straight to the East — for less than one surge-hour ride.",
+    title: "Your pass to more.",
+    accent: "More access. More perks.",
+    text: "Free entries, member ticket prices, R coins and more - with new Clubpass benefits rolling out throughout the year. ",
   },
   {
     image: `${IMG}/clubpass-hero.png`,
@@ -55,51 +55,68 @@ const NAV_LINKS = [
 ];
 
 const WITHOUT_CLUBPASS = [
-  "Surge fares that spike after midnight",
-  "Long ride queues at closing time",
-  "Last train gone before the night ends",
+  "Regular ticket prices",
+  "Standard event access",
+  "No rewards for your spending",
+  "Getting home is still your problem",
 ];
 
-const WITH_CLUBPASS = [
-  "One fixed price all month — S$19.90",
-  "A scheduled coach waiting on the loop",
-  "Drop-off minutes from your MRT",
+const WITH_CLUBPASS = [{
+  "text":"Free entry at selected events & venues",
+  "pill_text":"AVAILABLE NOW",
+  "class":"cl-box available"
+
+},{
+  "text":"Exclusive member ticket prices",
+  "pill_text":"COMING OCT",
+   "class":"cl-box coming-oct"
+},{
+  "text":"Earn R coins on tickets & F&B coupons",
+  "pill_text":"COMING OCT",
+   "class":"cl-box coming-oct"
+},{
+  "text":"Clubpass Home Express",
+  "pill_text":"COMING SOON",
+   "class":"cl-box coming-soon"
+}
+  
 ];
 
 const STEPS = [
   {
     img: "/images/one.png",
     num: "01",
-    title: "Open RewardLand",
-    text: "Download the app, or open it — if you're in, your account is already there.",
-    meta: "30 seconds",
+    title: "CREATE\nACCOUNT",
+    text: "Create a free account and subscribe to Clubpass membership. ",
+    meta: "/images/join-one.png",
   },
   {
     img: "/images/two.png",
     num: "02",
-    title: "Find Clubpass",
-    text: "It lives right inside the app, next to your rewards wallet.",
-    meta: "One tap",
+    title: "EXPLORE & \nENJOY",
+    text: "Discover events, enjoy free entries and member perks. More benefits coming soon!",
+    meta: "/images/join-two.png",
   },
   {
     img: "/images/three.png",
     num: "03",
-    title: "Subscribe",
-    text: "Pick your membership and pay securely in-app. Cancel anytime.",
-    meta: "S$19.90/month",
+    title: "EARN REWARDS \n(COMING SOON) ",
+    text: "Earn R coins (reward points) when you buy tickets and F&B coupons. ",
+    img: "/images/three.png",
+    meta: "/images/join-three.png",
   },
   {
     img: "/images/four.png",
     num: "04",
-    title: "Ride home",
-    text: "Show your boarding QR to the driver, find a seat, ride home.",
-    meta: "Every operating night",
+    title: "RIDE HOME \n(COMING SOON)",
+    text: "Unlock your route and enjoy a safe, comfortable ride home after the party.",
+    meta: "/images/join-four.png",
   },
 ];
 
 const PICKUPS = [
-  "Marina Bay Sands (Marquee / AVENUE)",
-  "CÉ LA VI",
+  "Marina Bay Sands (Marquee / Avenue)",
+  "CE LA VI",
   "Clarke Quay Central",
   "Boat Quay / Headquarters",
   "Zouk / Capital",
@@ -311,7 +328,7 @@ export default function ClubPass() {
       <header className="cp-header">
         <div className="cp-container cp-header-inner">
           <a className="cp-brand" href="#top">
-            <img src="/images/cp-rw-logo.png" />
+            <img src="/images/cp-logo.png" />
           </a>
 
           <nav className={`cp-nav${menuOpen ? " is-open" : ""}`}>
@@ -336,7 +353,7 @@ export default function ClubPass() {
               target="_blank"
               rel="noopener noreferrer"
             >
-              Open RewardLand
+              Join the Club
             </a>
 
             <button
@@ -370,9 +387,9 @@ export default function ClubPass() {
 
           <div className="cp-container">
             <div className="cp-hero-copy">
-              <span className="cp-tag">
+              {/* <span className="cp-tag">
                 Clubpass · Home Express by RewardLand
-              </span>
+              </span> */}
 
               <h1>
                 {currentHero.title}
@@ -408,7 +425,30 @@ export default function ClubPass() {
                   <path d="m9 18 6-6-6-6" />
                 </svg>
               </a>
-
+              <div className="club-beta">
+                 <div className="club-beta-top">
+                    <div className="club-beta-icon">
+                      <img src="/images/sparkle-icon-wrapper.svg"/>
+                    </div>
+                     <div className="club-beta-text">
+                       <h4>CLUBPASS BETA</h4>
+                       <p>Limited to 150 founding members</p>
+                     </div>
+                 </div>
+                 <div className="club-beta-bottom">
+                    <div className="club-beta-left">
+                      <img src="/images/tag.svg"/>
+                      <span>
+                        <b>S$17.90/month </b><br/>
+                        (U.P. S$24.90)
+                      </span>
+                    </div>
+                     <div className="club-beta-right">
+                      <img src="/images/lock.svg"/>
+                       <p>Rate locked for 12 months</p>
+                    </div>
+                 </div>
+              </div>
               <div className="cp-hero-actions">
                 <a
                   className="cp-btn cp-btn-white"
@@ -416,7 +456,7 @@ export default function ClubPass() {
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  Subscribe — S$19.90/month
+                  Become a Founding Member
                 </a>
               </div>
             </div>
@@ -448,9 +488,9 @@ export default function ClubPass() {
             <p className="cp-eyebrow">why clubpass?</p>
 
             <h2 className="cp-h2">
-              Getting home after 2am shouldn't be the hardest
-              part of the night.
+              More ways to enjoy going out.
             </h2>
+            <p>Clubpass brings together access, savings, rewards, and experiences — with more benefits rolling out as we grow.</p>
           </div>
 
           <div className="cp-compare">
@@ -481,10 +521,11 @@ export default function ClubPass() {
                 {WITH_CLUBPASS.map((item) => (
                   <li key={item}>
                     <span className="cp-ico cp-ico-check">
-                      <Check size={14} strokeWidth={3} />
+                      <Check size={14} strokeWidth={3} /> 
                     </span>
 
-                    {item}
+                    <div className="pl-item"><span>{item.text}</span> <span className={`${item.class}`}>{item.pill_text}</span></div>
+                    
                   </li>
                 ))}
               </ul>
@@ -506,292 +547,162 @@ export default function ClubPass() {
         </div>
       </div>
 
-      <div className="cp-gradient">
-        {/* ================= How it works ================= */}
 
-        <section
-          className="cp-section"
-          id="how-it-works"
-          style={{ paddingTop: 0 }}
-        >
-          <div className="cp-container">
-            <div className="cp-split-head">
-              <div className="cp-work-text">
-                <p className="cp-eyebrow">How it works</p>
 
-                <h2 className="cp-h2">
-                  From dance floor to doorstep
-                </h2>
+<section className="membership-section cp-container">
+  <div className="status">AVAILABLE NOW</div>
 
-                <p className="cp-note">
-                  Already a RewardLand user? You're signed in
-                  automatically — no new account, no new app.
-                </p>
-              </div>
-            </div>
+  <h2>Your membership already gets you in.</h2>
 
-            <div className="cp-steps">
-              {STEPS.map((step) => (
-                <div className="cp-step" key={step.num}>
-                  <div className="cp-step-num">
-                    <img
-                      src={step.img}
-                      alt={step.title}
-                    />
-                  </div>
+  <div className="intro">
+    Enjoy <strong>FREE ENTRY</strong> at selected Clubpass partner venues and events —
+    included with your membership
+  </div>
 
-                  <h3>{step.title}</h3>
-
-                  <p>{step.text}</p>
-
-                  <span className="cp-step-meta">
-                    {step.meta}
+  <div className="benefits">
+    <div className="benefit">
+      <span className="cpn-mark cpn-mark--check">
+                    <Check size={13} strokeWidth={3} />
                   </span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
+      <span>Included from day one</span>
+    </div>
+    <div className="benefit">
+      <span className="cpn-mark cpn-mark--check">
+                    <Check size={13} strokeWidth={3} />
+                  </span>
+      <span>No additional entry fee</span>
+    </div>
+    <div className="benefit">
+     <span className="cpn-mark cpn-mark--check">
+                    <Check size={13} strokeWidth={3} />
+                  </span>
+      <span>One night out could already cover your membership</span>
+    </div>
+  </div>
 
-        {/* ================= Routes ================= */}
+  <div className="venue-grid">
 
-        <section
-          className="cpn-section cpn-routes"
-          id="routes"
-        >
-          <div className="cpn-container">
-            <h5 className="island-text">
-              East is live today, West, North and South unlock as
-              neighbours register interest - one vote per route,
-              five seconds.
-            </h5>
-          </div>
-
-          <img
-            className="cpn-island"
-            src={`${IMG}/island.png`}
-            alt=""
-            aria-hidden="true"
-          />
-
-          <div className="cpn-container">
-            <h5 className="island-text-mobile">
-              East is live today, West, North and South unlock as
-              neighbours register interest - one vote per route,
-              five seconds.
-            </h5>
-
-            <div className="cpn-route-head">
-              <h3>East Route</h3>
-              <span className="cpn-live">Live Now</span>
-            </div>
-
-            <div className="cpn-stops">
-              <div className="cpn-stops-col">
-                <h4>Pick-up Loop - City</h4>
-
-                <ul>
-                  {PICKUPS.map((stop) => (
-                    <li key={stop}>
-                      <span className="cpn-ring" />
-                      {stop}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              <span
-                className="cpn-stops-arrow"
-                aria-hidden="true"
-              >
-                <img src="/images/cp-arrow.svg" />
-              </span>
-
-              <div className="cpn-stops-col">
-                <h4>Express Drop-off - East</h4>
-
-                <ul>
-                  {DROPOFFS.map((stop) => (
-                    <li key={stop}>
-                      <span className="cpn-ring" />
-                      {stop}
-                    </li>
-                  ))}
-                </ul>
-
-                <p className="cpn-stops-note">
-                  *Subject to demand.
-                  <br />
-                  Full timings in the app
-                </p>
-              </div>
-            </div>
-
-            <div className="cpn-map-wrap">
-              <img
-                className="cpn-squiggle"
-                src={`${IMG}/squiggle.png`}
-                alt=""
-                aria-hidden="true"
-              />
-
-              <div className="cpn-map">
-                <img src="/images/cp-route-map.svg" />
-              </div>
-
-              <img
-                className="cpn-squiggle-bottom"
-                src={`${IMG}/squiggle-bottom.png`}
-                alt=""
-                aria-hidden="true"
-              />
-            </div>
-
-            <div className="cpn-route-grid">
-              {routes.filter((route) => route.open).map((route) => (
-                <div
-                  className="cpn-route-card"
-                  key={route.id}
-                >
-                  <h4>{route.name} Route</h4>
-
-                  <div className="cpn-route-count">
-                    {route.remaining}
-                  </div>
-
-                  <small>more members needed</small>
-
-                  <div className="cpn-progress">
-                    <span
-                      style={{
-                        width: `${route.progress}%`,
-                      }}
-                    />
-                  </div>
-
-                  <button
-                    type="button"
-                    className="cpn-btn cpn-btn--outline"
-                    onClick={voteRoute}
-                  >
-                    I want this route
-                  </button>
-                </div>
-              ))}
-
-              <div className="cpn-route-card">
-                <h4>South Route</h4>
-
-                <p className="cpn-route-soon">
-                  Coming soon - be the first to
-                  <br />
-                  know when voting opens.
-                </p>
-
-                <button
-                  type="button"
-                  className="cpn-btn cpn-btn--outline"
-                  onClick={voteRoute}
-                >
-                  I want this route
-                </button>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* ================= Schedule & safety ================= */}
-
-        <section className="cpn-safety">
-          <div className="cpn-container cpn-safety-inner">
-            <p className="cpn-kicker cpn-kicker--light">
-              Schedule &amp; Safety
-            </p>
-
-            <div className="cpn-safety-head">
-              <h2 className="cpn-h2 cpn-h2--light">
-                Planned like transit.
-                <br />
-                Protected like a members' club.
-              </h2>
-
-              <p>
-                Fixed nights, fixed stops, verified riders.
-                <br />
-                Nothing about your ride home is left to chance.
-              </p>
-            </div>
-
-            <div className="cpn-safe-grid">
-              <div className="cpn-safety-top">
-                <div className="cpn-nights">
-                  <img src={`${IMG}/num-4.png`} alt="4" />
-
-                  <div>
-                    <h3>
-                      nights a month - one night a week, every
-                      week
-                    </h3>
-
-                    <hr />
-
-                    <p>
-                      Departures are fixed and published ahead of
-                      time; exact timings live in the app. Your
-                      price never changes - no surge, ever.
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="cpn-safety-grid">
-                {SAFETY_CARDS.map((card) => (
-                  <div
-                    className="cpn-safety-card"
-                    key={card.title}
-                  >
-                    {card.icon && (
-                      <span className="cpn-safety-icon">
-                        {card.icon}
-                      </span>
-                    )}
-
-                    <h3>{card.title}</h3>
-
-                    <p>{card.text}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </section>
+    <article className="venue">
+      <div className="venue-image">
+        <img src="/images/free-one.png"/>
+        <span className="venue-lock"><img src="/images/floating-badge.svg"/></span>
       </div>
+      <div className="venue-name">Emporium</div>
+      <div className="tag"><span className="tag-icon"><img src="/images/Vector.svg"/></span> FREE ENTRY</div>
+      <div className="members">Clubpass Members</div>
+      <div className="details"><span>View event details</span><span className="arrow"><img src="/images/mam-arrow.svg"/></span></div>
+    </article>
 
-      {/* ================= Membership ================= */}
+    <article className="venue">
+      <div className="venue-image">
+         <img src="/images/free-two.png"/>
+        <span className="venue-lock"><img src="/images/floating-badge.svg"/></span>
+      </div>
+      <div className="venue-name">Zouk</div>
+      <div className="tag"><span className="tag-icon"><img src="/images/Vector.svg"/></span> FREE ENTRY</div>
+      <div className="members">Clubpass Members</div>
+      <div className="details"><span>View event details</span><span className="arrow"><img src="/images/mam-arrow.svg"/></span></div>
+    </article>
+
+    <article className="venue">
+      <div className="venue-image">
+        <img src="/images/free-three.png"/>
+        <span className="venue-lock"><img src="/images/floating-badge.svg"/></span>
+      </div>
+      <div className="venue-name">Marquee Singapore</div>
+      <div className="tag"><span className="tag-icon"><img src="/images/Vector.svg"/></span> FREE ENTRY</div>
+      <div className="members">Clubpass Members</div>
+      <div className="details"><span>View event details</span><span className="arrow"><img src="/images/mam-arrow.svg"/></span></div>
+    </article>
+
+    <article className="venue">
+      <div className="venue-image">
+        <img src="/images/free-four.png"/>
+        <span className="venue-lock"><img src="/images/floating-badge.svg"/></span>
+      </div>
+      <div className="venue-name">Kilo Lounge</div>
+      <div className="tag"><span className="tag-icon"><img src="/images/Vector.svg"/></span> FREE ENTRY</div>
+      <div className="members">Clubpass Members</div>
+      <div className="details"><span>View event details</span><span className="arrow"><img src="/images/mam-arrow.svg"/></span></div>
+    </article>
+
+    <article className="coming">
+      <div className="plus">+</div>
+      <strong>More partners coming soon</strong>
+      <span>New venues and events added<br/>regularly.</span>
+    </article>
+
+  </div>
+
+  <div className="info">
+    <div className="info-item">
+      <div className="info-icon"><img src="/images/gift.svg"/></div>
+      
+      <div>
+        <div className="info-title">Free entry is included is with your Clubpass membership.</div>
+        <div className="info-copy">Join for <b>S$17.90/month</b> and start enjoying participating venues and events now.</div>
+      </div>
+    </div>
+
+    <div className="info-divider"></div>
+
+    <div className="info-item">
+      <div className="info-icon"><img src="/images/users.svg"/></div>
+      <div>
+        <div className="info-title">More venues. More events. More perks.</div>
+        <div className="info-copy">We're adding new partners and member benefits all the time — stay tuned!</div>
+      </div>
+    </div>
+  </div>
+
+  <div className="terms">
+    Free entry is subject to venue terms and conditions. Specific events and dates may apply.
+  </div>
+</section>
+
+  {/* ================= Membership ================= */}
 
       <section
         className="cpn-section cpn-membership"
         id="membership"
       >
+        <img className="tt-top" src="/images/tt-top.png"/>
+        <div className="tt-membership">
         <div className="cpn-container cpn-membership-grid">
           <div className="cpn-membership-copy">
             <p className="cpn-kicker cpn-kicker--orange">
-              Membership
+              CLUBPASS BETA
             </p>
 
             <h2 className="cpn-h2">
-              One simple membership.
-              <br />
-              No surge maths.
+             Be a founding member.<br/> 
+Help shape the future of Clubpass.
+
             </h2>
 
             <p className="cpn-membership-lead">
-              A single monthly subscription inside the RewardLand
-              app. It renews automatically, and you can cancel in
-              two taps - no lock-in, no hidden fees.
+              Limited to 150 founding members only.<br/> 
+Join the beta program, lock in the founder price and get exclusive launch rewards. 
             </p>
-
-            <ul className="cpn-benefits">
+              <ul className="col-mb-list">
+                <li>
+                  <img src="/images/cb-one.png"/>
+                  <p>Founder price locked in</p>
+                </li>
+                <li>
+                  <img src="/images/cb-two.png"/>
+                  <p>Exclusive launch rewards</p>
+                </li>
+                <li>
+                  <img src="/images/cb-three.png"/>
+                  <p>Limited to 150 members</p>
+                  </li>
+                <li>
+                  <img src="/images/cb-four.png"/>
+                  <p>Cancel anytime, no lock-in</p>
+                  </li>
+              </ul>
+            {/* <ul className="cpn-benefits">
               {MEMBER_BENEFITS.map((benefit) => (
                 <li key={benefit}>
                   <span className="cpn-mark cpn-mark--check">
@@ -801,7 +712,7 @@ export default function ClubPass() {
                   {benefit}
                 </li>
               ))}
-            </ul>
+            </ul> */}
           </div>
 
           <div className="cpn-ticket-wrap">
@@ -824,17 +735,18 @@ export default function ClubPass() {
 
             <div className="cpn-ticket">
               <div className="cpn-ticket-head">
-                Clubpass - Home Express
+                <span>Clubpass</span>
+                <span>BETA</span>
               </div>
 
               <div className="cpn-ticket-body">
                 <div className="cpn-price">
-                  SGD $19.90<span>/mth</span>
+                  FOUNDER
+                 
                 </div>
 
                 <p className="cpn-ticket-note">
-                  Founder launch price - First 150 members only.
-                  Locked in for as long as you stay subscribed.
+                  Limited to first 150 members.
                 </p>
               </div>
 
@@ -842,7 +754,7 @@ export default function ClubPass() {
 
               <div className="cpn-ticket-foot">
                 <dl className="cpn-ticket-stats">
-                  <div>
+                  {/* <div>
                     <dt>Status</dt>
                     <dd>Founder</dd>
                   </div>
@@ -855,7 +767,10 @@ export default function ClubPass() {
                   <div>
                     <dt>Boarding</dt>
                     <dd>QR in app</dd>
-                  </div>
+                  </div> */}
+                  <span className="ticket-price">SGD $17.90/month <br/>
+<p>(U.P. S$24.90)</p></span>
+<span className="ticket-active">Active</span>
                 </dl>
 
                 <a
@@ -864,18 +779,576 @@ export default function ClubPass() {
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  Subscribe to RewardLand
+                  Become a founding member
                 </a>
 
                 <p className="cpn-ticket-fine">
-                  Auto-renews monthly.
-                  Cancel anytime in the app.
+                  Auto-renewed at founder rate. Cancel anytime.
                 </p>
               </div>
             </div>
+            <div className="locked-text">
+            <img src="/images/lock.svg"/>
+            <p>Rate locked for 12 months</p>
+            </div>
           </div>
         </div>
+        </div>
+         <img className="tt-top tt-bottom" src="/images/tt-top.png"/>
       </section>
+
+      
+        {/* ================= How it works ================= */}
+
+        <section
+          className="cp-section"
+          id="how-it-works"
+          style={{ paddingTop: 0 }}
+        >
+          <div className="cp-container">
+            <div className="cp-split-head">
+              <div className="cp-work-text">
+                <p className="cp-eyebrow">how it works</p>
+
+                <h2 className="cp-h2">
+                 Join the club.<br/>
+Enjoy perks that keep growing.
+                </h2>
+
+                <p className="cp-note">
+                  Clubpass is your pass to exclusive access, rewards and experiences — with more benefits on the way.
+                </p>
+              </div>
+            </div>
+
+            <div className="cp-steps">
+              {STEPS.map((step) => (
+                <div className="cp-step" key={step.num}>
+                  <div className="cp-step-num">
+                    <img
+                      src={step.img}
+                      alt={step.title}
+                    />
+                  </div>
+
+                  <h3 className="step-title">
+  {step.title.split("\n").map((line, index) => (
+    <React.Fragment key={index}>
+      {line}
+      {index < step.title.split("\n").length - 1 && <br />}
+    </React.Fragment>
+  ))}
+</h3>
+
+                  <p>{step.text}</p>
+
+                  <span className="cp-step-meta">
+                    <img src={step.meta}/>
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+         {/* ================= rewards-section ================= */}
+
+        <section  className="cp-section  rewards-section" >
+          <div className="cp-container">
+            <div className="cp-split-head">
+              <div className="cp-work-text">
+                <p className="cp-eyebrow">CLUBPASS REWARDS<span className="rewards-coming">COMING SOON</span></p>
+                <h2 className="cp-h2">Going out has its rewards. Literally.</h2>
+                <p className="cp-note">Buy tickets and F&B coupons on Clubpass and earn R coins with every purchase. The first and only membership that rewards you for going out.</p>
+              </div>
+            </div>
+            <div className="rewards-body">
+                <div className="rw-box rw-one">
+                  <div className="rw-box-image ">
+                    <img src="/images/buy.png"/>
+                  </div>
+                  
+                  <h3>BUY</h3>
+                  <p>Tickets, F&B coupons and more on Clubpass.</p>
+                </div>
+                <div className="rw-box rw-inner">
+                  <div className="rw-box-image">
+                    <img src="/images/coin.png"/>
+                  </div>
+                  <h3>EARN R COINS</h3>
+                  <p>Earn R coins with every purchase.</p>
+                </div>
+                <div className="rw-box rw-inner">
+                  <div className="rw-box-image">
+                    <img src="/images/brand.png"/>
+                  </div>
+                  
+                  <h3>REDEEM AT 170+ BRANDS</h3>
+                  <p>...and many more!</p>
+                </div>
+            </div>
+              <div className="rewards-footer">
+                <img src="./images/gift-icon.png"/>
+                  <p>From your next Grab ride to groceries, shopping and everyday treats - your Clubpass rewards go beyond the party.</p>
+              </div>
+
+          </div>
+        </section>
+<div className="cp-gradient">
+        {/* ================= Routes ================= */}
+
+        <section
+          className="cpn-section cpn-routes"
+          id="routes"
+        >
+       <div className="cp-split-head">
+              <div className="cp-work-text">
+                <h2 className="cp-h2">Where should we bring you home?</h2>
+                <p className="cp-note">We’re planning Home Express routes from Singapore’s nightlife districts towards home.</p>
+              </div>
+            </div>
+
+          <img
+            className="cpn-island"
+            src={`${IMG}/island.png`}
+            alt=""
+            aria-hidden="true"
+          />
+
+          <div className="cpn-container">
+
+            <div className="cpn-route-head">
+              <h3>But first, we need you.</h3>
+              <p>Tell us which route you want most.</p>
+            </div>
+              <div className="col-interest">
+                <div className="interest-number">
+                  <h3>200 INTERESTS</h3>
+                  <p>NEEDED FOR EACH ROUTE</p>
+                </div>
+                <div className="interest-image">
+                  <img src="/images/cp-flower.png"/>
+                </div>
+                <div className="interest-text">
+                  <p>When a route reaches 200 registered interests, we'll work towards bringing it to life.</p>
+                </div>
+                </div>
+            <div className="cpn-stops">
+              <div className="cpn-stops-col">
+                <h4>Pick-up Loop - Same for all routes</h4>
+
+                <ul>
+                  {PICKUPS.map((stop) => (
+                    <li key={stop}>
+                      <span className="cpn-ring" />
+                      {stop}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+                <div className="stop-image"><img src="/images/stop-new.png" /></div>
+              {/* <span
+                className="cpn-stops-arrow"
+                aria-hidden="true"
+              >
+                <img src="/images/cp-arrow.svg" />
+              </span> */}
+
+              {/* <div className="cpn-stops-col">
+                <h4>Express Drop-off - East</h4>
+
+                <ul>
+                  {DROPOFFS.map((stop) => (
+                    <li key={stop}>
+                      <span className="cpn-ring" />
+                      {stop}
+                    </li>
+                  ))}
+                </ul>
+
+                <p className="cpn-stops-note">
+                  *Subject to demand.
+                  <br />
+                  Full timings in the app
+                </p>
+              </div> */}
+            </div>
+
+    
+
+           <div className="route-wrapper">
+   <div className="cp-split-head">
+              <div className="cp-work-text">
+                <h2 className="cp-h2">Where are you heading?</h2>
+                <p className="cp-note">Choose the Home Express route you’d use most and help your side unlock it.</p>
+              </div>
+            </div>
+
+    <div className="route-item easties active">
+
+        <div className="route-header" onclick="toggleAccordion(this)">
+
+            <div className="route-left">
+                <div className="route-title-row">
+                    <div className="route-title">EASTIES</div>
+                    <div className="route-route">— EAST ROUTE</div>
+                </div>
+
+                <div className="route-description">
+                    Traveling towards the East.
+                </div>
+            </div>
+
+            <div className="progress-area">
+                <div className="progress-top">
+                    <div>
+                        <span className="progress-number">137</span>
+                        <span className="progress-total">/ 200</span>
+                    </div>
+                </div>
+
+                <div className="progress-bar">
+                    <div className="progress-fill"></div>
+                </div>
+            </div>
+
+            <div className="unlock">
+                <strong>63 more to unlock</strong>
+                <span>Active Campaign</span>
+            </div>
+
+            <div className="toggle">−</div>
+
+        </div>
+
+
+        <div className="route-content">
+
+            <div className="route-content-inner">
+
+
+                <div className="dropoff">
+
+                    <div className="dropoff-title">
+                        DROP-OFF POINTS (EAST)
+                    </div>
+
+                    <ul className="dropoff-list">
+                        <li>Paya Lebar MRT</li>
+                        <li>Bedok MRT</li>
+                        <li>Tampines MRT</li>
+                        <li>Pasir Ris MRT</li>
+                    </ul>
+
+                    <a href="#" className="route-link">
+                        View route map <img src="/images/route.png"/>
+                    </a>
+
+                </div>
+
+
+  
+                <div className="map-box">
+
+                    <div className="map-line"></div>
+
+                    <div className="map-point point-1"></div>
+                    <div className="map-point point-2"></div>
+                    <div className="map-point point-3"></div>
+                    <div className="map-point point-4"></div>
+                    <div className="map-point point-5"></div>
+
+                    <div className="map-highlight">
+                        Tampines MRT
+                    </div>
+
+                    <div className="map-label label-1">
+                        Paya Lebar MRT
+                    </div>
+
+                    <div className="map-label label-2">
+                        Bedok MRT
+                    </div>
+
+                    <div className="map-label label-3">
+                        Tampines MRT
+                    </div>
+
+                    <div className="map-label label-4">
+                        Tampines MRT
+                    </div>
+
+                    <div className="map-label label-5">
+                        Pasir Ris
+                    </div>
+
+                    {/* <div className="map-location location-1">♧</div> */}
+                    <div className="map-location location-2"><img src="/images/map-pin.png"/></div>
+                    <div className="map-location location-3"><img src="/images/map-pin.png"/></div>
+
+                </div>
+
+
+ 
+                <div className="vote-box">
+
+                    <div className="vote-title">
+                        EASTIES, WE NEED YOU!
+                    </div>
+
+                    <div className="vote-icon">
+                        ♡
+                    </div>
+
+                    <a href="#" className="vote-button">
+                        Vote for East
+                    </a>
+
+                    <div className="vote-description">
+                        Free account required<br/>
+                        No membership needed
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div className="route-item westies">
+
+        <div className="route-header" onclick="toggleAccordion(this)">
+
+            <div className="route-left">
+                <div className="route-title-row">
+                    <div className="route-title">WESTIES</div>
+                    <div className="route-route">— WEST ROUTE</div>
+                </div>
+
+                <div className="route-description">
+                    Traveling towards the West.
+                </div>
+            </div>
+
+            <div className="progress-area">
+                <div className="progress-top">
+                    <div>
+                        <span className="progress-number">84</span>
+                        <span className="progress-total">/ 200</span>
+                    </div>
+                </div>
+
+                <div className="progress-bar">
+                    <div className="progress-fill"></div>
+                </div>
+            </div>
+
+            <div className="unlock">
+                <strong>116 more to unlock</strong>
+                <span>Active Campaign</span>
+            </div>
+
+            <div className="toggle">+</div>
+
+        </div>
+
+        <div className="route-content">
+            <div className="route-content-inner">
+                <div className="dropoff">
+                    <div className="dropoff-title">DROP-OFF POINTS (WEST)</div>
+                    <ul className="dropoff-list">
+                        <li>Jurong East MRT</li>
+                        <li>West Coast</li>
+                        <li>Clementi MRT</li>
+                        <li>Buona Vista MRT</li>
+                    </ul>
+                    <a href="#" className="route-link">View route map 🗺</a>
+                </div>
+
+                <div className="map-box">
+                    <div className="map-line"></div>
+                    <div className="map-point point-1"></div>
+                    <div className="map-point point-2"></div>
+                    <div className="map-point point-3"></div>
+                    <div className="map-point point-4"></div>
+                    <div className="map-point point-5"></div>
+                </div>
+
+                <div className="vote-box">
+                    <div className="vote-title">WESTIES, WE NEED YOU!</div>
+                    <div className="vote-icon">♡</div>
+                    <a href="#" className="vote-button">Vote for West</a>
+                    <div className="vote-description">
+                        Free account required<br/>
+                        No membership needed
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+
+    <div className="route-item north-easties">
+
+        <div className="route-header" onclick="toggleAccordion(this)">
+
+            <div className="route-left">
+                <div className="route-title-row">
+                    <div className="route-title">NORTH EASTIES</div>
+                    <div className="route-route">— NORTH EAST ROUTE</div>
+                </div>
+
+                <div className="route-description">
+                    Traveling towards the North East.
+                </div>
+            </div>
+
+            <div className="progress-area">
+                <div className="progress-top">
+                    <div>
+                        <span className="progress-number">126</span>
+                        <span className="progress-total">/ 200</span>
+                    </div>
+                </div>
+
+                <div className="progress-bar">
+                    <div className="progress-fill"></div>
+                </div>
+            </div>
+
+            <div className="unlock">
+                <strong>74 more to unlock</strong>
+                <span>Active Campaign</span>
+            </div>
+
+            <div className="toggle">+</div>
+
+        </div>
+
+        <div className="route-content">
+            <div className="route-content-inner">
+                <div className="dropoff">
+                    <div className="dropoff-title">DROP-OFF POINTS</div>
+                    <ul className="dropoff-list">
+                        <li>Serangoon MRT</li>
+                        <li>Hougang MRT</li>
+                        <li>Sengkang MRT</li>
+                        <li>Punggol MRT</li>
+                    </ul>
+                    <a href="#" className="route-link">View route map 🗺</a>
+                </div>
+
+                <div className="map-box">
+                    <div className="map-line"></div>
+                    <div className="map-point point-1"></div>
+                    <div className="map-point point-2"></div>
+                    <div className="map-point point-3"></div>
+                    <div className="map-point point-4"></div>
+                    <div className="map-point point-5"></div>
+                </div>
+
+                <div className="vote-box">
+                    <div className="vote-title">NORTH EASTIES, WE NEED YOU!</div>
+                    <div className="vote-icon">♡</div>
+                    <a href="#" className="vote-button">Vote Now</a>
+                    <div className="vote-description">
+                        Free account required<br/>
+                        No membership needed
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+
+    <div className="route-item north-westies">
+
+        <div className="route-header" onclick="toggleAccordion(this)">
+
+            <div className="route-left">
+                <div className="route-title-row">
+                    <div className="route-title">NORTH WESTIES</div>
+                    <div className="route-route">— NORTH WEST ROUTE</div>
+                </div>
+
+                <div className="route-description">
+                    Traveling towards the North West.
+                </div>
+            </div>
+
+            <div className="progress-area">
+                <div className="progress-top">
+                    <div>
+                        <span className="progress-number">61</span>
+                        <span className="progress-total">/ 200</span>
+                    </div>
+                </div>
+
+                <div className="progress-bar">
+                    <div className="progress-fill"></div>
+                </div>
+            </div>
+
+            <div className="unlock">
+                <strong>139 more to unlock</strong>
+                <span>Active Campaign</span>
+            </div>
+
+            <div className="toggle">+</div>
+
+        </div>
+
+        <div className="route-content">
+            <div className="route-content-inner">
+                <div className="dropoff">
+                    <div className="dropoff-title">DROP-OFF POINTS</div>
+                    <ul className="dropoff-list">
+                        <li>Bukit Batok MRT</li>
+                        <li>Choa Chu Kang MRT</li>
+                        <li>Bukit Panjang MRT</li>
+                        <li>Woodlands MRT</li>
+                    </ul>
+                    <a href="#" className="route-link">View route map 🗺</a>
+                </div>
+
+                <div className="map-box">
+                    <div className="map-line"></div>
+                    <div className="map-point point-1"></div>
+                    <div className="map-point point-2"></div>
+                    <div className="map-point point-3"></div>
+                    <div className="map-point point-4"></div>
+                    <div className="map-point point-5"></div>
+                </div>
+
+                <div className="vote-box">
+                    <div className="vote-title">NORTH WESTIES, WE NEED YOU!</div>
+                    <div className="vote-icon">♡</div>
+                    <a href="#" className="vote-button">Vote Now</a>
+                    <div className="vote-description">
+                        Free account required<br/>
+                        No membership needed
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+          </div>
+        </section>
+
+ 
+      </div>
+
+    
 
       {/* ================= FAQ ================= */}
 
@@ -1005,3 +1478,4 @@ export default function ClubPass() {
     </div>
   );
 }
+
