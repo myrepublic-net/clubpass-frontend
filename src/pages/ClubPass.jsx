@@ -1097,7 +1097,7 @@ Enjoy perks that keep growing.
                     </div>
 
                     <div className="vote-icon">
-                        ♡
+                        <img src="./images/like.png"/>
                     </div>
 
                     <a href="#" className="vote-button">
