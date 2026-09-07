@@ -578,6 +578,8 @@ span.cl-box {
     padding: 4px 10px;
     border-radius: 50px;
     font-weight: 700;
+    width: 110px;
+    text-align: center;
 }
 .cp-ico {
   flex: none;
