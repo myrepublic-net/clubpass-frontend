@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   ArrowRight,
   Bell,
@@ -282,6 +282,7 @@ function RouteMap() {
 export default function ClubPass() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [openFaq, setOpenFaq] = useState(0);
+  const [openRoute, setOpenRoute] = useState("easties");
   // Live tallies from Strapi. No user here, so nothing votes — see voteRoute.
   const { routes } = useRouteVoting();
 
@@ -306,6 +307,22 @@ export default function ClubPass() {
   const toggleFaq = (index) => {
     setOpenFaq((prev) => (prev === index ? null : index));
   };
+
+  const toggleRoute = (key) => {
+    setOpenRoute((prev) => (prev === key ? null : key));
+  };
+
+  // Panels stay mounted (just visually clipped) so their scrollHeight is always
+  // measurable — used to drive max-height with a real pixel value, since CSS
+  // can't transition smoothly to/from a keyword like max-content.
+  const routeContentRefs = useRef({});
+
+  const setRouteContentRef = (key) => (el) => {
+    routeContentRefs.current[key] = el;
+  };
+
+  const getRouteMaxHeight = (key) =>
+    openRoute === key ? routeContentRefs.current[key]?.scrollHeight : 0;
 
   // Nobody is signed in on the public page, so a tap can't be counted here —
   // voting needs a membership record to spend the vote against. Send them to
@@ -984,9 +1001,9 @@ Enjoy perks that keep growing.
               </div>
             </div>
 
-    <div className="route-item easties active">
+    <div className={`route-item easties${openRoute === "easties" ? " active" : ""}`}>
 
-        <div className="route-header" onclick="toggleAccordion(this)">
+        <div className="route-header" onClick={() => toggleRoute("easties")}>
 
             <div className="route-left">
                 <div className="route-title-row">
@@ -1017,12 +1034,16 @@ Enjoy perks that keep growing.
                 <span>Active Campaign</span>
             </div>
 
-            <div className="toggle">−</div>
+            <div className="toggle">{openRoute === "easties" ? "−" : "+"}</div>
 
         </div>
 
 
-        <div className="route-content">
+        <div
+          className="route-content"
+          ref={setRouteContentRef("easties")}
+          style={{ maxHeight: getRouteMaxHeight("easties") }}
+        >
 
             <div className="route-content-inner">
 
@@ -1118,9 +1139,9 @@ Enjoy perks that keep growing.
     </div>
 
 
-    <div className="route-item westies">
+    <div className={`route-item westies${openRoute === "westies" ? " active" : ""}`}>
 
-        <div className="route-header" onclick="toggleAccordion(this)">
+        <div className="route-header" onClick={() => toggleRoute("westies")}>
 
             <div className="route-left">
                 <div className="route-title-row">
@@ -1151,11 +1172,15 @@ Enjoy perks that keep growing.
                 <span>Active Campaign</span>
             </div>
 
-            <div className="toggle">+</div>
+            <div className="toggle">{openRoute === "westies" ? "−" : "+"}</div>
 
         </div>
 
-        <div className="route-content">
+        <div
+          className="route-content"
+          ref={setRouteContentRef("westies")}
+          style={{ maxHeight: getRouteMaxHeight("westies") }}
+        >
             <div className="route-content-inner">
                 <div className="dropoff">
                     <div className="dropoff-title">DROP-OFF POINTS (WEST)</div>
@@ -1193,9 +1218,9 @@ Enjoy perks that keep growing.
 
 
 
-    <div className="route-item north-easties">
+    <div className={`route-item north-easties${openRoute === "north-easties" ? " active" : ""}`}>
 
-        <div className="route-header" onclick="toggleAccordion(this)">
+        <div className="route-header" onClick={() => toggleRoute("north-easties")}>
 
             <div className="route-left">
                 <div className="route-title-row">
@@ -1226,11 +1251,15 @@ Enjoy perks that keep growing.
                 <span>Active Campaign</span>
             </div>
 
-            <div className="toggle">+</div>
+            <div className="toggle">{openRoute === "north-easties" ? "−" : "+"}</div>
 
         </div>
 
-        <div className="route-content">
+        <div
+          className="route-content"
+          ref={setRouteContentRef("north-easties")}
+          style={{ maxHeight: getRouteMaxHeight("north-easties") }}
+        >
             <div className="route-content-inner">
                 <div className="dropoff">
                     <div className="dropoff-title">DROP-OFF POINTS</div>
@@ -1268,9 +1297,9 @@ Enjoy perks that keep growing.
 
 
 
-    <div className="route-item north-westies">
+    <div className={`route-item north-westies${openRoute === "north-westies" ? " active" : ""}`}>
 
-        <div className="route-header" onclick="toggleAccordion(this)">
+        <div className="route-header" onClick={() => toggleRoute("north-westies")}>
 
             <div className="route-left">
                 <div className="route-title-row">
@@ -1301,11 +1330,15 @@ Enjoy perks that keep growing.
                 <span>Active Campaign</span>
             </div>
 
-            <div className="toggle">+</div>
+            <div className="toggle">{openRoute === "north-westies" ? "−" : "+"}</div>
 
         </div>
 
-        <div className="route-content">
+        <div
+          className="route-content"
+          ref={setRouteContentRef("north-westies")}
+          style={{ maxHeight: getRouteMaxHeight("north-westies") }}
+        >
             <div className="route-content-inner">
                 <div className="dropoff">
                     <div className="dropoff-title">DROP-OFF POINTS</div>
