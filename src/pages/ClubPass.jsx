@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import { Link } from "react-router";
 import {
   ArrowRight,
   Bell,
@@ -364,14 +365,12 @@ export default function ClubPass() {
             className="d-flex align-items-center"
             style={{ gap: 8 }}
           >
-            <a
+            <Link
               className="cp-btn cp-btn-purple cp-btn-sm"
-              href={APP_LINK}
-              target="_blank"
-              rel="noopener noreferrer"
+              to="/login"
             >
               Join the Club
-            </a>
+            </Link>
 
             <button
               className="cp-nav-toggle"
