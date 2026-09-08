@@ -1,0 +1,435 @@
+/* ==========================================================================
+   ClubPass — signup / login
+   Full-bleed bg_welcome_auth.png behind a centered white card. Scoped under
+   .auth-page / .auth-modal-overlay so it can't leak into the Bootstrap site.
+   ========================================================================== */
+
+.auth-page,
+.auth-modal-overlay {
+  box-sizing: border-box;
+  font-family: "Bricolage Grotesque", sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+.auth-page *,
+.auth-page *::before,
+.auth-page *::after,
+.auth-modal *,
+.auth-modal *::before,
+.auth-modal *::after {
+  box-sizing: border-box;
+}
+
+.auth-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 20px;
+  background: #0b1650 url(/images/bg_welcome_auth.png) center / cover no-repeat;
+}
+.auth-success-image {
+    display: table;
+    margin: auto;
+    margin-bottom: 20px;
+        width: 150px;
+}
+.auth-card {
+  width: 100%;
+  max-width: 448px;
+  background: #fff;
+  border-radius: 24px;
+  padding: 32px 32px;
+  box-shadow: 0 30px 60px -20px rgba(4, 8, 30, 0.45);
+  position: relative;
+  min-height: 500px;
+}
+
+.auth-card-head {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.auth-card-head h1 {
+  margin: 0 0 6px;
+  font-size: 27px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: #161616;
+}
+
+.auth-subtitle {
+    margin: 0;
+    font-size: 17px;
+    color: #161616;
+    font-weight: 300;
+}
+
+/* ---- form / fields ------------------------------------------------------- */
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.auth-field-box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 2px solid #BABABA80;
+  border-radius: 12px;
+  padding: 10px 14px;
+  background: #fff;
+  transition: border-color 0.15s ease;
+}
+
+.auth-field-box:focus-within {
+  border-color: #1fdbda;
+}
+
+.auth-field.has-error .auth-field-box {
+  border-color: #dc2626;
+}
+
+.auth-field-prefix {
+  font-size: 15px;
+  font-weight: 600;
+  color: #12122b;
+  padding-right: 8px;
+  border-right: 1px solid #e3e1ec;
+  margin-right: 2px;
+}
+
+.auth-field-control 
+{ flex: 1; 
+    min-width: 0; 
+    display: flex; 
+    flex-direction: column; 
+       position: relative;
+    width: 100%;
+ } 
+.auth-field-label { 
+   position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 14px;
+    color: #9c96ac;
+    line-height: 1.3;
+    pointer-events: none;
+    transition: all 0.25s ease;
+}
+    
+/* .auth-field-control:focus-within .auth-field-label, .auth-field-input:not(:placeholder-shown) + .auth-field-label {
+    top: 0px;
+    position: relative;
+    transform: translateY(0);
+    font-size: 11px;
+} */
+.auth-field-control:focus-within .auth-field-label,
+.auth-field-control.has-value .auth-field-label {
+    top: 2px;
+    transform: translateY(-50%);
+    font-size: 11px;
+    position: relative;
+}
+
+.auth-field-input {
+  border: 0;
+  outline: 0;
+  background: transparent;
+  width: 100%;
+  padding: 0;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 500;
+  color: #12122b;
+}
+
+.auth-field-input::placeholder {
+  color: #b9b4c8;
+}
+
+.auth-field-action {
+  flex-shrink: 0;
+  border: 0;
+  background: none;
+  padding: 4px;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: #0ec7c2;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.auth-field-action:disabled {
+  color: #cfcbdb;
+  cursor: not-allowed;
+}
+
+.auth-field-icon-btn {
+  flex-shrink: 0;
+  display: flex;
+  border: 0;
+  background: none;
+  padding: 4px;
+  color: #9c96ac;
+  cursor: pointer;
+}
+
+.auth-field-error {
+  margin: 6px 2px 0;
+  font-size: 12px;
+  color: #dc2626;
+}
+
+/* ---- OTP ------------------------------------------------------------------ */
+
+.auth-otp-label {
+  display: block;
+  margin: 2px 2px 10px;
+  font-size: 13px;
+  color: #6f6880;
+}
+
+.auth-otp-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.auth-otp-boxes {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+}
+
+.auth-otp-box {
+  width: 44px;
+  height: 52px;
+  border: 1.5px solid #e3e1ec;
+  border-radius: 10px;
+  text-align: center;
+  font-family: inherit;
+  font-size: 20px;
+  font-weight: 700;
+  color: #12122b;
+  outline: 0;
+}
+
+.auth-otp-box:focus {
+  border-color: #1fdbda;
+  box-shadow: 0 0 0 3px rgba(31, 219, 218, 0.25);
+}
+
+
+.auth-otp-expiry {
+  margin: 0;
+  font-size: 12px;
+  color: #9c96ac;
+}
+
+.auth-otp-expiry.is-expired {
+  color: #dc2626;
+}
+
+.auth-otp-error {
+  text-align: center;
+}
+
+/* ---- password rules -------------------------------------------------------- */
+
+.auth-password-rules {
+  list-style: none;
+  margin: -6px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.auth-password-rules li {
+  font-size: 12px;
+  color: #9c96ac;
+}
+
+.auth-password-rules li::before {
+  content: "• ";
+}
+
+.auth-password-rules li.is-met {
+  color: #16a34a;
+}
+
+/* ---- checkbox / cta / footer ------------------------------------------------ */
+
+.auth-checkbox {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: #4b4560;
+  cursor: pointer;
+}
+
+.auth-checkbox input {
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  margin-top: 2px;
+  accent-color: #1fdbda;
+}
+
+.auth-cta {
+    width: 100%;
+    border: 0;
+    border-radius: 14px;
+    padding: 14px;
+    margin-top: 4px;
+    font-family: inherit;
+    font-size: 18px;
+    font-weight: 700;
+    color: #0b1650;
+    background: #1fdbda;
+    cursor: pointer;
+    text-transform: capitalize;
+}
+
+.auth-cta:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.auth-cta-link {
+  display: block;
+  text-align: center;
+  text-decoration: none;
+}
+
+.auth-legal-fine {
+  margin: 4px 0 0;
+  font-size: 11.5px;
+  line-height: 1.6;
+  color: #9c96ac;
+  text-align: center;
+}
+
+.auth-legal-link {
+  border: 0;
+  background: none;
+  padding: 0;
+  font: inherit;
+  font-weight: 700;
+  color: #12122b;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.auth-switch {
+    margin: 22px 0 0;
+    font-size: 12px;
+    color: #9c96ac;
+    text-align: center;
+    font-weight: 300;
+    position: absolute;
+    bottom: 30px;
+    left: 50%;
+    transform: translate(-50%, 0px);
+    width: 100%;
+}
+
+.auth-switch a {
+  margin-left: 4px;
+  font-weight: 800;
+  color: #1FDBDA;
+  text-decoration: none;
+}
+
+.auth-success-text {
+  margin: 4px 0 24px;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #4b4560;
+  text-align: center;
+}
+
+/* ---- terms / privacy modal --------------------------------------------------- */
+
+.auth-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(11, 22, 80, 0.55);
+}
+
+.auth-modal {
+  width: 100%;
+  max-width: 480px;
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+.auth-modal-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 24px;
+  border-bottom: 1px solid #eeecf5;
+}
+
+.auth-modal-head h2 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 800;
+  color: #12122b;
+}
+
+.auth-modal-close {
+  border: 0;
+  background: none;
+  font-size: 22px;
+  line-height: 1;
+  color: #9c96ac;
+  cursor: pointer;
+}
+
+.auth-modal-body {
+  padding: 18px 24px 24px;
+  overflow-y: auto;
+  font-size: 13.5px;
+  line-height: 1.65;
+  color: #4b4560;
+}
+
+.auth-modal-body p {
+  margin: 0 0 14px;
+}
+
+.auth-modal-body p:last-child {
+  margin-bottom: 0;
+}
+
+@media (max-width: 420px) {
+  .auth-card {
+    padding: 32px 22px;
+  }
+
+  .auth-otp-box {
+    width: 38px;
+    height: 48px;
+  }
+}
