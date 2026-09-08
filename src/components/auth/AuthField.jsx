@@ -14,17 +14,44 @@ export default function AuthField({
   ...inputProps
 }) {
   return (
-    <div className={`auth-field ${error ? "has-error" : ""} ${className}`}>
-      <div className="auth-field-box">
-        {prefix && <span className="auth-field-prefix">{prefix}</span>}
-        <div className="auth-field-control">
-          <label className="auth-field-label">{label}</label>
-          <input className="auth-field-input" {...inputProps} />
-        </div>
-        {action}
-        {suffix}
-      </div>
-      {error && <p className="auth-field-error">{error}</p>}
+    // <div className={`auth-field ${error ? "has-error" : ""} ${className}`} >
+    //   <div className="auth-field-box">
+    //     {prefix && <span className="auth-field-prefix">{prefix}</span>}
+    //     <div className="auth-field-control">
+    //       <label className="auth-field-label">{label}</label>
+    //       <input  className="auth-field-input" {...inputProps} />
+    //     </div>
+    //     {action}
+    //     {suffix}
+    //   </div>
+    //   {error && <p className="auth-field-error">{error}</p>}
+    // </div>
+
+
+
+
+<div className={`auth-field ${error ? "has-error" : ""} ${className}`}>
+  <div className="auth-field-box">
+    {prefix && <span className="auth-field-prefix">{prefix}</span>}
+
+    <div
+      className={`auth-field-control ${
+        inputProps.value || inputProps.defaultValue ? "has-value" : ""
+      }`}
+    >
+      <label className="auth-field-label">{label}</label>
+
+      <input
+        className="auth-field-input"
+        {...inputProps}
+      />
     </div>
+
+    {action}
+    {suffix}
+  </div>
+
+  {error && <p className="auth-field-error">{error}</p>}
+</div>
   );
 }

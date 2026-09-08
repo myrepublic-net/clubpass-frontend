@@ -6,6 +6,7 @@ export default function AuthLayout({ title, subtitle, children }) {
     <div className="auth-page">
       <div className="auth-card">
         <header className="auth-card-head">
+          
           <h1>{title}</h1>
           {subtitle && <p className="auth-subtitle">{subtitle}</p>}
         </header>

@@ -107,8 +107,20 @@ export default function Signup() {
 
   if (step === "success") {
     return (
-      <AuthLayout title="You're in!" subtitle="Your Clubpass account is ready.">
-        <p className="auth-success-text">Welcome aboard, {username}. You can log in now.</p>
+        
+      <AuthLayout>
+         <img
+        src="/images/rl-full-icon.png"
+        alt="Account successfully created"
+        className="auth-success-image"
+      />
+      <div className="auth-card-head">
+         <h1>Account successfully <br/>created!</h1>
+        <p>Onwards!</p>
+      </div>
+       
+        
+        {/* <p className="auth-success-text">Welcome aboard, {username}. You can log in now.</p> */}
         <Link to="/login" className="auth-cta auth-cta-link">
           Continue to log in
         </Link>
