@@ -433,3 +433,9 @@
     height: 48px;
   }
 }
+
+@media (max-width: 550px) {
+.auth-page {
+  background: #0b1650 url(/images/Sign-bg.png) center / cover no-repeat;
+}
+}
