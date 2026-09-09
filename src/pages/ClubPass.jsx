@@ -1195,7 +1195,7 @@ Enjoy perks that keep growing.
                     <div className="map-point point-1"></div>
                     <div className="map-point point-2"></div>
                     <div className="map-point point-3"></div>
-                    <div className="map-point point-4"></div>
+                    {/* <div className="map-point point-4"></div> */}
                     <div className="map-point point-5"></div>
                 </div>
 
@@ -1274,7 +1274,7 @@ Enjoy perks that keep growing.
                     <div className="map-point point-1"></div>
                     <div className="map-point point-2"></div>
                     <div className="map-point point-3"></div>
-                    <div className="map-point point-4"></div>
+                    {/* <div className="map-point point-4"></div> */}
                     <div className="map-point point-5"></div>
                 </div>
 
@@ -1353,7 +1353,7 @@ Enjoy perks that keep growing.
                     <div className="map-point point-1"></div>
                     <div className="map-point point-2"></div>
                     <div className="map-point point-3"></div>
-                    <div className="map-point point-4"></div>
+                    {/* <div className="map-point point-4"></div> */}
                     <div className="map-point point-5"></div>
                 </div>
 

@@ -2067,8 +2067,8 @@ background: #9eafc5;
 
 .route-wrapper .map-line {
     position: absolute;
-    left: 18px;
-    right: 18px;
+    left: 15px;
+    right: 15px;
     top: 82px;
     height: 3px;
     background: #07549a;
@@ -2101,11 +2101,11 @@ background: #9eafc5;
     white-space: nowrap;
 }
 
-.route-wrapper .label-1 { left: 14%; }
+.route-wrapper .label-1 { left: 8%; }
 .route-wrapper .label-2 { left: 38%; }
 .route-wrapper .label-3 { left: 70%; }
 .route-wrapper .label-4 { left: 73%; }
-.route-wrapper .label-5 { left: 92%; }
+.route-wrapper .label-5 { left: 95%; }
 
 .route-wrapper .map-highlight {
     position: absolute;
@@ -2138,8 +2138,8 @@ background: #9eafc5;
 }
 
 .route-wrapper .location-3 {
-    left: 80%;
-    top: 50px;
+   left: 85%;
+    top: 40px;
 }
 
 /* VOTE */
@@ -2866,10 +2866,14 @@ section.cpn-safety p.cpn-kicker.cpn-kicker--light {
     flex-wrap: nowrap;
     overflow-y: scroll;
     justify-content: flex-start;
+            margin-right: -20px;
 }
 .membership-section .venue, .membership-section .coming {
         min-width: 280px !important;
             border-radius: 16px;
+    }
+    .membership-section .coming {
+       margin-right: 20px;
     }
   /* .cp-hero-inner {
     padding: 56px 0 260px;
@@ -3136,4 +3140,10 @@ height: 580px;
     .cp-hero-inner {
         min-height: 750px;
     }
+    .route-wrapper .label-5 {
+    left: 92%;
+}
+.route-wrapper .label-1 {
+    left: 14%;
+}
 }
