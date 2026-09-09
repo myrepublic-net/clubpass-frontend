@@ -1078,25 +1078,25 @@ Enjoy perks that keep growing.
                     <div className="map-point point-1"></div>
                     <div className="map-point point-2"></div>
                     <div className="map-point point-3"></div>
-                    <div className="map-point point-5"></div>
+                    <div className="map-point point-4"></div>
 
                     <div className="map-highlight">
-                        Tampines MRT
+                        Tampines
                     </div>
 
                     <div className="map-label label-1">
-                        Paya Lebar MRT
+                        Paya Lebar 
                     </div>
 
                     <div className="map-label label-2">
-                        Bedok MRT
+                        Bedok 
                     </div>
 
                     <div className="map-label label-3">
-                        Tampines MRT
+                        Tampines 
                     </div>
 
-                    <div className="map-label label-5">
+                    <div className="map-label label-4">
                         Pasir Ris
                     </div>
 
@@ -1195,8 +1195,12 @@ Enjoy perks that keep growing.
                     <div className="map-point point-1"></div>
                     <div className="map-point point-2"></div>
                     <div className="map-point point-3"></div>
-                    {/* <div className="map-point point-4"></div> */}
-                    <div className="map-point point-5"></div>
+                    <div className="map-point point-4"></div>
+
+                     <div className="map-label label-1"> Jurong East </div>
+                   <div className="map-label label-2"> West Coast </div>
+                    <div className="map-label label-3"> Clementi </div>
+                    <div className="map-label label-4"> Buona Vista</div>
                 </div>
 
                 <div className="vote-box">
@@ -1274,8 +1278,12 @@ Enjoy perks that keep growing.
                     <div className="map-point point-1"></div>
                     <div className="map-point point-2"></div>
                     <div className="map-point point-3"></div>
-                    {/* <div className="map-point point-4"></div> */}
-                    <div className="map-point point-5"></div>
+                    <div className="map-point point-4"></div>
+                     <div className="map-label label-1"> Serangoon </div>
+                   <div className="map-label label-2"> Hougang </div>
+                    <div className="map-label label-3"> Sengkang </div>
+                    <div className="map-label label-4"> Punggol</div>
+                    
                 </div>
 
                 <div className="vote-box">
@@ -1353,8 +1361,12 @@ Enjoy perks that keep growing.
                     <div className="map-point point-1"></div>
                     <div className="map-point point-2"></div>
                     <div className="map-point point-3"></div>
-                    {/* <div className="map-point point-4"></div> */}
-                    <div className="map-point point-5"></div>
+                    <div className="map-point point-4"></div>
+
+                    <div className="map-label label-1"> Bukit Batok </div>
+                   <div className="map-label label-2"> Choa Chu Kang </div>
+                    <div className="map-label label-3">Bukit Panjang </div>
+                    <div className="map-label label-4"> Woodlands</div>
                 </div>
 
                 <div className="vote-box">
