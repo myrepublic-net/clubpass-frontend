@@ -520,7 +520,7 @@ a.cp-btn.cp-btn-ghost {
   font-weight: 700;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: #bfbfbf;
+          color: #BABABA;
   margin-bottom: 20px !important;
 }
 
@@ -538,6 +538,7 @@ a.cp-btn.cp-btn-ghost {
     font-weight: 400;
     color: var(--cp-ink);
     align-items: center;
+        align-items: self-start;
 }
 .pl-item {
     display: flex;
@@ -1899,7 +1900,7 @@ span.rewards-coming {
 
 /* UNLOCK */
 .route-wrapper .unlock {
-    text-align: center;
+    text-align: right;
     font-size: 8px;
     color: #111;
     line-height: 1.35;
@@ -1990,25 +1991,43 @@ span.rewards-coming {
     margin-bottom: 16px;
     text-align: left;
 }
-
+.westies .dropoff-title, .route-wrapper .westies .route-link, .route-wrapper .westies .vote-button {
+    color: #9eafc5;
+}
+.north-easties .dropoff-title, .route-wrapper .north-easties .route-link, .route-wrapper .north-easties .vote-button {
+    color: #0070DB;
+}
+.route-wrapper .north-easties .vote-box {
+background: #0070DB;
+}
+.north-westies .dropoff-title, .route-wrapper .north-westies .route-link, .route-wrapper .north-westies .vote-button {
+    color: #FF630D;
+}
+.route-wrapper .north-westies .vote-box {
+background: #FF630D;
+}
+.route-wrapper .westies .vote-box {
+background: #9eafc5;
+}
 .route-wrapper .dropoff-list {
     list-style: none;
 }
-
 .route-wrapper .dropoff-list li {
     position: relative;
-    padding-left: 20px;
     margin-bottom: 10px;
-    font-size: 18px;
+    font-size: 16px;
     color: #11142D;
     font-weight: 500;
-        text-align: left;
+    text-align: left;
+    display: flex;
+    align-items: center;
+    gap: 5px;
 }
 .route-wrapper .dropoff-list li:last-child {
     margin-bottom: 0px;
 }
 
-.route-wrapper .dropoff-list li::before {
+/* .route-wrapper .dropoff-list li::before {
     background: url(/images/map-pin.png);
     position: absolute;
     left: 0px;
@@ -2021,7 +2040,7 @@ span.rewards-coming {
     background-repeat: no-repeat;
     background-position: center;
     background-size: contain;
-}
+} */
 
 .route-wrapper .route-link {
     display: inline-flex;
@@ -2192,6 +2211,12 @@ span.rewards-coming {
     bottom: -2px;
     right: -600px;
 }
+span.cp-step-meta.mobile-mt {
+    display: none;
+}
+.desk-mt {
+    display: block;
+}
 @media (max-width: 650px) {
    .route-wrapper   .route-item {
         border-radius: 20px;
@@ -2303,15 +2328,13 @@ span.rewards-coming {
 .cpn-membership-grid {
     gap: 20px  !important;
 }
-.route-wrapper .map-box {
-    display: none;
-}
+
 .route-wrapper .route-content-inner {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr;
 }
       .cp-hero-inner {
         padding-top: 60px;
-        padding-bottom: 80px;
+        padding-bottom: 100px;
     }
   .cp-step p {
     min-height: 100px;
@@ -2467,11 +2490,11 @@ span.rewards-coming {
     gap: 40px !important;
 }
 section.cp-section.why-section {
-    margin-top: 0;
-    border-radius: 0;
+            border-radius: 40px 40px 0px 0px;
+            margin-top: -40px;
 }
 .membership-section .intro, .membership-section .benefit {
-    font-size: 16px;
+    font-size: 15px;
     line-height: 24px;
 }
 }
@@ -2480,16 +2503,35 @@ section.cp-section.why-section {
   .col-interest {
     padding: 20px;
     grid-template-columns: 1fr;
-    gap: 15px;
+    gap: 5px;
     margin-top: 20px;
+    border-radius: 16px;
+            position: relative;
+}
+.interest-image {
+    position: absolute;
+    top: -40px;
+    right: 20px;
+}
+.interest-text p {
+    font-size: 15px;
+    font-weight: 300;
+}
+.interest-image img {
+    width: 50px;
 }
 .interest-image img {
     position: relative;
     bottom: 0;
     margin: auto;
 }
-  .cp-work-text, .cp-hero-copy, .cp-eyebrow, .cpn-routes, .cpn-kicker--light, .cpn-h2--light, .cpn-safety-head p {
+  /* .cp-work-text, .cp-hero-copy, .cp-eyebrow, .cpn-routes, .cpn-kicker--light, .cpn-h2--light, .cpn-safety-head p {
     text-align: center !important;
+} */
+ .cp-btn.cp-btn-ghost {
+    justify-content: left;
+    font-size: 12px;
+    margin-bottom: 10px;
 }
 .membership-section .benefits {
     grid-template-columns: 1fr;
@@ -2499,33 +2541,58 @@ section.cp-section.why-section {
     width: 100%;
     height: 350px;
 }
-.cpn-route-head h3 {
-    font-size: 28px !important;
-    color: #0d165d !important;
-    margin-bottom: 5px;
+
+
+    .membership-section .terms {
+        font-size: 10px;
+        line-height: 16px;
+        padding: 8px 20px;
+        text-align: left;
+    }
+    .tt-membership .cpn-kicker {
+    font-size: 20px;
+    margin-bottom: 10px;
+    text-align: left;
 }
-.cpn-route-head p {
-    font-size: 16px !important;
-    color: #0d165d !important;
+.cpn-membership-lead {
+    font-size: 15px;
+    text-align: left;
 }
-.membership-section .terms {
-    font-size: 12px;
-    line-height: 18px;
-    padding: 5px 20px;
+
+.cpn-membership h2 {
+    text-align: left;
 }
 .membership-section {
     padding: 0px 18px !important;
 }
 .membership-section .info {
     grid-template-columns: 1fr;
+    margin-top: 30px;
+    border-radius: 16px;
+}
+.membership-section .info-title {
+    font-size: 17px;
+    margin-bottom: 10px;
+}
+.membership-section .info-copy {
+    font-size: 15px;
+    font-weight: 400;
+}
+.membership-section .info-item:last-child {
+    padding-left: 0px;
 }
 .membership-section h2 {
-    font-size: 28px;
-    line-height: 40px;
+    font-size: 30px;
+    line-height:38px;
+    text-align: left;
 }
-.cpn-membership .tt-membership {
-    padding-top: 28px !important;
+.membership-section .intro {
+    text-align: left;
 }
+.membership-section .benefits {
+    margin: 20px 0px 40px 0px;
+}
+
 .cpn-membership .tt-top {
     height: 150px !important;
 }
@@ -2540,7 +2607,6 @@ section.cp-section.why-section {
 .cp-hero-copy {
     display: flex;
     flex-direction: column;
-    align-items: center;
 }
 .cpn-safety-top {
     margin-top: 20px  !important;
@@ -2550,8 +2616,7 @@ section.cp-section.why-section {
     padding-top: 60px !important;
 }
 .rewards-body {
-    grid-template-columns: 1fr;
-    gap: 40px;
+    gap: 20px;
 }
 .rw-box-image {
     min-height: auto;
@@ -2559,18 +2624,18 @@ section.cp-section.why-section {
 .rewards-body {
     margin-top: 40px;
 }
+.rw-box-image img{
+    height: 100px;
+    object-fit: fill;
+}
 .rw-box.rw-inner:after {
-    content: "";
-    background: url(./images/Frame.png);
-    width: 40px;
-    height: 40px;
-    background-position: center;
-    background-size: contain;
-    background-repeat: no-repeat;
-    position: absolute;
-    top: -40px;
-    left: 50%;
-    transform: rotate(90deg);
+    width: 30px;
+    height: 30px;
+    top: 15%;
+    left: -30px;
+}
+.rw-box-image {
+    margin-bottom: 20px;
 }
 .cpn-safety-card {
     display: flex;
@@ -2582,6 +2647,13 @@ section.cp-section.why-section {
     margin-top: 20px ;
     justify-content: center;
 }
+.cp-step-num {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+            justify-content: space-between;
+                    margin-bottom: 15px;
+}
 .membership-section .venue {
     width: 100%;
 }
@@ -2590,20 +2662,21 @@ section.cp-section.why-section {
     justify-content: center;
 }
    .cp-work-text h2, .cpn-h2 {
-    font-size: 28px !important;
-    line-height: 36px !important;
+    font-size: 30px !important;
+    line-height: 38px !important;
 }
 .cp-steps .cp-step {
-    border-radius: 0;
+    border-radius: 16px;
         margin: 0;
-        padding:  20px;
+        padding:  20px 8px;
+        text-align: left;
     
 }
-.cp-step:first-child {
-    border-radius: 35px 35px 0px 0px;
+.cp-step h3 {
+    font-size: 18px;
 }
-.cp-step:nth-child(4) {
-    border-radius: 0px 0px 35px 35px ;
+.cp-step-num img {
+    width: 60px;
 }
       .cp-split-head {
         flex-direction: column;
@@ -2611,25 +2684,51 @@ section.cp-section.why-section {
 .cp-card-plain {
     order: 2;
 }
-.cp-why-head {
-    margin: 0 auto 40px;
+span.cp-step-meta.mobile-mt {
+    display: block;
 }
-
+.desk-mt {
+    display: none;
+    
+}
+.cp-why-head {
+    margin: 0 auto 22px;
+}
+.cp-card-plain {
+    border: 1.5px solid #BABABA;
+    border-radius: 16px;
+    padding-bottom: 60px !important;
+}
+.cp-card-dark {
+    margin-top: -40px;
+    background-color: #fff;
+}
   .cp-card-label {
     font-size: 18px;
         margin-bottom: 10px !important;
 }
 .rewards-footer p {
-    font-size: 16px;
-    line-height: 26px;
+    font-size: 15px;
+    line-height: 22px;
+    
 }
 .rewards-footer {
     padding: 15px;
     gap: 10px;
     margin-top: 20px;
+    border-radius: 16px;
 }
-.cpn-faq .cpn-kicker {
-    margin-bottom: 0px !important;
+.interest-number h3 {
+    font-size: 17px;
+    font-weight: 700;
+}
+.interest-number p {
+    font-size: 15px;
+    font-weight: 700;
+}
+
+.cp-faq-image {
+    display: none;
 }
 .cp-ico {
     flex: none;
@@ -2639,20 +2738,42 @@ section.cp-section.why-section {
 .cp-eyebrow {
     font-size: 20px;
 }
-   
-    
-    .cp-split-head .cp-note {
-    font-size: 16px;
-    text-align: center;
+   .cp-why-head p {
+    margin-top: 0px !important;
 }
-.cp-card-plain {
-    padding-bottom: 0 !important;
+    .cp-why-head.cp-center {
+    text-align: left;
+}
+.cp-why-head h2 {
+    margin-bottom: 15px;
+}
+.cp-why-head p {
+    font-size: 15px;
+    font-weight: 300;
+}
+.cp-eyebrow {
+    font-size: 20px !important;
+    font-weight: 600 !important;
+}
+    .cp-split-head .cp-note {
+    font-size: 15px;
+    text-align: left;
+            line-height: 20px;
+}
+.rw-box h3 {
+    font-size: 17px;
+    margin-bottom: 15px;
+}
+.rw-box p {
+    font-size: 15px;
+    text-align: center;
+    line-height: 20px;
 }
 .cpn-cta-bus {
     width: 180px !important;
 }
      .cp-h2, .cp-cta h2, .cpn-h2, .cpn-cta h2  {
-        font-size: 28px !important;
+        font-size: 30px !important;
         line-height: 38px !important;
     }
   .cp-brand img {
@@ -2731,15 +2852,30 @@ section.cpn-safety p.cpn-kicker.cpn-kicker--light {
 }
 
 .cpn-dj {
-    margin-bottom: 20px;
+    margin-bottom: 60px;
 }
+.membership-section .status {
+    font-size: 18px;
+    line-height: 28px;
+    margin-bottom: 10px;
+    margin-inline: 0;
+}
+.membership-section .venue-grid {
+    flex-wrap: nowrap;
+    overflow-y: scroll;
+    justify-content: flex-start;
+}
+.membership-section .venue, .membership-section .coming {
+        min-width: 280px !important;
+            border-radius: 16px;
+    }
   /* .cp-hero-inner {
     padding: 56px 0 260px;
   } */
 
   .cp-hero h1 {
-    font-size: 28px;
-    line-height: 36px;
+    font-size: 30px;
+    line-height: 38px;
   }
 .route-wrapper .route-content-inner {
     grid-template-columns: 1fr;
@@ -2752,24 +2888,33 @@ section.cpn-safety p.cpn-kicker.cpn-kicker--light {
     gap: 10px 20px;
   }
 
-  .cp-compare,
-  .cp-steps,
+  .cp-steps  {
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
   .cp-stops {
     grid-template-columns: 1fr;
   }
 
-  .cp-steps {
-    gap: 0px;
+    .cp-compare {
+   display: flex;
+        flex-direction: column-reverse;
+        gap: 0;
   }
+
   .cpn-membership-grid {
     grid-template-columns: 1fr !important;
   }
 .cp-step p {
     min-height: auto;
+            margin-bottom: 0;
 }
   .cp-stops {
     gap: 24px;
   }
+  span.cl-box {
+    padding: 2px 10px;
+}
 section#how-it-works {
     padding-bottom: 0;
 }
@@ -2778,6 +2923,8 @@ section#how-it-works {
         margin-top: 10px;
         margin-left: 0;
         margin-bottom: 10px;
+        font-size: 18px;
+        padding-inline: 10px;
     }
   .cp-sc-wide {
     flex-direction: column;
@@ -2976,7 +3123,15 @@ height: 580px;
     width: 100%;
   }
 
-  .cp-hero-slider-dots {
-    bottom: 30px;
-  }
+  .cp-hero-inner {
+    background-size: contain !important;
+    background-position: center top !important;
+}
+    .cp-overlay {
+        background: transparent;
+
+    }
+    .cp-hero-inner {
+        min-height: 750px;
+    }
 }
