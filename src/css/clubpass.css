@@ -2334,7 +2334,7 @@ span.cp-step-meta.mobile-mt {
 }
       .cp-hero-inner {
         padding-top: 60px;
-        padding-bottom: 80px;
+        padding-bottom: 100px;
     }
   .cp-step p {
     min-height: 100px;
@@ -2531,7 +2531,7 @@ section.cp-section.why-section {
  .cp-btn.cp-btn-ghost {
     justify-content: left;
     font-size: 12px;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
 }
 .membership-section .benefits {
     grid-template-columns: 1fr;
@@ -2907,6 +2907,7 @@ section.cpn-safety p.cpn-kicker.cpn-kicker--light {
   }
 .cp-step p {
     min-height: auto;
+            margin-bottom: 0;
 }
   .cp-stops {
     gap: 24px;
@@ -3122,7 +3123,15 @@ height: 580px;
     width: 100%;
   }
 
-  .cp-hero-slider-dots {
-    bottom: 50px;
-  }
+  .cp-hero-inner {
+    background-size: contain !important;
+    background-position: center top !important;
+}
+    .cp-overlay {
+        background: transparent;
+
+    }
+    .cp-hero-inner {
+        min-height: 750px;
+    }
 }
