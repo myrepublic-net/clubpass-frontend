@@ -1479,7 +1479,7 @@ Enjoy perks that keep growing.
       <footer className="cp-footer">
         <div className="cp-container cp-footer-inner">
           <div className="cp-brand">
-            <img src="/images//cp-rw-logo.png" />
+            <img src="./images/cp-logo.png" />
             {/* <span className="cp-brand-mark">R</span>
 
             <span className="cp-brand-name">
