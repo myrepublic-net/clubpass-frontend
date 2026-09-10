@@ -41,7 +41,7 @@ export default function Login() {
     <AuthLayout title="Welcome Back" subtitle="Log in to your Clubpass account.">
       <form className="auth-form" onSubmit={handleSubmit}>
         <AuthField
-          label="Username or Email"
+          label="Email"
           name="identifier"
           autoComplete="username"
           value={identifier}

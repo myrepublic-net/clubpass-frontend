@@ -202,7 +202,12 @@ export async function login({ identifier, password }) {
   if (SIMULATE) {
     const data = await delay(700).then(() => {
       console.warn("[auth:simulate] login", { identifier });
-      return { user: { username: identifier, email: identifier.includes("@") ? identifier : "" } };
+      const isEmail = identifier.includes("@");
+      // Never store the raw email as the username — Strapi's userName is a
+      // separate, required field distinct from email.
+      return {
+        user: { username: isEmail ? identifier.split("@")[0] : identifier, email: isEmail ? identifier : "" },
+      };
     });
     storeMemberSession(data);
     return data;
