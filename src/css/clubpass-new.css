@@ -1338,12 +1338,6 @@ span.ticket-active {
     box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
     display: none;
   }
-ul.col-mb-list {
-    grid-template-columns: 1fr 1fr;
-}
-ul.col-mb-list li p {
-    text-align: center;
-}
 .cpn-ticket-foot {
     padding: 35px 15px 40px;
 }
@@ -1469,7 +1463,7 @@ ul.col-mb-list li p {
   }
 }
 
-@media (max-width: 700px) {
+@media (max-width: 767px) {
   .cpn-section {
     padding: 40px 0;
   }
@@ -1496,9 +1490,17 @@ ul.col-mb-list li p {
 
   .cpn-stops {
     grid-template-columns: 1fr;
-    gap: 30px;
+    margin-top: 40px;
   }
+.stop-image {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+}
 
+.stop-image img {
+    width: 100px;
+}
   .cpn-stops-arrow {
     display: none;
   }
@@ -1518,4 +1520,68 @@ ul.col-mb-list li p {
   .cpn-speaker {
     display: none;
   }
+  ul.col-mb-list {
+    gap: 8px !important;
 }
+ul.col-mb-list li {
+    padding: 8px;
+}
+ul.col-mb-list li p {
+    font-size: 12px;
+    line-height: 18px;
+    margin-top: 0px;
+    text-align: left;
+}
+.cpn-membership .tt-membership {
+    padding-top: 28px ;
+    padding-bottom: 0;
+}
+.cp-work-text {
+    text-align: left;
+}
+.cpn-route-head h3 {
+    font-size: 30px;
+    margin-bottom: 5px;
+}
+.cpn-route-head p {
+    font-size: 15px;
+}
+.cpn-stops-col li {
+    gap: 0px;
+}
+.cpn-stops-col h4 {
+    margin-left: 20px;
+        font-size: 20px;
+                margin-bottom: 0;
+}
+.cpn-faq .cpn-kicker {
+    margin-bottom: 0px !important;
+    text-align: left !important;
+}
+.cpn-faq .cpn-faq-copy {
+    text-align: left;
+    margin-bottom: 20px;
+}
+.cpn-faq {
+  padding-bottom: 80px;
+}
+.cpn-faq-copy p {
+    font-size: 15px;
+}
+.cpn-acc-item {
+    border-radius: 16px;
+}
+.cpn-acc-item button {
+    padding: 15px;
+    text-align: left;
+    font-size: 14px;
+    font-weight: 700;
+}
+.cpn-cta p {
+    margin: 15px auto 20px;
+    font-size: 15px;
+    font-weight: 300;
+}
+}
+
+

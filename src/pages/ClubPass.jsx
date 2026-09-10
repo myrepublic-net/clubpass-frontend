@@ -841,10 +841,13 @@ Enjoy perks that keep growing.
               {STEPS.map((step) => (
                 <div className="cp-step" key={step.num}>
                   <div className="cp-step-num">
-                    <img
+                    <img 
                       src={step.img}
                       alt={step.title}
                     />
+                    <span className="cp-step-meta mobile-mt">
+                    <img src={step.meta}/>
+                  </span>
                   </div>
 
                   <h3 className="step-title">
@@ -858,7 +861,7 @@ Enjoy perks that keep growing.
 
                   <p>{step.text}</p>
 
-                  <span className="cp-step-meta">
+                  <span className="cp-step-meta desk-mt">
                     <img src={step.meta}/>
                   </span>
                 </div>
@@ -1054,14 +1057,14 @@ Enjoy perks that keep growing.
                     </div>
 
                     <ul className="dropoff-list">
-                        <li>Paya Lebar MRT</li>
-                        <li>Bedok MRT</li>
-                        <li>Tampines MRT</li>
-                        <li>Pasir Ris MRT</li>
+                        <li><img src="./images/map-pin.png"/>Paya Lebar MRT</li>
+                        <li><img src="./images/map-pin.png"/>Bedok MRT</li>
+                        <li><img src="./images/map-pin.png"/>Tampines MRT</li>
+                        <li><img src="./images/map-pin.png"/>Pasir Ris MRT</li>
                     </ul>
 
                     <a href="#" className="route-link">
-                        View route map <img src="/images/route.png"/>
+                        View route map <img src="/images/map-easties.svg"/>
                     </a>
 
                 </div>
@@ -1076,29 +1079,24 @@ Enjoy perks that keep growing.
                     <div className="map-point point-2"></div>
                     <div className="map-point point-3"></div>
                     <div className="map-point point-4"></div>
-                    <div className="map-point point-5"></div>
 
                     <div className="map-highlight">
-                        Tampines MRT
+                        Tampines
                     </div>
 
                     <div className="map-label label-1">
-                        Paya Lebar MRT
+                        Paya Lebar 
                     </div>
 
                     <div className="map-label label-2">
-                        Bedok MRT
+                        Bedok 
                     </div>
 
                     <div className="map-label label-3">
-                        Tampines MRT
+                        Tampines 
                     </div>
 
                     <div className="map-label label-4">
-                        Tampines MRT
-                    </div>
-
-                    <div className="map-label label-5">
                         Pasir Ris
                     </div>
 
@@ -1117,7 +1115,7 @@ Enjoy perks that keep growing.
                     </div>
 
                     <div className="vote-icon">
-                        <img src="./images/like.png"/>
+                        <img src="./images/thumbs-up-ea.svg"/>
                     </div>
 
                     <a href="#" className="vote-button">
@@ -1184,12 +1182,12 @@ Enjoy perks that keep growing.
                 <div className="dropoff">
                     <div className="dropoff-title">DROP-OFF POINTS (WEST)</div>
                     <ul className="dropoff-list">
-                        <li>Jurong East MRT</li>
-                        <li>West Coast</li>
-                        <li>Clementi MRT</li>
-                        <li>Buona Vista MRT</li>
+                        <li><img src="./images/map-pin-we.png"/>Jurong East MRT</li>
+                        <li><img src="./images/map-pin-we.png"/>West Coast</li>
+                        <li><img src="./images/map-pin-we.png"/>Clementi MRT</li>
+                        <li><img src="./images/map-pin-we.png"/>Buona Vista MRT</li>
                     </ul>
-                    <a href="#" className="route-link">View route map 🗺</a>
+                    <a href="#" className="route-link"> View route map <img src="/images/map-westies.svg"/></a>
                 </div>
 
                 <div className="map-box">
@@ -1198,12 +1196,16 @@ Enjoy perks that keep growing.
                     <div className="map-point point-2"></div>
                     <div className="map-point point-3"></div>
                     <div className="map-point point-4"></div>
-                    <div className="map-point point-5"></div>
+
+                     <div className="map-label label-1"> Jurong East </div>
+                   <div className="map-label label-2"> West Coast </div>
+                    <div className="map-label label-3"> Clementi </div>
+                    <div className="map-label label-4"> Buona Vista</div>
                 </div>
 
                 <div className="vote-box">
                     <div className="vote-title">WESTIES, WE NEED YOU!</div>
-                    <div className="vote-icon">♡</div>
+                    <div className="vote-icon"><img src="./images/thumbs-up-we.svg"/></div>
                     <a href="#" className="vote-button">Vote for West</a>
                     <div className="vote-description">
                         Free account required<br/>
@@ -1263,12 +1265,12 @@ Enjoy perks that keep growing.
                 <div className="dropoff">
                     <div className="dropoff-title">DROP-OFF POINTS</div>
                     <ul className="dropoff-list">
-                        <li>Serangoon MRT</li>
-                        <li>Hougang MRT</li>
-                        <li>Sengkang MRT</li>
-                        <li>Punggol MRT</li>
+                        <li><img src="./images/map-pin-ne.png"/>Serangoon MRT</li>
+                        <li><img src="./images/map-pin-ne.png"/>Hougang MRT</li>
+                        <li><img src="./images/map-pin-ne.png"/>Sengkang MRT</li>
+                        <li><img src="./images/map-pin-ne.png"/>Punggol MRT</li>
                     </ul>
-                    <a href="#" className="route-link">View route map 🗺</a>
+                    <a href="#" className="route-link">View route map  <img src="/images/map-north-e.svg"/></a>
                 </div>
 
                 <div className="map-box">
@@ -1277,12 +1279,16 @@ Enjoy perks that keep growing.
                     <div className="map-point point-2"></div>
                     <div className="map-point point-3"></div>
                     <div className="map-point point-4"></div>
-                    <div className="map-point point-5"></div>
+                     <div className="map-label label-1"> Serangoon </div>
+                   <div className="map-label label-2"> Hougang </div>
+                    <div className="map-label label-3"> Sengkang </div>
+                    <div className="map-label label-4"> Punggol</div>
+                    
                 </div>
 
                 <div className="vote-box">
                     <div className="vote-title">NORTH EASTIES, WE NEED YOU!</div>
-                    <div className="vote-icon">♡</div>
+                    <div className="vote-icon"><img src="./images/thumbs-up-ne.svg"/></div>
                     <a href="#" className="vote-button">Vote Now</a>
                     <div className="vote-description">
                         Free account required<br/>
@@ -1342,12 +1348,12 @@ Enjoy perks that keep growing.
                 <div className="dropoff">
                     <div className="dropoff-title">DROP-OFF POINTS</div>
                     <ul className="dropoff-list">
-                        <li>Bukit Batok MRT</li>
-                        <li>Choa Chu Kang MRT</li>
-                        <li>Bukit Panjang MRT</li>
-                        <li>Woodlands MRT</li>
+                        <li><img src="./images/map-pin-nw.png"/>Bukit Batok MRT</li>
+                        <li><img src="./images/map-pin-nw.png"/>Choa Chu Kang MRT</li>
+                        <li><img src="./images/map-pin-nw.png"/>Bukit Panjang MRT</li>
+                        <li><img src="./images/map-pin-nw.png"/>Woodlands MRT</li>
                     </ul>
-                    <a href="#" className="route-link">View route map 🗺</a>
+                    <a href="#" className="route-link">View route map  <img src="/images/map-north-w.svg"/></a>
                 </div>
 
                 <div className="map-box">
@@ -1356,12 +1362,16 @@ Enjoy perks that keep growing.
                     <div className="map-point point-2"></div>
                     <div className="map-point point-3"></div>
                     <div className="map-point point-4"></div>
-                    <div className="map-point point-5"></div>
+
+                    <div className="map-label label-1"> Bukit Batok </div>
+                   <div className="map-label label-2"> Choa Chu Kang </div>
+                    <div className="map-label label-3">Bukit Panjang </div>
+                    <div className="map-label label-4"> Woodlands</div>
                 </div>
 
                 <div className="vote-box">
                     <div className="vote-title">NORTH WESTIES, WE NEED YOU!</div>
-                    <div className="vote-icon">♡</div>
+                    <div className="vote-icon"><img src="./images/thumbs-up-nw.svg"/></div>
                     <a href="#" className="vote-button">Vote Now</a>
                     <div className="vote-description">
                         Free account required<br/>
@@ -1481,7 +1491,7 @@ Enjoy perks that keep growing.
       <footer className="cp-footer">
         <div className="cp-container cp-footer-inner">
           <div className="cp-brand">
-            <img src="/images//cp-rw-logo.png" />
+            <img src="./images/cp-logo.png" />
             {/* <span className="cp-brand-mark">R</span>
 
             <span className="cp-brand-name">
