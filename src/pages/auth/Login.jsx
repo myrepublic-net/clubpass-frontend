@@ -29,7 +29,7 @@ export default function Login() {
     setSubmitting(true);
     try {
       await login({ identifier, password });
-      navigate("/clubpass-app");
+      navigate("/dashboard");
     } catch (err) {
       setError(err?.message ?? "Couldn't log you in. Please check your details and try again.");
     } finally {

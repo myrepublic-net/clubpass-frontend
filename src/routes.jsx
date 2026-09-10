@@ -3,6 +3,7 @@ import { createBrowserRouter } from "react-router";
 import ClubPass from "./pages/ClubPass.jsx";
 import ClubpassNew from "./pages/ClubpassNew.jsx";
 import ClubPassApp from "./pages/ClubPassApp.jsx";
+import Dashboard from "./pages/Dashboard.jsx";
 import ScanConfirm from "./pages/ScanConfirm.jsx";
 import DriverScan from "./pages/DriverScan.jsx";
 import Login from "./pages/auth/Login.jsx";
@@ -27,6 +28,17 @@ const router = createBrowserRouter([
     element: (
       <UserGate>
         <ClubPassApp />
+      </UserGate>
+    ),
+  },
+  // Where every login now lands — separate from /clubpass-app (the Home
+  // Express sales/member page above), which is untouched and still reachable
+  // directly.
+  {
+    path: "/dashboard",
+    element: (
+      <UserGate>
+        <Dashboard />
       </UserGate>
     ),
   },
