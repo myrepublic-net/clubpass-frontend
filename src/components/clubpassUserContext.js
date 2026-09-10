@@ -3,8 +3,8 @@ import { createContext, useContext } from "react";
 export const ClubpassUserContext = createContext({
   userName: "",
   user: null,
-  // The RewardLand profile from SSO ({ rrId, username, email, phoneNumber }),
-  // null when the member arrived without an rr_sso token.
+  // The Reward Land profile from the login API ({ username, email, ... }),
+  // null when the member hasn't logged in on this device.
   profile: null,
   setUser: () => {},
 });

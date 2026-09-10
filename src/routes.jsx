@@ -3,6 +3,7 @@ import { createBrowserRouter } from "react-router";
 import ClubPass from "./pages/ClubPass.jsx";
 import ClubpassNew from "./pages/ClubpassNew.jsx";
 import ClubPassApp from "./pages/ClubPassApp.jsx";
+import Dashboard from "./pages/Dashboard.jsx";
 import ScanConfirm from "./pages/ScanConfirm.jsx";
 import DriverScan from "./pages/DriverScan.jsx";
 import Login from "./pages/auth/Login.jsx";
@@ -19,7 +20,7 @@ const router = createBrowserRouter([
   // driver opening it is not the member, and carries no ?userName= of their own.
   { path: "/scan", element: <ScanConfirm /> },
   // The driver's own console: sign in once per shift, then scan passes with the
-  // phone camera without leaving the page. No UserGate — a driver has no rr_sso.
+  // phone camera without leaving the page. No UserGate — a driver has no member login.
   { path: "/driver", element: <DriverScan /> },
   // Only the in-app landing is gated on ?userName= — the public pages stay open.
   {
@@ -27,6 +28,17 @@ const router = createBrowserRouter([
     element: (
       <UserGate>
         <ClubPassApp />
+      </UserGate>
+    ),
+  },
+  // Where every login now lands — separate from /clubpass-app (the Home
+  // Express sales/member page above), which is untouched and still reachable
+  // directly.
+  {
+    path: "/dashboard",
+    element: (
+      <UserGate>
+        <Dashboard />
       </UserGate>
     ),
   },

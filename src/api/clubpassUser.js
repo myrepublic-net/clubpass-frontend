@@ -40,10 +40,20 @@ export async function findUserByUserName(userName) {
   return body?.data?.[0] ?? null;
 }
 
-export async function createUser(userName) {
+export async function createUser({ userName, email }) {
   const body = await request("/clubpass-users?status=published", {
     method: "POST",
-    body: JSON.stringify({ data: { userName } }),
+    body: JSON.stringify({ data: { userName, ...(email && { email }) } }),
+  });
+
+  return body?.data ?? null;
+}
+
+/** Keeps Strapi's email current when the login API returns a different one. */
+async function updateUserEmail(documentId, email) {
+  const body = await request(`/clubpass-users/${documentId}?status=published`, {
+    method: "PUT",
+    body: JSON.stringify({ data: { email } }),
   });
 
   return body?.data ?? null;
@@ -179,14 +189,27 @@ export async function verifyScan({ userName, token, pickupPoint, route }) {
 // can't fire two creates for the same person.
 const inFlight = new Map();
 
-/** Find the user for `userName`, creating them in Strapi if they don't exist. */
-export function resolveClubpassUser(userName) {
+/**
+ * Find the user for `identity`, creating them in Strapi if they don't exist.
+ *
+ * `identity` is either a bare userName (SubscribeModal's retry path, which
+ * has no email on hand) or `{ username, email }` from a fresh login API
+ * response — the login API is the source of truth for a member's profile, so
+ * an existing record's email is kept in sync with it here.
+ */
+export function resolveClubpassUser(identity) {
+  const { username: userName, email } =
+    typeof identity === "string" ? { username: identity, email: undefined } : identity;
+
   let pending = inFlight.get(userName);
 
   if (!pending) {
     pending = (async () => {
       const existing = await findUserByUserName(userName);
-      return existing ?? (await createUser(userName));
+      if (existing) {
+        return email && existing.email !== email ? await updateUserEmail(existing.documentId, email) : existing;
+      }
+      return createUser({ userName, email });
     })();
 
     // A network blip shouldn't poison retries — only successes stay cached.

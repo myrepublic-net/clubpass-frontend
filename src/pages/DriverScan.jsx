@@ -12,8 +12,8 @@ import "../css/driver.css";
  * Driver console — sign in, then scan boarding passes with the phone camera.
  *
  * Deliberately its own page with its own session: the driver is not a ClubPass
- * member, arrives with no rr_sso, and every scan they make is authorised by
- * their Strapi login rather than by the site's API token.
+ * member, arrives with no member login, and every scan they make is authorised
+ * by their Strapi login rather than by the site's API token.
  *
  * The existing /scan page still works — a driver who points their phone's own
  * camera app at a pass lands there. This is for scanning without leaving the
