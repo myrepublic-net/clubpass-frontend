@@ -156,7 +156,7 @@ export default function Signup() {
                 type="button"
                 className="auth-field-action"
                 disabled={!canRequestEmailOtp || emailOtp.sending}
-                onClick={() => emailOtp.request(email)}
+                onClick={() => emailOtp.request({ username, email })}
               >
                 {emailOtp.sending ? "Sending…" : emailOtp.expired ? "Resend" : "Get OTP"}
               </button>

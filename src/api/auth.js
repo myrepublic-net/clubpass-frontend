@@ -1,34 +1,99 @@
 /**
  * ClubPass self-serve auth — signup, login, and email/phone OTP.
  *
- * No backend for this exists yet (unlike sso.js / subscribe.js, which already
- * point at real Lambdas). Until VITE_AUTH_API_URL is set, every call here is
- * simulated locally: OTPs are generated in-memory, "sent" to the console, and
- * verified against what was generated — so the multi-step form works fully
- * offline while the real API is being built. Swap SIMULATE off by setting
- * VITE_AUTH_API_URL and this file talks to that endpoint instead; nothing
- * above it (the pages/components) needs to change.
+ * Backend: the Reward Land Channel Account API, proxied through
+ * reward-land-channel-account-lambda-logging. Unlike the SSO/subscribe
+ * Lambdas, actions aren't a body field on one URL — each is its own path
+ * segment: POST {API_URL}/{action}. Identity fields (username, email,
+ * password, otp, phoneNumber, phoneCountryCode) go up as plaintext; the
+ * Lambda RSA-encrypts them before forwarding to Reward Land, so no key ever
+ * reaches the browser.
+ *
+ * The registration journey is stateful: `register` mints a token that must
+ * be sent back as X-REGISTRATION-TOKEN on every later step. One signup
+ * wizard is ever in flight per tab, so that token lives in module state
+ * rather than something heavier like context.
+ *
+ * Until VITE_AUTH_API_URL is set, every call here is simulated locally: OTPs
+ * are generated in-memory, "sent" to the console, and verified against what
+ * was generated — so the multi-step form works fully offline while the real
+ * credential/domain/scope grant is being finalised with Reward Land.
  */
 
 const API_URL = (import.meta.env.VITE_AUTH_API_URL ?? "").replace(/\/+$/, "");
 const SIMULATE = !API_URL;
 
-async function call(action, payload = {}) {
-  const res = await fetch(API_URL, {
+// Reward Land's Singapore-only phone fields are split (phoneCountryCode +
+// phoneNumber); the UI only ever collects a local SG number, so the code is
+// fixed rather than parsed out of the combined string.
+const COUNTRY_CODE_DIGITS = "65";
+
+let registrationToken = null;
+
+/**
+ * The member's own sign-in — the only way into /clubpass-app now that rr_sso
+ * is gone. localStorage, not session: closing the tab shouldn't sign someone
+ * out of a pass they'll want again tomorrow. Same pattern as driverAuth.js's
+ * session, kept separate because a member and a driver are different people.
+ */
+const SESSION_STORAGE_KEY = "clubpass:member";
+
+export function readMemberSession() {
+  try {
+    const raw = localStorage.getItem(SESSION_STORAGE_KEY);
+    return raw ? JSON.parse(raw) : null;
+  } catch {
+    return null;
+  }
+}
+
+function storeMemberSession(session) {
+  try {
+    localStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(session));
+  } catch {
+    // Private mode — the member stays signed in for this page only.
+  }
+}
+
+export function signOutMember() {
+  try {
+    localStorage.removeItem(SESSION_STORAGE_KEY);
+  } catch {
+    /* nothing to clear */
+  }
+}
+
+async function request(action, payload, extraHeaders = {}) {
+  const res = await fetch(`${API_URL}/${action}`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ action, ...payload }),
+    headers: { "Content-Type": "application/json", ...extraHeaders },
+    body: JSON.stringify(payload),
   });
 
   const body = await res.json().catch(() => null);
 
-  if (!res.ok || body?.error) {
-    const error = new Error(body?.error ?? `Request failed (${res.status})`);
-    error.action = action;
+  // { code, errorMessage, data } — the envelope Reward Land returns, passed
+  // through by the Lambda (same shape sso.js already relies on).
+  if (!res.ok || body?.code !== "SUCCESS") {
+    const error = new Error(body?.errorMessage ?? `Request failed (${res.status})`);
+    error.code = body?.code ?? "INTERNAL_ERROR";
     throw error;
   }
 
-  return body;
+  return body.data ?? {};
+}
+
+function tokenHeaders() {
+  if (!registrationToken) {
+    throw Object.assign(new Error("Your session expired — please start again."), {
+      code: "NO_REGISTRATION_TOKEN",
+    });
+  }
+  return { "X-REGISTRATION-TOKEN": registrationToken };
+}
+
+function stripCountryCode(phoneNumberWithCode) {
+  return phoneNumberWithCode.replace(/^\+?65/, "");
 }
 
 /* ---- simulation ---------------------------------------------------------- */
@@ -61,71 +126,90 @@ function simulateVerifyOtp(identifier, otp) {
 
 /* ---- email OTP ------------------------------------------------------------ */
 
-export function requestEmailOtp(email) {
+/**
+ * First call of the journey. Starts registration (minting the token every
+ * later step needs) before requesting the email OTP; a resend just re-asks
+ * against the same token.
+ */
+export async function requestEmailOtp({ username, email }) {
   if (SIMULATE) return simulateSendOtp(email);
-  return call("request-email-otp", { email });
+
+  if (!registrationToken) {
+    const data = await request("register", { username, email });
+    registrationToken = data.registrationToken;
+  }
+
+  return request("request-otp", { email }, tokenHeaders());
 }
 
-export function verifyEmailOtp(email, otp) {
+export async function verifyEmailOtp({ email }, otp) {
   if (SIMULATE) return simulateVerifyOtp(email, otp);
-  return call("verify-email-otp", { email, otp });
+  return request("verify-otp", { email, otp }, tokenHeaders());
 }
 
 /* ---- phone OTP ------------------------------------------------------------ */
 
-export function requestPhoneOtp(phoneNumber) {
-  if (SIMULATE) return simulateSendOtp(phoneNumber);
-  return call("request-phone-otp", { phoneNumber });
+export async function requestPhoneOtp(phoneNumberWithCode) {
+  if (SIMULATE) return simulateSendOtp(phoneNumberWithCode);
+
+  return request(
+    "request-phone-otp",
+    { phoneCountryCode: COUNTRY_CODE_DIGITS, phoneNumber: stripCountryCode(phoneNumberWithCode) },
+    tokenHeaders(),
+  );
 }
 
-export function verifyPhoneOtp(phoneNumber, otp) {
-  if (SIMULATE) return simulateVerifyOtp(phoneNumber, otp);
-  return call("verify-phone-otp", { phoneNumber, otp });
+export async function verifyPhoneOtp(phoneNumberWithCode, otp) {
+  if (SIMULATE) return simulateVerifyOtp(phoneNumberWithCode, otp);
+
+  return request(
+    "verify-phone-otp",
+    { phoneCountryCode: COUNTRY_CODE_DIGITS, phoneNumber: stripCountryCode(phoneNumberWithCode), otp },
+    tokenHeaders(),
+  );
 }
 
 /* ---- account ---------------------------------------------------------------- */
 
-export function signup({
-  username,
-  email,
-  phoneNumber,
-  password,
-  referralCode,
-  promoCode,
-  marketingOptIn,
-}) {
+export async function signup({ email, phoneNumber, password, referralCode, promoCode, marketingOptIn }) {
   if (SIMULATE) {
     return delay(700).then(() => {
-      console.warn("[auth:simulate] signup", {
-        username,
-        email,
-        phoneNumber,
-        referralCode,
-        promoCode,
-        marketingOptIn,
-      });
-      return { user: { username, email, phoneNumber } };
+      console.warn("[auth:simulate] signup", { email, phoneNumber, referralCode, promoCode, marketingOptIn });
+      return { user: { email, phoneNumber } };
     });
   }
 
-  return call("signup", {
-    username,
-    email,
-    phoneNumber,
-    password,
-    referralCode,
-    promoCode,
-    marketingOptIn,
-  });
+  const data = await request(
+    "register-complete",
+    {
+      email,
+      password,
+      phoneCountryCode: COUNTRY_CODE_DIGITS,
+      phoneNumber: stripCountryCode(phoneNumber),
+      referralCode,
+      promoCode,
+      allowEmailMarketing: marketingOptIn,
+    },
+    tokenHeaders(),
+  );
+
+  // The journey is done — a second signup in the same tab should start clean.
+  registrationToken = null;
+  return data;
 }
 
-export function login({ identifier, password }) {
+export async function login({ identifier, password }) {
   if (SIMULATE) {
-    return delay(700).then(() => {
+    const data = await delay(700).then(() => {
       console.warn("[auth:simulate] login", { identifier });
-      return { user: { username: identifier } };
+      return { user: { username: identifier, email: identifier.includes("@") ? identifier : "" } };
     });
+    storeMemberSession(data);
+    return data;
   }
 
-  return call("login", { identifier, password });
+  // Reward Land's login field is called `email` but accepts email or mobile.
+  const data = await request("login", { email: identifier, password });
+  storeMemberSession(data);
+  return data;
 }

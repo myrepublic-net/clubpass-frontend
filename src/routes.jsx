@@ -19,7 +19,7 @@ const router = createBrowserRouter([
   // driver opening it is not the member, and carries no ?userName= of their own.
   { path: "/scan", element: <ScanConfirm /> },
   // The driver's own console: sign in once per shift, then scan passes with the
-  // phone camera without leaving the page. No UserGate — a driver has no rr_sso.
+  // phone camera without leaving the page. No UserGate — a driver has no member login.
   { path: "/driver", element: <DriverScan /> },
   // Only the in-app landing is gated on ?userName= — the public pages stay open.
   {
