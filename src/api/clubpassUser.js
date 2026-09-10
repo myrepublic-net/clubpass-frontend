@@ -40,6 +40,16 @@ export async function findUserByUserName(userName) {
   return body?.data?.[0] ?? null;
 }
 
+/** Same draft-inclusive lookup as findUserByUserName, keyed by email instead. */
+export async function findUserByEmail(email) {
+  const query = new URLSearchParams({
+    "filters[email][$eq]": email,
+  });
+
+  const body = await request(`/clubpass-users?${query}`);
+  return body?.data?.[0] ?? null;
+}
+
 export async function createUser({ userName, email }) {
   const body = await request("/clubpass-users?status=published", {
     method: "POST",
@@ -209,6 +219,14 @@ export function resolveClubpassUser(identity) {
       if (existing) {
         return email && existing.email !== email ? await updateUserEmail(existing.documentId, email) : existing;
       }
+
+      // No record under this username — but the same person may already have
+      // one under a different username with this email (e.g. a Reward Land
+      // username change). Reuse that record rather than creating a second one
+      // for the same email.
+      const existingByEmail = email ? await findUserByEmail(email) : null;
+      if (existingByEmail) return existingByEmail;
+
       return createUser({ userName, email });
     })();
 
