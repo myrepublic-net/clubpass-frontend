@@ -17,6 +17,8 @@ import {
 import "../css/clubpass.css";
 import useRouteVoting from "../hooks/useRouteVoting.js";
 import "../css/clubpass-new.css";
+import { logout, readMemberSession } from "../api/auth.js";
+import { isPaid, resolveClubpassUser } from "../api/clubpassUser.js";
 
 const APP_LINK = "https://rewardland.onelink.me/EwIe/start";
 const SITE = "https://www.rewardland.sg";
@@ -287,6 +289,51 @@ export default function ClubPass() {
   // Live tallies from Strapi. No user here, so nothing votes — see voteRoute.
   const { routes } = useRouteVoting();
 
+  // This page is public (not behind UserGate), so a signed-out visitor still
+  // sees the full page — the header just reflects whichever state applies.
+  const [session, setSession] = useState(() => readMemberSession());
+  const [loggingOut, setLoggingOut] = useState(false);
+  const userName = session?.user?.username ?? null;
+
+  // Resolved separately from the session: knowing someone is logged in isn't
+  // knowing they've paid — that lives on the Strapi record, not localStorage.
+  const [clubpassUser, setClubpassUser] = useState(null);
+
+  useEffect(() => {
+    if (!session?.user?.username) {
+      setClubpassUser(null);
+      return;
+    }
+
+    let cancelled = false;
+    resolveClubpassUser(session.user).then(
+      (user) => {
+        if (!cancelled) setClubpassUser(user);
+      },
+      (error) => {
+        console.error("ClubPass user lookup failed", error);
+        if (!cancelled) setClubpassUser(null);
+      },
+    );
+
+    return () => {
+      cancelled = true;
+    };
+  }, [session]);
+
+  const paid = isPaid(clubpassUser);
+
+  const handleLogout = async () => {
+    setLoggingOut(true);
+    try {
+      await logout();
+    } finally {
+      setSession(null);
+      setLoggingOut(false);
+      setMenuOpen(false);
+    }
+  };
+
   /* =========================================
      HERO SLIDER STATE
   ========================================= */
@@ -359,18 +406,33 @@ export default function ClubPass() {
                 {link.label}
               </a>
             ))}
+
+            {userName && (
+              <button
+                type="button"
+                className="cp-nav-logout"
+                onClick={handleLogout}
+                disabled={loggingOut}
+              >
+                {loggingOut ? "Logging out…" : "Logout"}
+              </button>
+            )}
           </nav>
 
           <div
             className="d-flex align-items-center"
             style={{ gap: 8 }}
           >
-            <Link
-              className="cp-btn cp-btn-purple cp-btn-sm"
-              to="/login"
-            >
-              Join the Club
-            </Link>
+            {userName ? (
+              <span className="cp-hi">Hi, {userName}</span>
+            ) : (
+              <Link
+                className="cp-btn cp-btn-purple cp-btn-sm"
+                to="/login"
+              >
+                Join the Club
+              </Link>
+            )}
 
             <button
               className="cp-nav-toggle"
@@ -466,14 +528,20 @@ export default function ClubPass() {
                  </div>
               </div>
               <div className="cp-hero-actions">
-                <a
-                  className="cp-btn cp-btn-white"
-                  href={APP_LINK}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Become a Founding Member
-                </a>
+                {!paid && (userName ? (
+                  <Link className="cp-btn cp-btn-white" to="/clubpass-app">
+                    Become a Founding Member
+                  </Link>
+                ) : (
+                  <a
+                    className="cp-btn cp-btn-white"
+                    href={APP_LINK}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Become a Founding Member
+                  </a>
+                ))}
               </div>
             </div>
           </div>
@@ -606,7 +674,7 @@ export default function ClubPass() {
       <div className="venue-name">Emporium</div>
       <div className="tag"><span className="tag-icon"><img src="/images/Vector.svg"/></span> FREE ENTRY</div>
       <div className="members">Clubpass Members</div>
-      <div className="details"><span>View event details</span><span className="arrow"><img src="/images/mam-arrow.svg"/></span></div>
+      <Link className="details" to="/events/emporium"><span>View event details</span><span className="arrow"><img src="/images/mam-arrow.svg"/></span></Link>
     </article>
 
     <article className="venue">
@@ -617,7 +685,7 @@ export default function ClubPass() {
       <div className="venue-name">Zouk</div>
       <div className="tag"><span className="tag-icon"><img src="/images/Vector.svg"/></span> FREE ENTRY</div>
       <div className="members">Clubpass Members</div>
-      <div className="details"><span>View event details</span><span className="arrow"><img src="/images/mam-arrow.svg"/></span></div>
+      <Link className="details" to="/events/zouk"><span>View event details</span><span className="arrow"><img src="/images/mam-arrow.svg"/></span></Link>
     </article>
 
     <article className="venue">
@@ -628,7 +696,7 @@ export default function ClubPass() {
       <div className="venue-name">Marquee Singapore</div>
       <div className="tag"><span className="tag-icon"><img src="/images/Vector.svg"/></span> FREE ENTRY</div>
       <div className="members">Clubpass Members</div>
-      <div className="details"><span>View event details</span><span className="arrow"><img src="/images/mam-arrow.svg"/></span></div>
+      <Link className="details" to="/events/marquee-singapore"><span>View event details</span><span className="arrow"><img src="/images/mam-arrow.svg"/></span></Link>
     </article>
 
     <article className="venue">
@@ -639,7 +707,7 @@ export default function ClubPass() {
       <div className="venue-name">Kilo Lounge</div>
       <div className="tag"><span className="tag-icon"><img src="/images/Vector.svg"/></span> FREE ENTRY</div>
       <div className="members">Clubpass Members</div>
-      <div className="details"><span>View event details</span><span className="arrow"><img src="/images/mam-arrow.svg"/></span></div>
+      <Link className="details" to="/events/kilo-lounge"><span>View event details</span><span className="arrow"><img src="/images/mam-arrow.svg"/></span></Link>
     </article>
 
     <article className="coming">
@@ -789,14 +857,20 @@ Join the beta program, lock in the founder price and get exclusive launch reward
 <span className="ticket-active">Active</span>
                 </dl>
 
-                <a
-                  className="cpn-btn cpn-btn--white"
-                  href={APP_LINK}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Become a founding member
-                </a>
+                {!paid && (userName ? (
+                  <Link className="cpn-btn cpn-btn--white" to="/clubpass-app">
+                    Become a founding member
+                  </Link>
+                ) : (
+                  <a
+                    className="cpn-btn cpn-btn--white"
+                    href={APP_LINK}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Become a founding member
+                  </a>
+                ))}
 
                 <p className="cpn-ticket-fine">
                   Auto-renewed at founder rate. Cancel anytime.
@@ -1474,14 +1548,16 @@ Enjoy perks that keep growing.
               one.
             </p>
 
-            <a
-              className="cpn-btn cpn-btn--dark"
-              href={APP_LINK}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Sign Up Now
-            </a>
+            {!userName && (
+              <a
+                className="cpn-btn cpn-btn--dark"
+                href={APP_LINK}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Sign Up Now
+              </a>
+            )}
           </div>
         </div>
       </section>
