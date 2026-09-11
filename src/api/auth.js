@@ -63,6 +63,26 @@ export function signOutMember() {
   }
 }
 
+/**
+ * Ends the Reward Land session with the web-issued refresh token, per the
+ * channel API's session-handling note, then clears the local one regardless
+ * of whether that call succeeds — a logout that failed server-side shouldn't
+ * leave the member stuck looking signed in on this device.
+ */
+export async function logout() {
+  const session = readMemberSession();
+
+  try {
+    if (!SIMULATE && session?.refreshToken) {
+      await request("logout", { refreshToken: session.refreshToken });
+    }
+  } catch (error) {
+    console.error("ClubPass logout failed", error);
+  } finally {
+    signOutMember();
+  }
+}
+
 async function request(action, payload, extraHeaders = {}) {
   const res = await fetch(`${API_URL}/${action}`, {
     method: "POST",

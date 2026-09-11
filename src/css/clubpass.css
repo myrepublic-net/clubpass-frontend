@@ -304,6 +304,35 @@ a.cp-btn.cp-btn-ghost {
   color: #FF630D;
 }
 
+.cp-nav-logout {
+  background: none;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  font-size: 18px;
+  font-weight: 400;
+  color: #fff;
+  cursor: pointer;
+  transition: color .15s ease;
+}
+
+.cp-nav-logout:hover {
+  color: #FF630D;
+}
+
+.cp-nav-logout:disabled {
+  opacity: .6;
+  cursor: default;
+}
+
+.cp-hi {
+  color: #fff;
+  font-size: 16px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
 .cp-nav-toggle {
   display: none;
   background: none;
@@ -1597,6 +1626,7 @@ h5.island-text-mobile {
     font-size: 14px;
     line-height: 20px;
     font-weight: 600;
+    text-decoration: none;
 }
   .membership-section .arrow { font-size: 10px; line-height: 8px; }
 
@@ -2384,10 +2414,12 @@ span.cp-step-meta.mobile-mt {
     box-shadow: 0 18px 30px -22px rgba(25, 16, 36, .4);
   }
 
-  .cp-nav.is-open a {
+  .cp-nav.is-open a,
+  .cp-nav.is-open .cp-nav-logout {
     width: 100%;
     padding: 12px 0;
     border-bottom: 1px solid var(--cp-line);
+    text-align: left;
   }
 
   .cp-nav-toggle {
