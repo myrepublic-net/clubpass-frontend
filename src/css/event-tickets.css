@@ -54,10 +54,12 @@
   justify-content: center;
   width: 34px;
   height: 34px;
+  border: none;
   border-radius: 10px;
   background: rgba(255, 255, 255, .1);
   color: #fff;
   flex-shrink: 0;
+  cursor: pointer;
 }
 
 .evt-hi {
@@ -93,6 +95,79 @@
 
 .evt-not-found a {
   color: var(--evt-teal);
+}
+
+/* --- guest checkout --- */
+
+.evt-guest-title {
+  margin: 12px 0 10px;
+  font-size: 26px;
+  font-weight: 900;
+  letter-spacing: .01em;
+  text-transform: uppercase;
+}
+
+.evt-guest-sub {
+  margin: 0 0 24px;
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: var(--evt-muted);
+}
+
+.evt-field-label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--evt-muted);
+}
+
+.evt-input {
+  width: 100%;
+  padding: 14px 16px;
+  border: 1px solid var(--evt-line);
+  border-radius: 12px;
+  background: var(--evt-card);
+  color: #fff;
+  font-family: inherit;
+  font-size: 15px;
+}
+
+.evt-input::placeholder {
+  color: var(--evt-muted);
+}
+
+.evt-input:focus {
+  outline: none;
+  border-color: var(--evt-teal);
+}
+
+.evt-info-box {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-top: 14px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: rgba(31, 219, 218, .08);
+  color: var(--evt-muted);
+  font-size: 12.5px;
+  line-height: 1.55;
+}
+
+.evt-info-box svg {
+  flex-shrink: 0;
+  margin-top: 1px;
+  color: var(--evt-teal);
+}
+
+.evt-cta.evt-cta--block {
+  display: flex;
+  width: 100%;
+  max-width: none;
+  margin-top: 28px;
 }
 
 /* --- ticket cards --- */
@@ -239,6 +314,407 @@
   font-size: 13px;
 }
 
+/* --- checkout summary --- */
+
+.evt-event-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 4px 0 14px;
+  padding: 14px;
+  border-radius: 18px;
+  background: var(--evt-card);
+}
+
+.evt-event-card img {
+  width: 74px;
+  height: 56px;
+  border-radius: 12px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.evt-event-card div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.evt-event-card b {
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.evt-event-card span {
+  font-size: 12.5px;
+  color: var(--evt-muted);
+}
+
+.evt-summary {
+  padding: 16px;
+  border-radius: 18px;
+  background: var(--evt-card);
+}
+
+.evt-summary-head {
+  margin-bottom: 14px;
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--evt-muted);
+}
+
+.evt-summary-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--evt-line);
+}
+
+.evt-summary-row > div:first-child {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.evt-summary-row b {
+  font-size: 16px;
+  font-weight: 800;
+}
+
+.evt-summary-lines {
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--evt-teal);
+}
+
+.evt-summary-price {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+  white-space: nowrap;
+}
+
+.evt-summary-price s {
+  font-size: 12.5px;
+  color: var(--evt-muted);
+}
+
+.evt-summary-price b {
+  font-size: 19px;
+  color: var(--evt-teal);
+}
+
+.evt-totals {
+  margin-top: 18px;
+  padding: 0 4px;
+}
+
+.evt-totals-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 0;
+  font-size: 14px;
+  color: var(--evt-muted);
+}
+
+.evt-totals-row--grand {
+  padding-top: 16px;
+  border-top: 1px solid var(--evt-line);
+  color: #fff;
+  font-size: 17px;
+  font-weight: 800;
+}
+
+.evt-totals-row--grand b {
+  font-size: 22px;
+  color: var(--evt-teal);
+}
+
+/* --- payment method --- */
+
+.evt-due {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 4px 0 22px;
+  padding: 16px;
+  border-radius: 14px;
+  background: var(--evt-card);
+  font-size: 14px;
+  color: var(--evt-muted);
+}
+
+.evt-due b {
+  font-size: 18px;
+  color: var(--evt-teal);
+}
+
+.evt-section-title {
+  margin: 0 0 14px;
+  font-size: 17px;
+  font-weight: 800;
+}
+
+.evt-method {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  margin-bottom: 12px;
+  padding: 16px;
+  border: 1px solid transparent;
+  border-radius: 14px;
+  background: var(--evt-card);
+  color: #fff;
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.evt-method.is-selected {
+  border-color: var(--evt-teal);
+  background: rgba(31, 219, 218, .07);
+}
+
+.evt-method:disabled {
+  opacity: .45;
+  cursor: default;
+}
+
+.evt-method-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 1px solid var(--evt-teal);
+  color: var(--evt-teal);
+  flex-shrink: 0;
+}
+
+.evt-method-label {
+  flex: 1;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.evt-method-hint {
+  font-size: 11.5px;
+  color: var(--evt-muted);
+}
+
+.evt-radio {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 1px solid var(--evt-muted);
+  flex-shrink: 0;
+}
+
+.evt-radio.is-on {
+  border-color: var(--evt-teal);
+  background: var(--evt-teal);
+}
+
+.evt-pay-error {
+  margin-top: 14px;
+  font-size: 13px;
+  color: var(--evt-danger);
+}
+
+/* --- processing --- */
+
+.evt-processing {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 40px 32px;
+  text-align: center;
+}
+
+.evt-processing h2 {
+  margin: 24px 0 10px;
+  font-size: 22px;
+  font-weight: 800;
+}
+
+.evt-processing p {
+  margin: 0;
+  max-width: 330px;
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: var(--evt-muted);
+}
+
+.evt-spinner {
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  background: var(--evt-card);
+  position: relative;
+}
+
+.evt-spinner::after {
+  content: "";
+  position: absolute;
+  inset: 18px;
+  border-radius: 50%;
+  border: 2.5px solid transparent;
+  border-top-color: var(--evt-teal);
+  border-right-color: var(--evt-teal);
+  animation: evt-spin .8s linear infinite;
+}
+
+@keyframes evt-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* --- booking confirmed --- */
+
+.evt-body--confirm {
+  padding-bottom: 60px;
+}
+
+.evt-confirm-head {
+  padding: 24px 0 26px;
+  text-align: center;
+}
+
+.evt-confirm-head h1 {
+  margin: 16px 0 10px;
+  font-size: 27px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.evt-confirm-head p {
+  margin: 0 auto;
+  max-width: 330px;
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: var(--evt-muted);
+}
+
+.evt-booking {
+  padding: 18px;
+  border-radius: 18px;
+  background: var(--evt-card);
+}
+
+.evt-booking-title {
+  display: block;
+  font-size: 16px;
+  font-weight: 800;
+}
+
+.evt-booking-when {
+  display: block;
+  margin-top: 6px;
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--evt-teal);
+}
+
+.evt-booking-venue {
+  display: block;
+  margin-top: 4px;
+  font-size: 13px;
+  color: var(--evt-muted);
+}
+
+.evt-booking-facts {
+  margin: 16px 0 0;
+  padding-top: 16px;
+  border-top: 1px dashed var(--evt-line);
+}
+
+.evt-booking-facts > div {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 7px 0;
+}
+
+.evt-booking-facts dt {
+  font-size: 13px;
+  color: var(--evt-muted);
+}
+
+.evt-booking-facts dd {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 700;
+  text-align: right;
+}
+
+.evt-booking-coins {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 12px;
+  padding-top: 16px;
+  border-top: 1px dashed var(--evt-line);
+  font-size: 13px;
+  color: var(--evt-muted);
+}
+
+.evt-coin-pill {
+  padding: 6px 12px;
+  border: 1px solid var(--evt-teal);
+  border-radius: 999px;
+  color: var(--evt-teal);
+  font-size: 12.5px;
+  font-weight: 700;
+}
+
+.evt-reward-card {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 16px;
+  padding: 18px;
+  border-radius: 18px;
+  background: var(--evt-card);
+}
+
+.evt-reward-card b {
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.evt-reward-card span {
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--evt-muted);
+}
+
+.evt-reward-card .evt-cta {
+  margin-top: 12px;
+}
+
+.evt-back-link {
+  display: block;
+  margin-top: 22px;
+  text-align: center;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--evt-teal);
+}
+
 /* --- R Coins banner --- */
 
 .evt-coins {
@@ -270,13 +746,6 @@
   text-decoration: underline;
 }
 
-/* --- confirmation --- */
-
-.evt-confirm {
-  padding: 60px 10px;
-  text-align: center;
-}
-
 .evt-confirm-tick {
   display: inline-flex;
   align-items: center;
@@ -284,28 +753,11 @@
   width: 56px;
   height: 56px;
   margin-bottom: 16px;
+  border: 1.5px solid #2FBF71;
   border-radius: 50%;
-  background: rgba(31, 219, 218, .15);
-  color: var(--evt-teal);
+  background: rgba(47, 191, 113, .12);
+  color: #4ADE80;
   font-size: 26px;
-}
-
-.evt-confirm h2 {
-  margin: 0 0 8px;
-  font-size: 20px;
-  font-weight: 800;
-}
-
-.evt-confirm p {
-  margin: 0 0 24px;
-  font-size: 14px;
-  color: var(--evt-muted);
-}
-
-.evt-confirm .evt-cta {
-  display: inline-flex;
-  width: auto;
-  padding: 14px 28px;
 }
 
 /* --- footer --- */
@@ -323,6 +775,15 @@
   padding: 16px 20px;
   background: var(--evt-dark);
   border-top: 1px solid var(--evt-line);
+}
+
+/* Checkout and Payment end in one full-width button instead of a total + CTA. */
+.evt-footer--single {
+  display: block;
+}
+
+.evt-footer--single .evt-cta {
+  margin-top: 0;
 }
 
 .evt-total {
