@@ -62,7 +62,7 @@
   grid-template-columns: 0.9fr 1.1fr;
   align-items: flex-start;
   justify-content: space-between;
-  gap: 16px;
+  gap: 10px;
   padding: 14px 0 20px;
 }
 
@@ -89,7 +89,7 @@
   min-width: 172px;
   border: 1px solid rgba(55, 224, 200, 0.5);
   border-radius: 16px;
-  padding: 10px 14px 12px;
+  padding: 10px;
   background: rgba(55, 224, 200, 0.06);
   /* Icons/text below read this via currentColor/inherit, so the whole badge
      flips from light-on-dark to dark-on-gold in one place. */
@@ -113,18 +113,22 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 10px;
+  gap: 5px;
 }
 
 .dsh-coins-row {
   display: flex;
   align-items: center;
-  gap: 6px;
-  color: inherit;
+  gap: 4px;
+  color: #fff;
+}
+
+.is-member .dsh-coins-row b,  .is-member .dsh-coins-row {
+color: #0C165E;
 }
 
 .dsh-coins-row b {
-  color: inherit;
+  color: #fff;
   font-size: 1rem;
   font-weight: 700;
   white-space: nowrap;
@@ -132,7 +136,7 @@
 
 .dsh-coins-badge {
   flex: 0 0 auto;
-  font-size: 0.65rem;
+  font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.04em;
   padding: 3px 10px;
@@ -143,17 +147,21 @@
 }
 
 .dsh-coins.is-member .dsh-coins-badge {
-  border-color: rgba(203, 167, 81, 0.6);
-  background: #fbf6e6;
-  color: #8a6a16;
+    border-color: #0C165E;
+    background: transparent;
+    color: #0C165E;
 }
 
 .dsh-coins-tap {
-  display: block;
-  margin-top: 4px;
-  font-size: 0.75rem;
-  color: #fff;
-  opacity: 1;
+    display: block;
+    margin-top: 2px;
+    font-size: 11px;
+    color: #fff;
+    opacity: 1;
+}
+
+.is-member .dsh-coins-tap {
+    color: #0C165E;
 }
 
 .dsh-ticket-card {
@@ -392,7 +400,7 @@
   font-weight: 600;
   color: #37e0c8;
 }
-
+    
 .dsh-event-free {
   margin: 4px 0 0;
   font-size: 0.85rem;
@@ -426,7 +434,7 @@
 
 .dsh-promo h3 {
   margin: 0 0 6px;
-  font-size: 1.05rem;
+  font-size: 16px;
   font-weight: 700;
 }
 
@@ -447,6 +455,7 @@
 .dsh-promo-price {
   font-weight: 700;
   color: #37e0c8;
+  font-size: 12px;
 }
 
 .dsh-promo-cta {
@@ -547,4 +556,9 @@
   .dsh-tabbar {
     display: none;
   }
+}
+@media (max-width: 767px) {
+.dsh-coins {
+  padding: 10px 5px;
+}
 }
