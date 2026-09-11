@@ -144,7 +144,7 @@ const MEMBER_BENEFITS = [
 
 const FAQS = [
   {
-    q: "What is Clubass Home Express?",
+    q: "What is Clubpass Home Express?",
     a: "A monthly membership for scheduled late-night coaches: a pick-up loop through the city's nightlife spots, then express drop-offs in the East. Fixed schedule, fixed price — no surge, no waiting for a driver at 3am.",
   },
   {
