@@ -1,6 +1,6 @@
 import { Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
-import { Link, useNavigate } from "react-router";
+import { Link, useLocation, useNavigate } from "react-router";
 
 import { login } from "../../api/auth.js";
 import AuthField from "../../components/auth/AuthField.jsx";
@@ -13,6 +13,12 @@ import AuthLayout from "../../components/auth/AuthLayout.jsx";
  */
 export default function Login() {
   const navigate = useNavigate();
+  const location = useLocation();
+  // Wherever the "Join the Club" / "Login" link that sent them here came
+  // from (passed as router state), so login returns them there instead of
+  // always landing on the same page. Falls back to the home page — there's
+  // no dashboard to send people to for now.
+  const from = location.state?.from ?? "/";
   const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -29,7 +35,7 @@ export default function Login() {
     setSubmitting(true);
     try {
       await login({ identifier, password });
-      navigate("/dashboard");
+      navigate(from, { replace: true });
     } catch (err) {
       setError(err?.message ?? "Couldn't log you in. Please check your details and try again.");
     } finally {

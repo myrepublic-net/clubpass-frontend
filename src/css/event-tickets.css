@@ -1,0 +1,374 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&display=swap');
+
+/* ==========================================================================
+   Select Tickets — reached from EventDetails.jsx's "Get Tickets Now". Dark
+   throughout (unlike EventDetails' white body), matching the ticket-sheet
+   mockups.
+   ========================================================================== */
+
+.evt-page {
+  --evt-teal: #1FDBDA;
+  --evt-dark: #10131F;
+  --evt-card: #171B2B;
+  --evt-card-dim: #171B2B99;
+  --evt-line: rgba(255, 255, 255, .1);
+  --evt-muted: #8B90A6;
+  --evt-danger: #FF6B6B;
+
+  font-family: "Outfit", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  color: #fff;
+  background: var(--evt-dark);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+.evt-page *,
+.evt-page *::before,
+.evt-page *::after {
+  box-sizing: border-box;
+}
+
+/* --- header --- */
+
+.evt-header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 20px;
+  background: var(--evt-dark);
+}
+
+.evt-header h1 {
+  flex: 1;
+  margin: 0;
+  font-size: 17px;
+  font-weight: 700;
+}
+
+.evt-back {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, .1);
+  color: #fff;
+  flex-shrink: 0;
+}
+
+.evt-hi {
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.evt-login-btn {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 16px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, .5);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* --- body --- */
+
+.evt-body {
+  padding: 8px 20px 120px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.evt-not-found {
+  font-size: 14px;
+  color: var(--evt-muted);
+}
+
+.evt-not-found a {
+  color: var(--evt-teal);
+}
+
+/* --- ticket cards --- */
+
+.evt-card {
+  margin-bottom: 14px;
+  padding: 16px;
+  border-radius: 18px;
+  background: var(--evt-card);
+}
+
+.evt-card--locked,
+.evt-card--soldOut,
+.evt-card--upcoming {
+  background: var(--evt-card-dim);
+}
+
+.evt-card-top {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.evt-card-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.evt-card-label {
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.evt-card--locked .evt-card-label,
+.evt-card--soldOut .evt-card-label,
+.evt-card--upcoming .evt-card-label {
+  color: var(--evt-muted);
+}
+
+.evt-card-sub {
+  margin-top: 2px;
+  font-size: 12.5px;
+  color: var(--evt-muted);
+}
+
+.evt-card-price {
+  font-size: 16px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.evt-card--locked .evt-card-price,
+.evt-card--soldOut .evt-card-price,
+.evt-card--upcoming .evt-card-price {
+  color: var(--evt-muted);
+}
+
+.evt-stepper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 4px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, .06);
+  flex-shrink: 0;
+}
+
+.evt-stepper button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, .1);
+  color: #fff;
+}
+
+.evt-stepper button:disabled {
+  opacity: .35;
+}
+
+.evt-stepper span {
+  min-width: 14px;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.evt-card-note {
+  margin: 10px 0 0;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--evt-muted);
+}
+
+.evt-unlock-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 12px;
+  padding: 12px;
+  border-radius: 12px;
+  background: var(--evt-teal);
+  color: #04302F;
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.evt-card-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.evt-tag {
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.evt-tag--sold {
+  color: var(--evt-danger);
+}
+
+.evt-tag--stock {
+  color: var(--evt-danger);
+  margin-left: auto;
+}
+
+.evt-sale-period {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  margin-left: auto;
+  font-size: 11.5px;
+  color: var(--evt-muted);
+}
+
+.evt-sale-period b {
+  color: #fff;
+  font-size: 13px;
+}
+
+/* --- R Coins banner --- */
+
+.evt-coins {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 8px;
+  padding: 14px 16px;
+  border: 1px solid var(--evt-teal);
+  border-radius: 14px;
+}
+
+.evt-coins b {
+  color: var(--evt-teal);
+  font-size: 14px;
+}
+
+.evt-coins span {
+  font-size: 12.5px;
+  color: var(--evt-muted);
+}
+
+.evt-coins a {
+  align-self: flex-start;
+  margin-top: 2px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--evt-teal);
+  text-decoration: underline;
+}
+
+/* --- confirmation --- */
+
+.evt-confirm {
+  padding: 60px 10px;
+  text-align: center;
+}
+
+.evt-confirm-tick {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  margin-bottom: 16px;
+  border-radius: 50%;
+  background: rgba(31, 219, 218, .15);
+  color: var(--evt-teal);
+  font-size: 26px;
+}
+
+.evt-confirm h2 {
+  margin: 0 0 8px;
+  font-size: 20px;
+  font-weight: 800;
+}
+
+.evt-confirm p {
+  margin: 0 0 24px;
+  font-size: 14px;
+  color: var(--evt-muted);
+}
+
+.evt-confirm .evt-cta {
+  display: inline-flex;
+  width: auto;
+  padding: 14px 28px;
+}
+
+/* --- footer --- */
+
+.evt-footer {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px 20px;
+  background: var(--evt-dark);
+  border-top: 1px solid var(--evt-line);
+}
+
+.evt-total {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.1;
+}
+
+.evt-total span {
+  font-size: 12px;
+  color: var(--evt-muted);
+}
+
+.evt-total b {
+  font-size: 20px;
+  font-weight: 800;
+}
+
+.evt-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 220px;
+  padding: 14px 28px;
+  border: none;
+  border-radius: 999px;
+  background: var(--evt-teal);
+  color: #04302F;
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: .02em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.evt-cta:disabled {
+  opacity: .4;
+}
+
+@media (min-width: 480px) {
+  .evt-header,
+  .evt-footer {
+    max-width: 600px;
+    margin: 0 auto;
+    left: 0;
+    right: 0;
+  }
+}

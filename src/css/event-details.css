@@ -1,0 +1,317 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&display=swap');
+
+/* ==========================================================================
+   Event Details — reached from a venue card's "View event details" row on
+   ClubPass.jsx. Public page: the header reflects signed-in vs signed-out
+   instead of gating the page like /clubpass-app and /dashboard do.
+   ========================================================================== */
+
+.evd-page {
+  --evd-teal: #1FDBDA;
+  --evd-dark: #10131F;
+  --evd-ink: #14061F;
+  --evd-muted: #6F6880;
+  --evd-line: #EAE5F8;
+
+  font-family: "Outfit", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  color: var(--evd-ink);
+  background: #fff;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+.evd-page *,
+.evd-page *::before,
+.evd-page *::after {
+  box-sizing: border-box;
+}
+
+/* --- header --- */
+
+.evd-header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 20px;
+  background: var(--evd-dark);
+  color: #fff;
+}
+
+.evd-header h1 {
+  flex: 1;
+  margin: 0;
+  font-size: 17px;
+  font-weight: 700;
+}
+
+.evd-back {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, .12);
+  color: #fff;
+  flex-shrink: 0;
+}
+
+.evd-hi {
+  font-size: 14px;
+  font-weight: 600;
+  color: #fff;
+  white-space: nowrap;
+}
+
+.evd-login-btn {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 16px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, .5);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* --- gallery --- */
+
+.evd-gallery {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  background: #000;
+  overflow: hidden;
+}
+
+.evd-hero-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.evd-counter {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, .55);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.evd-play {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, .45);
+  border: 1px solid rgba(255, 255, 255, .5);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.evd-dots {
+  position: absolute;
+  bottom: 14px;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.evd-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, .5);
+  padding: 0;
+  border: none;
+}
+
+.evd-dot.is-active {
+  background: #fff;
+  width: 16px;
+  border-radius: 999px;
+}
+
+/* --- body --- */
+
+.evd-body {
+  padding: 20px 20px 100px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.evd-title {
+  margin: 0 0 10px;
+  font-size: 22px;
+  font-weight: 800;
+  line-height: 1.25;
+}
+
+.evd-datetime {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 18px;
+  color: var(--evd-muted);
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.evd-venue-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px;
+  margin-bottom: 20px;
+  border: 1px solid var(--evd-teal);
+  border-radius: 16px;
+  color: var(--evd-ink);
+}
+
+.evd-venue-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: rgba(31, 219, 218, .12);
+  color: var(--evd-teal);
+  flex-shrink: 0;
+}
+
+.evd-venue-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.evd-venue-name {
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.evd-venue-address {
+  font-size: 13px;
+  color: var(--evd-muted);
+}
+
+.evd-venue-link {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--evd-teal);
+}
+
+.evd-venue-chevron {
+  color: var(--evd-muted);
+  flex-shrink: 0;
+}
+
+.evd-description {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--evd-ink);
+  white-space: pre-line;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+}
+
+.evd-description.is-expanded {
+  -webkit-line-clamp: unset;
+  display: block;
+}
+
+.evd-see-more {
+  margin-top: 6px;
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--evd-teal);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.evd-not-found {
+  font-size: 14px;
+  color: var(--evd-muted);
+}
+
+/* --- footer --- */
+
+.evd-footer {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px 20px;
+  background: #fff;
+  border-top: 1px solid var(--evd-line);
+}
+
+.evd-price {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.1;
+}
+
+.evd-price span {
+  font-size: 12px;
+  color: var(--evd-muted);
+}
+
+.evd-price b {
+  font-size: 20px;
+  font-weight: 800;
+}
+
+.evd-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px 28px;
+  border-radius: 999px;
+  background: var(--evd-teal);
+  color: #04302F;
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: .02em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+@media (min-width: 480px) {
+  .evd-header,
+  .evd-footer {
+    max-width: 600px;
+    margin: 0 auto;
+    left: 0;
+    right: 0;
+  }
+}
