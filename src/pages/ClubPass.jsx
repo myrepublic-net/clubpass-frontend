@@ -533,14 +533,14 @@ export default function ClubPass() {
                     Become a Founding Member
                   </Link>
                 ) : (
-                  <a
+                  <Link
                     className="cp-btn cp-btn-white"
-                    href={APP_LINK}
+                    to={'/signup'}
                     target="_blank"
                     rel="noopener noreferrer"
                   >
                     Become a Founding Member
-                  </a>
+                  </Link>
                 ))}
               </div>
             </div>
@@ -861,14 +861,14 @@ Join the beta program, lock in the founder price and get exclusive launch reward
                     Become a founding member
                   </Link>
                 ) : (
-                  <a
+                  <Link
                     className="cpn-btn cpn-btn--white"
-                    href={APP_LINK}
+                    to={'/signup'}
                     target="_blank"
                     rel="noopener noreferrer"
                   >
                     Become a founding member
-                  </a>
+                  </Link>
                 ))}
 
                 <p className="cpn-ticket-fine">
