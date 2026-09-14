@@ -8,6 +8,7 @@ import {
   Minus,
   Plus,
   ChevronDown,
+  ChevronLeft,
   ChevronRight,
   Menu,
   UserRound,
@@ -340,6 +341,9 @@ export default function ClubPass() {
 
   const [activeHero, setActiveHero] = useState(0);
 
+  // Keyed on activeHero so the timer restarts whenever the slide changes —
+  // without that, clicking an arrow could be followed a moment later by the
+  // auto-advance firing on the old schedule.
   useEffect(() => {
     const interval = setInterval(() => {
       setActiveHero((prev) => {
@@ -348,7 +352,11 @@ export default function ClubPass() {
     }, 5000);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [activeHero]);
+
+  /** Steps the hero by `delta`, wrapping around at either end. */
+  const stepHero = (delta) =>
+    setActiveHero((prev) => (prev + delta + HERO_SLIDES.length) % HERO_SLIDES.length);
 
   const currentHero = HERO_SLIDES[activeHero];
 
@@ -545,6 +553,26 @@ export default function ClubPass() {
               </div>
             </div>
           </div>
+
+          {/* ================= Slider Arrows ================= */}
+
+          <button
+            type="button"
+            className="cp-hero-arrow cp-hero-arrow--prev"
+            onClick={() => stepHero(-1)}
+            aria-label="Previous slide"
+          >
+            <ChevronLeft size={22} />
+          </button>
+
+          <button
+            type="button"
+            className="cp-hero-arrow cp-hero-arrow--next"
+            onClick={() => stepHero(1)}
+            aria-label="Next slide"
+          >
+            <ChevronRight size={22} />
+          </button>
 
           {/* ================= Slider Dots ================= */}
 
