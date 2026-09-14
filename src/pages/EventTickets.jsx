@@ -10,11 +10,13 @@ import "../css/event-tickets.css";
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-// $ per R Coin at the base (non-member) rate — a paid member's active
-// multiplier is 3x this, and a guest is shown that same 3x figure as a
-// "here's what you'd earn" hook to create a free account.
-const COIN_RATE = 1;
-const MEMBER_COIN_MULTIPLIER = 3;
+// R Coins earn back a percentage of the spend — 3% on a paid Clubpass
+// membership, 1% on a free account — and a coin is a thousandth, so the
+// percentage is scaled by 1000 to get the coin count. $265 at 3% is $7.95,
+// which is 7,950 coins.
+const MEMBER_COIN_RATE = 0.03;
+const FREE_COIN_RATE = 0.01;
+const COINS_PER_DOLLAR = 1000;
 
 /** The payment options, in the order the checkout design lists them. */
 const PAYMENT_METHODS = [
@@ -156,8 +158,11 @@ export default function EventTickets() {
   // only shown when the buyer is actually paying less than that.
   const standardTotal = event ? ticketCount * event.priceFrom : 0;
 
-  const coinMultiplier = paid ? MEMBER_COIN_MULTIPLIER : userName ? 1 : MEMBER_COIN_MULTIPLIER;
-  const coins = Math.round(total * COIN_RATE * coinMultiplier);
+  // A guest earns nothing until they have an account, so the figure they're
+  // shown is what a free account would have earned — that's what the "create
+  // free account" line next to it is offering them.
+  const coinRate = paid ? MEMBER_COIN_RATE : FREE_COIN_RATE;
+  const coins = Math.round(total * coinRate * COINS_PER_DOLLAR);
 
   /**
    * Takes the payment and returns the booking.
@@ -590,7 +595,7 @@ export default function EventTickets() {
           {paid ? (
             <>
               <b>+{coins} R Coins pending</b>
-              <span>Credited upon checkout with your active 3x member multiplier.</span>
+              <span>Credited upon checkout at your active 3% member rate.</span>
             </>
           ) : userName ? (
             <>
