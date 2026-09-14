@@ -1548,14 +1548,14 @@ Enjoy perks that keep growing.
             </p>
 
             {!userName && (
-              <Nav
+              <Link
                 className="cpn-btn cpn-btn--dark"
                 to="/login"
                 target="_blank"
                 rel="noopener noreferrer"
               >
                 Sign Up Now
-              </Nav>
+              </Link>
             )}
           </div>
         </div>
