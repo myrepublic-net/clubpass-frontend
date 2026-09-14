@@ -146,12 +146,12 @@ const SAFETY_CARDS = [
   {
     icon: <img src="/images/cp-card.png" />,
     title: "Licensed operators",
-    text: "Full-size, air-conditioned coaches with professional drivers — not ad-hoc rides found at 3am.",
+    text: "Full-size, air-conditioned coaches with professional drivers not ad-hoc rides found at 3am.",
   },
   {
     icon: <img src="/images/rl-icon.png" />,
     title: "Ride with your crew",
-    text: "Same coach, seats together — the night ends the way it started.",
+    text: "Same coach, seats together the night ends the way it started.",
   },
 ];
 
@@ -165,7 +165,7 @@ const MEMBER_BENEFITS = [
 const FAQS = [
   {
     q: "What is Clubpass Home Express?",
-    a: "A monthly membership for scheduled late-night coaches: a pick-up loop through the city's nightlife spots, then express drop-offs in the East. Fixed schedule, fixed price — no surge, no waiting for a driver at 3am.",
+    a: "A monthly membership for scheduled late-night coaches: a pick-up loop through the city's nightlife spots, then express drop-offs in the East. Fixed schedule, fixed price, no surge, no waiting for a driver at 3am.",
   },
   {
     q: "Is this safe? Who operates the buses?",
@@ -173,19 +173,19 @@ const FAQS = [
   },
   {
     q: "How many rides do I get?",
-    a: "Your membership covers four operating nights a month — one night a week, every week. Exact timings and the published departure board live in the RewardLand app.",
+    a: "Your membership covers four operating nights a month one night a week, every week. Exact timings and the published departure board live in the RewardLand app.",
   },
   {
     q: "Do I need a new account or app?",
-    a: "No. Clubpass sits inside the RewardLand app you already have. If you're an existing user you're signed in automatically — no new account, no second app to download.",
+    a: "No. Clubpass sits inside the RewardLand app you already have. If you're an existing user you're signed in automatically no new account, no second app to download.",
   },
   {
     q: "How does billing and cancellation work?",
-    a: "S$19.90 is charged monthly to your payment method in the app and renews automatically. You can cancel in two taps from your membership screen — there's no lock-in and no cancellation fee.",
+    a: "S$19.90 is charged monthly to your payment method in the app and renews automatically. You can cancel in two taps from your membership screen there's no lock-in and no cancellation fee.",
   },
   {
     q: "My route isn't live yet — what can I do?",
-    a: "Register your interest for West, North or South. Each route unlocks once enough neighbours vote for it — one vote per route, five seconds. We'll notify you the moment yours goes live.",
+    a: "Register your interest for West, North or South. Each route unlocks once enough neighbours vote for it one vote per route, five seconds. We'll notify you the moment yours goes live.",
   },
 ];
 
@@ -385,7 +385,7 @@ export default function ClubPass() {
 
       <meta
         name="description"
-        content="Singapore's first late-night coach membership. Scheduled departures from the club district straight to the East — S$19.90/month, no surge, cancel anytime."
+        content="Singapore's first late-night coach membership. Scheduled departures from the club district straight to the East S$19.90/month, no surge, cancel anytime."
       />
 
       {/* ================= Header ================= */}
@@ -574,7 +574,7 @@ export default function ClubPass() {
             <h2 className="cp-h2">
               More ways to enjoy going out.
             </h2>
-            <p>Clubpass brings together access, savings, rewards, and experiences — with more benefits rolling out as we grow.</p>
+            <p>Clubpass brings together access, savings, rewards, and experiences with more benefits rolling out as we grow.</p>
           </div>
 
           <div className="cp-compare">
@@ -639,8 +639,7 @@ export default function ClubPass() {
   <h2>Your membership already gets you in.</h2>
 
   <div className="intro">
-    Enjoy <strong>FREE ENTRY</strong> at selected Clubpass partner venues and events —
-    included with your membership
+    Enjoy <strong>FREE ENTRY</strong> at selected Clubpass partner venues and events included with your membership
   </div>
 
   <div className="benefits">
@@ -734,7 +733,7 @@ export default function ClubPass() {
       <div className="info-icon"><img src="/images/users.svg"/></div>
       <div>
         <div className="info-title">More venues. More events. More perks.</div>
-        <div className="info-copy">We're adding new partners and member benefits all the time — stay tuned!</div>
+        <div className="info-copy">We're adding new partners and member benefits all the time. Stay tuned!</div>
       </div>
     </div>
   </div>
@@ -906,7 +905,7 @@ Enjoy perks that keep growing.
                 </h2>
 
                 <p className="cp-note">
-                  Clubpass is your pass to exclusive access, rewards and experiences — with more benefits on the way.
+                  Clubpass is your pass to exclusive access, rewards and experiences with more benefits on the way.
                 </p>
               </div>
             </div>
