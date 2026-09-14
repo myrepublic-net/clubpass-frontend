@@ -80,7 +80,9 @@ export default function Login() {
       </form>
 
       <p className="auth-switch">
-        Don't have an account? <Link to="/signup">SIGN UP NOW</Link>
+        {/* Hand the origin on, so signing up from here finishes wherever
+            logging in here would have. */}
+        Don't have an account? <Link to="/signup" state={location.state}>SIGN UP NOW</Link>
       </p>
     </AuthLayout>
   );

@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import {
   ArrowRight,
   Bell,
@@ -284,6 +284,7 @@ function RouteMap() {
 }
 
 export default function ClubPass() {
+  const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
   const [openFaq, setOpenFaq] = useState(0);
   const [openRoute, setOpenRoute] = useState("easties");
@@ -380,10 +381,17 @@ export default function ClubPass() {
   const getRouteMaxHeight = (key) =>
     openRoute === key ? routeContentRefs.current[key]?.scrollHeight : 0;
 
-  // Nobody is signed in on the public page, so a tap can't be counted here —
-  // voting needs a membership record to spend the vote against. Send them to
-  // the app, which is where ClubPass lives anyway.
-  const voteRoute = () => {
+  // A vote is spent against an account — "free account required", as the vote
+  // box says — so a signed-out tap goes to login first and comes back here.
+  // Signed in, voting itself still happens in the app.
+  const voteRoute = (event) => {
+    event?.preventDefault();
+
+    if (!userName) {
+      navigate("/login", { state: { from: "/" } });
+      return;
+    }
+
     window.open(APP_LINK, "_blank", "noopener,noreferrer");
   };
 
@@ -1219,7 +1227,7 @@ Enjoy perks that keep growing.
                         <img src="./images/thumbs-up-ea.svg"/>
                     </div>
 
-                    <a href="#" className="vote-button">
+                    <a href="#" className="vote-button" onClick={voteRoute}>
                         Vote for East
                     </a>
 
@@ -1307,7 +1315,7 @@ Enjoy perks that keep growing.
                 <div className="vote-box">
                     <div className="vote-title">WESTIES, WE NEED YOU!</div>
                     <div className="vote-icon"><img src="./images/thumbs-up-we.svg"/></div>
-                    <a href="#" className="vote-button">Vote for West</a>
+                    <a href="#" className="vote-button" onClick={voteRoute}>Vote for West</a>
                     <div className="vote-description">
                         Free account required<br/>
                         No membership needed
@@ -1390,7 +1398,7 @@ Enjoy perks that keep growing.
                 <div className="vote-box">
                     <div className="vote-title">NORTH EASTIES, WE NEED YOU!</div>
                     <div className="vote-icon"><img src="./images/thumbs-up-ne.svg"/></div>
-                    <a href="#" className="vote-button">Vote Now</a>
+                    <a href="#" className="vote-button" onClick={voteRoute}>Vote Now</a>
                     <div className="vote-description">
                         Free account required<br/>
                         No membership needed
@@ -1473,7 +1481,7 @@ Enjoy perks that keep growing.
                 <div className="vote-box">
                     <div className="vote-title">NORTH WESTIES, WE NEED YOU!</div>
                     <div className="vote-icon"><img src="./images/thumbs-up-nw.svg"/></div>
-                    <a href="#" className="vote-button">Vote Now</a>
+                    <a href="#" className="vote-button" onClick={voteRoute}>Vote Now</a>
                     <div className="vote-description">
                         Free account required<br/>
                         No membership needed
