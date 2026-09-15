@@ -853,7 +853,7 @@ export default function EventTickets() {
             >
               <span className="evt-sheet-grip" aria-hidden="true" />
 
-              <img className="evt-sheet-art" src="/images/Group%2043.png" alt="" />
+              <img className="evt-sheet-art" src="/images/r-coin.png" alt="" />
 
               <h2>Redeem Your R Coins</h2>
               <p>Use the Reward Land app to redeem your r coins at 170+ partner brands.</p>

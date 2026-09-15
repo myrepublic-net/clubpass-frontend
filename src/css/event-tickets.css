@@ -955,15 +955,15 @@
 .evt-sheet-art {
   display: block;
   width: 100%;
-  max-width: 290px;
-  margin: 0 auto 22px;
+  max-width: 300px;
+  margin: 0 auto 0px;
 }
 
 .evt-sheet h2 {
-  margin: 0 0 10px;
-  font-size: 22px;
-  font-weight: 800;
-  color: #101B3D;
+    margin: 0 0 10px;
+    font-size: 24px;
+    font-weight: 800;
+    color: #0C165E;
 }
 
 .evt-sheet p {
