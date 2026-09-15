@@ -51,7 +51,7 @@ export default function EventDetails() {
     return (
       <div className="evd-page">
         <header className="evd-header">
-          <Link className="evd-back" to="/" aria-label="Back">
+          <Link className="evd-back" to="/#venues" aria-label="Back">
             <ArrowLeft size={18} />
           </Link>
           <h1>Event Details</h1>
@@ -68,7 +68,7 @@ export default function EventDetails() {
   return (
     <div className="evd-page">
       <header className="evd-header">
-        <Link className="evd-back" to="/" aria-label="Back">
+        <Link className="evd-back" to="/#venues" aria-label="Back">
           <ArrowLeft size={18} />
         </Link>
         <h1>Event Details</h1>
