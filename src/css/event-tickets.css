@@ -171,6 +171,12 @@
   margin-top: 28px;
 }
 
+/* For the CTAs the designs set in title case rather than caps. */
+.evt-cta.evt-cta--plain {
+  text-transform: none;
+  font-size: 15px;
+}
+
 /* --- ticket cards --- */
 
 .evt-card {
@@ -282,6 +288,58 @@
   font-size: 14px;
   font-weight: 800;
   cursor: pointer;
+}
+
+/* --- guest sign-up prompt --- */
+
+.evt-brand-tag {
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--evt-teal);
+  white-space: nowrap;
+}
+
+.evt-signup {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 62vh;
+  text-align: center;
+}
+
+.evt-signup-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 150px;
+  height: 150px;
+  margin-bottom: 40px;
+  border: 2px solid var(--evt-teal);
+  border-radius: 50%;
+  background: radial-gradient(circle, #16203A 0%, #0E1626 70%);
+  color: var(--evt-teal);
+  /* The glow in the design: a tight ring plus a soft halo around it. */
+  box-shadow:
+    0 0 22px rgba(31, 219, 218, .45),
+    0 0 70px rgba(31, 219, 218, .22);
+}
+
+.evt-signup h2 {
+  margin: 0 0 14px;
+  font-size: 25px;
+  font-weight: 800;
+  line-height: 1.25;
+}
+
+.evt-signup p {
+  margin: 0 auto;
+  max-width: 340px;
+  font-size: 14.5px;
+  line-height: 1.6;
+  color: var(--evt-muted);
 }
 
 /* --- membership upsell --- */
@@ -854,9 +912,87 @@
   padding: 6px 12px;
   border: 1px solid var(--evt-teal);
   border-radius: 999px;
+  background: none;
   color: var(--evt-teal);
+  font-family: inherit;
   font-size: 12.5px;
   font-weight: 700;
+  cursor: pointer;
+}
+
+/* --- redeem sheet --- */
+
+.evt-sheet-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  background: rgba(4, 7, 16, .72);
+}
+
+/* Light sheet over a dark page, so every colour here is stated outright
+   rather than inherited. */
+.evt-sheet {
+  width: 100%;
+  max-width: 600px;
+  padding: 12px 24px 34px;
+  border-radius: 26px 26px 0 0;
+  background: #fff;
+  color: #101B3D;
+  text-align: center;
+  animation: evt-sheet-up .22s ease-out;
+}
+
+@keyframes evt-sheet-up {
+  from { transform: translateY(14px); }
+  to { transform: translateY(0); }
+}
+
+.evt-sheet-grip {
+  display: block;
+  width: 54px;
+  height: 5px;
+  margin: 0 auto 18px;
+  border-radius: 999px;
+  background: #C7CCDA;
+}
+
+.evt-sheet-art {
+  display: block;
+  width: 100%;
+  max-width: 290px;
+  margin: 0 auto 22px;
+}
+
+.evt-sheet h2 {
+  margin: 0 0 10px;
+  font-size: 22px;
+  font-weight: 800;
+  color: #101B3D;
+}
+
+.evt-sheet p {
+  margin: 0 auto 22px;
+  max-width: 330px;
+  font-size: 14px;
+  line-height: 1.55;
+  color: #5A6480;
+}
+
+/* Title case here, unlike the uppercase CTAs elsewhere in the flow. */
+.evt-sheet-cta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 16px;
+  border-radius: 999px;
+  background: var(--evt-teal);
+  color: #04302F;
+  font-size: 15px;
+  font-weight: 800;
 }
 
 .evt-reward-card {

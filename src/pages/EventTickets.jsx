@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useState } from "react";
-import { Link, useParams } from "react-router";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { Link, useNavigate, useParams, useSearchParams } from "react-router";
 import {
   ArrowLeft,
   Calendar,
@@ -9,6 +9,7 @@ import {
   Minus,
   Plus,
   Smartphone,
+  Ticket,
   Wallet,
 } from "lucide-react";
 
@@ -32,6 +33,9 @@ const COINS_PER_DOLLAR = 1000;
 // The same figure the subscribe flow charges, so the upsell can't quote a
 // price the checkout then contradicts.
 const MEMBERSHIP_PRICE = import.meta.env.VITE_CLUBPASS_PRICE ?? "19.90";
+
+/** Where R Coins are actually spent — the Reward Land app's install link. */
+const REWARD_LAND_APP = "https://rewardland.onelink.me/EwIe/start";
 
 /** What the membership buys, as pitched on the upsell screen. */
 const MEMBERSHIP_PERKS = [
@@ -121,18 +125,28 @@ function bookingReference(loggedIn) {
  */
 export default function EventTickets() {
   const { id } = useParams();
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const event = getEventById(id);
 
   const session = useMemo(() => readMemberSession(), []);
   const userName = session?.user?.username ?? null;
 
   const [clubpassUser, setClubpassUser] = useState(null);
+  // Whether the Strapi lookup has settled — until it has we don't know if
+  // they're a paying member, and the resume below has to wait for that.
+  const [userResolved, setUserResolved] = useState(false);
+
   useEffect(() => {
-    if (!session?.user?.username) return;
+    if (!session?.user?.username) {
+      setUserResolved(true);
+      return;
+    }
+
     let cancelled = false;
     resolveClubpassUser(session.user).then(
-      (user) => { if (!cancelled) setClubpassUser(user); },
-      () => { if (!cancelled) setClubpassUser(null); },
+      (user) => { if (!cancelled) { setClubpassUser(user); setUserResolved(true); } },
+      () => { if (!cancelled) setUserResolved(true); },
     );
     return () => { cancelled = true; };
   }, [session]);
@@ -191,6 +205,36 @@ export default function EventTickets() {
   // checkout runs here and hands back the updated record — `paid` flips off
   // that, which is what unlocks the Member Price row behind this screen.
   const [justSubscribed, setJustSubscribed] = useState(false);
+  const [coinsSheetOpen, setCoinsSheetOpen] = useState(false);
+
+  // Signing up leaves the site (signup, then login), so the intent to buy a
+  // membership can't live in component state — it rides back on the URL that
+  // login returns to, and is consumed once here.
+  const resumeHandled = useRef(false);
+
+  useEffect(() => {
+    if (resumeHandled.current) return;
+    if (searchParams.get("next") !== "membership") return;
+    // Wait for the lookup: a member who already paid shouldn't be dropped
+    // back onto the upsell.
+    if (!userName || !userResolved) return;
+
+    resumeHandled.current = true;
+    if (!paid) setStep("membership");
+    navigate(`/events/${id}/tickets`, { replace: true });
+  }, [searchParams, userName, userResolved, paid, navigate, id]);
+
+  // Escape closes the R Coins sheet, the same as tapping outside it.
+  useEffect(() => {
+    if (!coinsSheetOpen) return;
+
+    const onKeyDown = (event) => {
+      if (event.key === "Escape") setCoinsSheetOpen(false);
+    };
+
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
+  }, [coinsSheetOpen]);
 
   const membership = useMembershipCheckout({
     active: step === "membershipPayment",
@@ -281,15 +325,16 @@ export default function EventTickets() {
     );
   }
 
+  // Signing in partway through buying tickets is worth a membership pitch on
+  // the way back, since member pricing is the reason to bother. The resume
+  // skips the pitch for anyone who already pays for one.
+  const returnToMembership = `/events/${event.id}/tickets?next=membership`;
+
   /** The header's right-hand slot: who you are, or a way to become someone. */
   const identity = userName ? (
     <span className="evt-hi">Hi, {userName}</span>
   ) : (
-    <Link
-      className="evt-login-btn"
-      to="/login"
-      state={{ from: `/events/${event.id}/tickets` }}
-    >
+    <Link className="evt-login-btn" to="/login" state={{ from: returnToMembership }}>
       Login / Signup
     </Link>
   );
@@ -358,6 +403,49 @@ export default function EventTickets() {
             Continue
           </button>
         </div>
+      </div>
+    );
+  }
+
+  if (step === "signupPrompt") {
+    return (
+      <div className="evt-page">
+        <header className="evt-header">
+          <button
+            type="button"
+            className="evt-back"
+            onClick={() => setStep("select")}
+            aria-label="Back"
+          >
+            <ArrowLeft size={18} />
+          </button>
+          <h1>Sign Up</h1>
+          <span className="evt-brand-tag">Clubpass</span>
+        </header>
+
+        <div className="evt-body evt-signup">
+          <span className="evt-signup-badge" aria-hidden="true">
+            <Ticket size={30} />
+          </span>
+
+          <h2>Complete Your Registration</h2>
+          <p>
+            Please follow the sign up process to create your account. Once registered, you'll be
+            redirected to select your tickets.
+          </p>
+        </div>
+
+        <footer className="evt-footer evt-footer--single">
+          {/* Registration leaves this page, so where to resume rides along on
+              the URL login will return to. */}
+          <Link
+            className="evt-cta evt-cta--block evt-cta--plain"
+            to="/signup"
+            state={{ from: `/events/${event.id}/tickets?next=membership` }}
+          >
+            Start Registration
+          </Link>
+        </footer>
       </div>
     );
   }
@@ -669,7 +757,9 @@ export default function EventTickets() {
 
   if (step === "confirmed") {
     const holder = userName ?? "Guest User";
-    const ticketType = lines.length === 1 ? lines[0].tier.label : "Mixed tickets";
+    // Spell the basket out — "1× Standard Price, 2× Early Bird" — rather than
+    // flattening anything with more than one tier into "Mixed tickets".
+    const ticketType = lines.map((line) => `${line.qty}× ${line.tier.label}`).join(", ");
     // A guest earns nothing — that's what the create-an-account card is for.
     const earned = userName ? coins : 0;
 
@@ -703,7 +793,7 @@ export default function EventTickets() {
                 <dd>{ticketType}</dd>
               </div>
               <div>
-                <dt>Holder Name</dt>
+                <dt>Username</dt>
                 <dd>{holder}</dd>
               </div>
               <div>
@@ -722,7 +812,13 @@ export default function EventTickets() {
 
             <div className="evt-booking-coins">
               <span>R Coins Earned</span>
-              <span className="evt-coin-pill">{earned} R Coins ›</span>
+              <button
+                type="button"
+                className="evt-coin-pill"
+                onClick={() => setCoinsSheetOpen(true)}
+              >
+                {earned} R Coins ›
+              </button>
             </div>
           </div>
 
@@ -740,6 +836,38 @@ export default function EventTickets() {
             Back to event
           </Link>
         </div>
+
+        {coinsSheetOpen && (
+          <div
+            className="evt-sheet-overlay"
+            role="presentation"
+            onClick={() => setCoinsSheetOpen(false)}
+          >
+            <div
+              className="evt-sheet"
+              role="dialog"
+              aria-modal="true"
+              aria-label="Redeem your R Coins"
+              onClick={(clickEvent) => clickEvent.stopPropagation()}
+            >
+              <span className="evt-sheet-grip" aria-hidden="true" />
+
+              <img className="evt-sheet-art" src="/images/Group%2043.png" alt="" />
+
+              <h2>Redeem Your R Coins</h2>
+              <p>Use the Reward Land app to redeem your r coins at 170+ partner brands.</p>
+
+              <a
+                className="evt-sheet-cta"
+                href={REWARD_LAND_APP}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Open Reward Land App
+              </a>
+            </div>
+          </div>
+        )}
       </div>
     );
   }
@@ -802,22 +930,18 @@ export default function EventTickets() {
 
               {tier.note && <p className="evt-card-note">{tier.note}</p>}
 
-              {/* Signed in, the pitch happens right here; signed out there's
-                  no account to put a membership on, so that still starts at
-                  the membership page's own sign-in gate. */}
-              {locked && (userName ? (
+              {/* Signed in, the pitch happens right here. Signed out there's
+                  no account to put a membership on yet, so it starts with
+                  registration and picks the membership back up afterwards. */}
+              {locked && (
                 <button
                   type="button"
                   className="evt-unlock-btn"
-                  onClick={() => setStep("membership")}
+                  onClick={() => setStep(userName ? "membership" : "signupPrompt")}
                 >
                   Unlock Member Price
                 </button>
-              ) : (
-                <Link className="evt-unlock-btn" to="/clubpass-app">
-                  Unlock Member Price
-                </Link>
-              ))}
+              )}
 
               {(soldOut || upcoming || active) && (tier.salePeriod || soldOut) && (
                 <div className="evt-card-bottom">
@@ -852,7 +976,9 @@ export default function EventTickets() {
             <>
               <b>+{coins} R Coins awaiting</b>
               <span>Create free account to start earning R coins.</span>
-              <Link to="/signup">Sign up for free</Link>
+              <Link to="/signup" state={{ from: returnToMembership }}>
+                Sign up for free
+              </Link>
             </>
           )}
         </div>

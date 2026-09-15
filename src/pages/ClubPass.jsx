@@ -446,7 +446,7 @@ export default function ClubPass() {
                 className="cp-btn cp-btn-purple cp-btn-sm"
                 to="/login"
               >
-                Join the Club
+                Login / Sign up
               </Link>
             )}
 
