@@ -110,7 +110,9 @@ export default function Signup() {
 
   const loginFooter = (
     <p className="auth-switch">
-      Have an account? <Link to="/login">LOG IN NOW</Link>
+      {/* Someone who turns out to already have an account is still on the same
+          journey, so log in finishes where signing up would have. */}
+      Have an account? <Link to="/login" state={{ from: afterSignup }}>LOG IN NOW</Link>
     </p>
   );
 
