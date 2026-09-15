@@ -12,6 +12,7 @@ import Login from "./pages/auth/Login.jsx";
 import Signup from "./pages/auth/Signup.jsx";
 import UserGate from "./components/UserGate.jsx";
 import NotFound from "./pages/NotFound.jsx";
+import Profile from "./pages/Profile.jsx";
 
 const router = createBrowserRouter([
   { path: "/", element: <ClubPass /> },
@@ -53,6 +54,9 @@ const router = createBrowserRouter([
       </UserGate>
     ),
   },
+  // The account menu's Profile entry. Public route, but it sends a signed-out
+  // visitor to login rather than rendering an empty membership.
+  { path: "/profile", element: <Profile /> },
   // Catch-all, last: anything the routes above didn't claim. Without it a bad
   // URL renders React Router's own error screen, which talks about routing
   // rather than to the person reading it.

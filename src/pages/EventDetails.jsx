@@ -1,8 +1,9 @@
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { Link, useLocation, useParams } from "react-router";
 import { ArrowLeft, Calendar, ChevronRight, MapPin, Play } from "lucide-react";
 
 import { readMemberSession } from "../api/auth.js";
+import UserMenu from "../components/UserMenu.jsx";
 import { getEventById } from "../data/events.js";
 import "../css/event-details.css";
 
@@ -26,6 +27,25 @@ export default function EventDetails() {
 
   const [activeImage, setActiveImage] = useState(0);
   const [expanded, setExpanded] = useState(false);
+
+  // The gallery is a native horizontal scroller, so swiping it is what moves
+  // it — the counter and dots follow the scroll position rather than driving it.
+  const trackRef = useRef(null);
+
+  const syncActiveImage = () => {
+    const track = trackRef.current;
+    if (!track) return;
+
+    const index = Math.round(track.scrollLeft / track.clientWidth);
+    setActiveImage((prev) => (prev === index ? prev : index));
+  };
+
+  const scrollToImage = (index) => {
+    const track = trackRef.current;
+    if (!track) return;
+
+    track.scrollTo({ left: index * track.clientWidth, behavior: "smooth" });
+  };
 
   if (!event) {
     return (
@@ -54,7 +74,7 @@ export default function EventDetails() {
         <h1>Event Details</h1>
 
         {userName ? (
-          <span className="evd-hi">Hi, {userName}</span>
+          <UserMenu userName={userName} />
         ) : (
           <Link className="evd-login-btn" to="/login" state={loginState}>
             Login / Signup
@@ -67,7 +87,16 @@ export default function EventDetails() {
           {activeImage + 1}/{event.images.length}
         </span>
 
-        <img className="evd-hero-img" src={event.images[activeImage]} alt={event.title} />
+        <div className="evd-track" ref={trackRef} onScroll={syncActiveImage}>
+          {event.images.map((image, index) => (
+            <img
+              key={image}
+              className="evd-hero-img"
+              src={image}
+              alt={`${event.title} — photo ${index + 1}`}
+            />
+          ))}
+        </div>
 
         <button
           type="button"
@@ -76,17 +105,18 @@ export default function EventDetails() {
         >
           <Play size={22} fill="currentColor" />
         </button>
-
-        <div className="evd-dots">
-          {event.images.map((image, index) => (
-            <button
-              key={image}
-              type="button"
-              className={`evd-dot${index === activeImage ? " is-active" : ""}`}
-              aria-label={`Show image ${index + 1}`}
-              onClick={() => setActiveImage(index)}
-            />
-          ))}
+        <div className="evd-dots-main">
+          <div className="evd-dots">
+            {event.images.map((image, index) => (
+              <button
+                key={image}
+                type="button"
+                className={`evd-dot${index === activeImage ? " is-active" : ""}`}
+                aria-label={`Show image ${index + 1}`}
+                onClick={() => setActiveImage(index)}
+              />
+            ))}
+          </div>
         </div>
       </div>
 

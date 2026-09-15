@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import {
   ArrowRight,
   Bell,
@@ -18,8 +18,9 @@ import {
 import "../css/clubpass.css";
 import useRouteVoting from "../hooks/useRouteVoting.js";
 import "../css/clubpass-new.css";
-import { logout, readMemberSession } from "../api/auth.js";
+import { readMemberSession } from "../api/auth.js";
 import { isPaid, resolveClubpassUser } from "../api/clubpassUser.js";
+import UserMenu from "../components/UserMenu.jsx";
 
 const APP_LINK = "https://rewardland.onelink.me/EwIe/start";
 const SITE = "https://www.rewardland.sg";
@@ -284,6 +285,7 @@ function RouteMap() {
 }
 
 export default function ClubPass() {
+  const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
   const [openFaq, setOpenFaq] = useState(0);
   const [openRoute, setOpenRoute] = useState("easties");
@@ -293,7 +295,6 @@ export default function ClubPass() {
   // This page is public (not behind UserGate), so a signed-out visitor still
   // sees the full page — the header just reflects whichever state applies.
   const [session, setSession] = useState(() => readMemberSession());
-  const [loggingOut, setLoggingOut] = useState(false);
   const userName = session?.user?.username ?? null;
 
   // Resolved separately from the session: knowing someone is logged in isn't
@@ -323,17 +324,6 @@ export default function ClubPass() {
   }, [session]);
 
   const paid = isPaid(clubpassUser);
-
-  const handleLogout = async () => {
-    setLoggingOut(true);
-    try {
-      await logout();
-    } finally {
-      setSession(null);
-      setLoggingOut(false);
-      setMenuOpen(false);
-    }
-  };
 
   /* =========================================
      HERO SLIDER STATE
@@ -380,10 +370,17 @@ export default function ClubPass() {
   const getRouteMaxHeight = (key) =>
     openRoute === key ? routeContentRefs.current[key]?.scrollHeight : 0;
 
-  // Nobody is signed in on the public page, so a tap can't be counted here —
-  // voting needs a membership record to spend the vote against. Send them to
-  // the app, which is where ClubPass lives anyway.
-  const voteRoute = () => {
+  // A vote is spent against an account — "free account required", as the vote
+  // box says — so a signed-out tap goes to login first and comes back here.
+  // Signed in, voting itself still happens in the app.
+  const voteRoute = (event) => {
+    event?.preventDefault();
+
+    if (!userName) {
+      navigate("/login", { state: { from: "/" } });
+      return;
+    }
+
     window.open(APP_LINK, "_blank", "noopener,noreferrer");
   };
 
@@ -415,16 +412,6 @@ export default function ClubPass() {
               </a>
             ))}
 
-            {userName && (
-              <button
-                type="button"
-                className="cp-nav-logout"
-                onClick={handleLogout}
-                disabled={loggingOut}
-              >
-                {loggingOut ? "Logging out…" : "Logout"}
-              </button>
-            )}
           </nav>
 
           <div
@@ -432,13 +419,13 @@ export default function ClubPass() {
             style={{ gap: 8 }}
           >
             {userName ? (
-              <span className="cp-hi">Hi, {userName}</span>
+              <UserMenu userName={userName} onSignedOut={() => setSession(null)} />
             ) : (
               <Link
                 className="cp-btn cp-btn-purple cp-btn-sm"
                 to="/login"
               >
-                Join the Club
+                Login / Sign up
               </Link>
             )}
 
@@ -1219,7 +1206,7 @@ Enjoy perks that keep growing.
                         <img src="./images/thumbs-up-ea.svg"/>
                     </div>
 
-                    <a href="#" className="vote-button">
+                    <a href="#" className="vote-button" onClick={voteRoute}>
                         Vote for East
                     </a>
 
@@ -1307,7 +1294,7 @@ Enjoy perks that keep growing.
                 <div className="vote-box">
                     <div className="vote-title">WESTIES, WE NEED YOU!</div>
                     <div className="vote-icon"><img src="./images/thumbs-up-we.svg"/></div>
-                    <a href="#" className="vote-button">Vote for West</a>
+                    <a href="#" className="vote-button" onClick={voteRoute}>Vote for West</a>
                     <div className="vote-description">
                         Free account required<br/>
                         No membership needed
@@ -1390,7 +1377,7 @@ Enjoy perks that keep growing.
                 <div className="vote-box">
                     <div className="vote-title">NORTH EASTIES, WE NEED YOU!</div>
                     <div className="vote-icon"><img src="./images/thumbs-up-ne.svg"/></div>
-                    <a href="#" className="vote-button">Vote Now</a>
+                    <a href="#" className="vote-button" onClick={voteRoute}>Vote Now</a>
                     <div className="vote-description">
                         Free account required<br/>
                         No membership needed
@@ -1473,7 +1460,7 @@ Enjoy perks that keep growing.
                 <div className="vote-box">
                     <div className="vote-title">NORTH WESTIES, WE NEED YOU!</div>
                     <div className="vote-icon"><img src="./images/thumbs-up-nw.svg"/></div>
-                    <a href="#" className="vote-button">Vote Now</a>
+                    <a href="#" className="vote-button" onClick={voteRoute}>Vote Now</a>
                     <div className="vote-description">
                         Free account required<br/>
                         No membership needed

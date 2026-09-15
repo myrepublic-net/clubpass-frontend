@@ -7,16 +7,16 @@
    ========================================================================== */
 
 .evt-page {
-  --evt-teal: #1FDBDA;
+  --evt-teal: #06B6D0;
   --evt-dark: #10131F;
   --evt-card: #171B2B;
   --evt-card-dim: #171B2B99;
   --evt-line: rgba(255, 255, 255, .1);
   --evt-muted: #8B90A6;
-  --evt-danger: #FF6B6B;
+  --evt-danger: #D91A1A;
 
   font-family: "Outfit", ui-sans-serif, system-ui, -apple-system, sans-serif;
-  color: #fff;
+   color: #fff;
   background: var(--evt-dark);
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;
@@ -38,7 +38,7 @@
   align-items: center;
   gap: 14px;
   padding: 16px 20px;
-  background: var(--evt-dark);
+     background: var(--evt-dark);
 }
 
 .evt-header h1 {
@@ -56,16 +56,10 @@
   height: 34px;
   border: none;
   border-radius: 10px;
-  background: rgba(255, 255, 255, .1);
+   background: rgba(255, 255, 255, .1);
   color: #fff;
   flex-shrink: 0;
   cursor: pointer;
-}
-
-.evt-hi {
-  font-size: 14px;
-  font-weight: 600;
-  white-space: nowrap;
 }
 
 .evt-login-btn {
@@ -74,7 +68,7 @@
   padding: 8px 16px;
   border-radius: 999px;
   border: 1px solid rgba(255, 255, 255, .5);
-  color: #fff;
+   color: #fff;
   font-size: 13px;
   font-weight: 600;
   white-space: nowrap;
@@ -170,6 +164,12 @@
   margin-top: 28px;
 }
 
+/* For the CTAs the designs set in title case rather than caps. */
+.evt-cta.evt-cta--plain {
+  text-transform: none;
+  font-size: 15px;
+}
+
 /* --- ticket cards --- */
 
 .evt-card {
@@ -177,6 +177,7 @@
   padding: 16px;
   border-radius: 18px;
   background: var(--evt-card);
+  border: 1.5px solid  #1E293B;
 }
 
 .evt-card--locked,
@@ -214,7 +215,7 @@
 }
 
 .evt-card-price {
-  font-size: 16px;
+  font-size: 20px;
   font-weight: 800;
   white-space: nowrap;
 }
@@ -231,7 +232,6 @@
   gap: 10px;
   padding: 4px;
   border-radius: 999px;
-  background: rgba(255, 255, 255, .06);
   flex-shrink: 0;
 }
 
@@ -241,9 +241,10 @@
   justify-content: center;
   width: 26px;
   height: 26px;
-  border-radius: 50%;
+  border-radius: 4px;
   border: none;
-  background: rgba(255, 255, 255, .1);
+  /* background: rgba(255, 255, 255, .1); */
+  background: #06B6D4;
   color: #fff;
 }
 
@@ -269,13 +270,177 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 100%;
   margin-top: 12px;
   padding: 12px;
-  border-radius: 12px;
+  border: none;
+  border-radius: 8px;
   background: var(--evt-teal);
   color: #04302F;
+  font-family: inherit;
   font-size: 14px;
   font-weight: 800;
+  cursor: pointer;
+}
+
+/* --- guest sign-up prompt --- */
+
+.evt-brand-tag {
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--evt-teal);
+  white-space: nowrap;
+}
+
+.evt-signup {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 62vh;
+  text-align: center;
+}
+
+.evt-signup-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 150px;
+  height: 150px;
+  margin-bottom: 40px;
+  border: 2px solid var(--evt-teal);
+  border-radius: 50%;
+  background: radial-gradient(circle, #16203A 0%, #0E1626 70%);
+  color: var(--evt-teal);
+  /* The glow in the design: a tight ring plus a soft halo around it. */
+  box-shadow:
+    0 0 22px rgba(31, 219, 218, .45),
+    0 0 70px rgba(31, 219, 218, .22);
+}
+
+.evt-signup h2 {
+  margin: 0 0 14px;
+  font-size: 25px;
+  font-weight: 800;
+  line-height: 1.25;
+}
+
+.evt-signup p {
+  margin: 0 auto;
+  max-width: 340px;
+  font-size: 14.5px;
+  line-height: 1.6;
+  color: var(--evt-muted);
+}
+
+/* --- membership upsell --- */
+
+.evt-upsell-title {
+  margin: 10px 0 10px;
+  font-size: 28px;
+  font-weight: 900;
+  line-height: 1.2;
+}
+
+.evt-upsell-sub {
+  margin: 0 0 22px;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--evt-muted);
+}
+
+.evt-perks {
+  padding: 18px;
+  border-radius: 16px;
+  background: var(--evt-card);
+      border: 1px solid #1E293B;
+}
+
+.evt-perks-head {
+  margin-bottom: 18px;
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--evt-teal);
+}
+
+.evt-perk {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding-left: 14px;
+}
+
+.evt-perk + .evt-perk {
+  margin-top: 16px;
+}
+
+.evt-perk b {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.evt-perk span {
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--evt-muted);
+}
+
+.evt-plan {
+  margin-top: 16px;
+  padding: 18px;
+  border: 1px solid var(--evt-teal);
+  border-radius: 18px;
+  background: var(--evt-card);
+}
+
+.evt-plan-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.evt-plan-top > div:first-child {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.evt-plan-top b {
+  font-size: 16px;
+  font-weight: 800;
+}
+
+.evt-plan-top span {
+  font-size: 13px;
+  color: var(--evt-muted);
+}
+
+.evt-plan-price {
+  font-size: 21px;
+  font-weight: 800;
+  color: var(--evt-teal);
+  white-space: nowrap;
+}
+
+.evt-plan-renews {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid var(--evt-line);
+  font-size: 12.5px;
+  color: var(--evt-muted);
+}
+
+.evt-plan-renews svg {
+  flex-shrink: 0;
 }
 
 .evt-card-bottom {
@@ -284,6 +449,9 @@
   justify-content: space-between;
   gap: 10px;
   margin-top: 10px;
+  flex-direction: column;
+      border-top: 1px solid #1E293B;
+    padding-top: 10px;
 }
 
 .evt-tag {
@@ -301,14 +469,14 @@
 }
 
 .evt-sale-period {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  margin-left: auto;
-  font-size: 11.5px;
-  color: var(--evt-muted);
+    display: flex;
+    align-items: center;
+    margin-left: auto;
+    font-size: 12px;
+    color: var(--evt-muted);
+    justify-content: space-between;
+    width: 100%;
 }
-
 .evt-sale-period b {
   color: #fff;
   font-size: 13px;
@@ -531,6 +699,67 @@
   color: var(--evt-danger);
 }
 
+.evt-pay-error small {
+  display: block;
+  margin-top: 4px;
+  opacity: .8;
+}
+
+.evt-pay-note {
+  margin-top: 14px;
+  font-size: 13px;
+  color: var(--evt-muted);
+}
+
+.evt-charge-note {
+  margin: 0 0 18px;
+  font-size: 13.5px;
+  color: var(--evt-muted);
+}
+
+.evt-card-fields {
+  margin: 4px 0 8px;
+  padding: 14px;
+  border-radius: 14px;
+      background: #181c2b;
+}
+
+.evt-card-fields.is-hidden {
+  display: none;
+}
+
+.evt-sim-btn {
+  width: 100%;
+  margin-top: 18px;
+  padding: 12px;
+  border: 1px dashed var(--evt-muted);
+  border-radius: 12px;
+  background: none;
+  color: var(--evt-muted);
+  font-family: inherit;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+/* --- just-subscribed banner --- */
+
+.evt-member-banner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 4px 0 16px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: #16A06B;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.evt-member-banner svg {
+  flex-shrink: 0;
+}
+
 /* --- processing --- */
 
 .evt-processing {
@@ -676,9 +905,87 @@
   padding: 6px 12px;
   border: 1px solid var(--evt-teal);
   border-radius: 999px;
+  background: none;
   color: var(--evt-teal);
+  font-family: inherit;
   font-size: 12.5px;
   font-weight: 700;
+  cursor: pointer;
+}
+
+/* --- redeem sheet --- */
+
+.evt-sheet-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  background: rgba(4, 7, 16, .72);
+}
+
+/* Light sheet over a dark page, so every colour here is stated outright
+   rather than inherited. */
+.evt-sheet {
+  width: 100%;
+  max-width: 600px;
+  padding: 12px 24px 34px;
+  border-radius: 26px 26px 0 0;
+  background: #fff;
+  color: #101B3D;
+  text-align: center;
+  animation: evt-sheet-up .22s ease-out;
+}
+
+@keyframes evt-sheet-up {
+  from { transform: translateY(14px); }
+  to { transform: translateY(0); }
+}
+
+.evt-sheet-grip {
+  display: block;
+  width: 54px;
+  height: 5px;
+  margin: 0 auto 18px;
+  border-radius: 999px;
+  background: #C7CCDA;
+}
+
+.evt-sheet-art {
+  display: block;
+  width: 100%;
+  max-width: 300px;
+  margin: 0 auto 0px;
+}
+
+.evt-sheet h2 {
+    margin: 0 0 10px;
+    font-size: 24px;
+    font-weight: 800;
+    color: #0C165E;
+}
+
+.evt-sheet p {
+  margin: 0 auto 22px;
+  max-width: 330px;
+  font-size: 14px;
+  line-height: 1.55;
+  color: #5A6480;
+}
+
+/* Title case here, unlike the uppercase CTAs elsewhere in the flow. */
+.evt-sheet-cta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 16px;
+  border-radius: 999px;
+  background: var(--evt-teal);
+  color: #04302F;
+  font-size: 15px;
+  font-weight: 800;
 }
 
 .evt-reward-card {
@@ -763,18 +1070,19 @@
 /* --- footer --- */
 
 .evt-footer {
-  position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 20;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  padding: 16px 20px;
-  background: var(--evt-dark);
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 20;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 16px 20px;
+     background: var(--evt-dark);
   border-top: 1px solid var(--evt-line);
+        flex-direction: column;
 }
 
 /* Checkout and Payment end in one full-width button instead of a total + CTA. */
@@ -787,18 +1095,20 @@
 }
 
 .evt-total {
-  display: flex;
-  flex-direction: column;
-  line-height: 1.1;
+    display: flex;
+    flex-direction: row;
+    line-height: 1.1;
+    justify-content: space-between;
+    width: 100%;
 }
 
 .evt-total span {
-  font-size: 12px;
-  color: var(--evt-muted);
+    font-size: 13px;
+    color: var(--evt-muted);
 }
 
 .evt-total b {
-  font-size: 20px;
+  font-size: 16px;
   font-weight: 800;
 }
 
@@ -807,7 +1117,6 @@
   align-items: center;
   justify-content: center;
   width: 100%;
-  max-width: 220px;
   padding: 14px 28px;
   border: none;
   border-radius: 999px;
@@ -823,7 +1132,17 @@
 .evt-cta:disabled {
   opacity: .4;
 }
-
+.evt-page, .evt-footer {
+    max-width: 600px;
+    margin: auto;
+    border-inline: 1px solid #2e323b;
+}
+body:has(.evt-page) {
+      background: #10131f;
+}
+    /* .evt-header, .evt-footer, .evt-body {
+        border-inline: 1px solid #2e323b;
+    } */
 @media (min-width: 480px) {
   .evt-header,
   .evt-footer {
