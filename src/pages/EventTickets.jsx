@@ -149,13 +149,13 @@ export default function EventTickets() {
 
   const lines = tiers
     .map((tier) => ({ tier, qty: quantities[tier.id] ?? 0 }))
-    .filter((line) => line.qty > 0);
+    .filter((line) => line.qty > 0);  
 
   const ticketCount = lines.reduce((sum, line) => sum + line.qty, 0);
   const total = lines.reduce((sum, line) => sum + line.tier.price * line.qty, 0);
 
   // What the same tickets would have cost at the event's standard price —
-  // only shown when the buyer is actually paying less than that.
+  // only shown when the buyer is actually paying less than that.   
   const standardTotal = event ? ticketCount * event.priceFrom : 0;
 
   // A guest earns nothing until they have an account, so the figure they're
