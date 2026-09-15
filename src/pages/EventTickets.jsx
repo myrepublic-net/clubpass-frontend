@@ -1,10 +1,21 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useParams } from "react-router";
-import { ArrowLeft, CreditCard, Info, Minus, Plus, Smartphone, Wallet } from "lucide-react";
+import {
+  ArrowLeft,
+  Calendar,
+  CheckCircle2,
+  CreditCard,
+  Info,
+  Minus,
+  Plus,
+  Smartphone,
+  Wallet,
+} from "lucide-react";
 
 import { readMemberSession } from "../api/auth.js";
 import { isPaid, resolveClubpassUser } from "../api/clubpassUser.js";
 import { getEventById } from "../data/events.js";
+import useMembershipCheckout, { SIMULATE } from "../hooks/useMembershipCheckout.js";
 import usePaypalSdk from "../hooks/usePaypalSdk.js";
 import "../css/event-tickets.css";
 
@@ -17,6 +28,18 @@ const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const MEMBER_COIN_RATE = 0.03;
 const FREE_COIN_RATE = 0.01;
 const COINS_PER_DOLLAR = 1000;
+
+// The same figure the subscribe flow charges, so the upsell can't quote a
+// price the checkout then contradicts.
+const MEMBERSHIP_PRICE = import.meta.env.VITE_CLUBPASS_PRICE ?? "19.90";
+
+/** What the membership buys, as pitched on the upsell screen. */
+const MEMBERSHIP_PERKS = [
+  ["Up to 50% off all tickets", "Save on standard entrance prices always"],
+  ["3× R Coins Multiplier", "Earn and redeem points at 170+ partner brands"],
+  ["Home Express Shuttle", "Safe rides home from prime nightlife districts"],
+  ["Free Entry Days", "Complimentary admission to selected partner events"],
+];
 
 /** The payment options, in the order the checkout design lists them. */
 const PAYMENT_METHODS = [
@@ -164,6 +187,49 @@ export default function EventTickets() {
   const coinRate = paid ? MEMBER_COIN_RATE : FREE_COIN_RATE;
   const coins = Math.round(total * coinRate * COINS_PER_DOLLAR);
 
+  // Subscribing happens in the middle of picking tickets, so the membership
+  // checkout runs here and hands back the updated record — `paid` flips off
+  // that, which is what unlocks the Member Price row behind this screen.
+  const [justSubscribed, setJustSubscribed] = useState(false);
+
+  const membership = useMembershipCheckout({
+    active: step === "membershipPayment",
+    userName,
+    user: clubpassUser,
+    profile: session?.user ?? null,
+    setUser: setClubpassUser,
+    onPaid: (updated) => {
+      setClubpassUser(updated);
+      setJustSubscribed(true);
+
+      setQuantities((prev) => {
+        // Standard Price isn't offered to members, so anything sitting in it
+        // would vanish from the basket along with the row. Move it to Early
+        // Bird — it survives the switch and costs them less — rather than
+        // quietly dropping tickets they'd already chosen.
+        const carried = prev.standard ?? 0;
+        const earlyBirdCap = tiers.find((tier) => tier.id === "early-bird")?.stockLeft ?? Infinity;
+
+        return {
+          ...prev,
+          // They came here to buy the member-priced ticket — put it in the basket.
+          member: Math.max(prev.member ?? 0, 1),
+          standard: 0,
+          "early-bird": Math.min((prev["early-bird"] ?? 0) + carried, earlyBirdCap),
+        };
+      });
+
+      setStep("select");
+    },
+  });
+
+  /** First renewal is a month after joining. */
+  const renewalDate = useMemo(() => {
+    const date = new Date();
+    date.setMonth(date.getMonth() + 1);
+    return date.toLocaleDateString("en-SG", { day: "numeric", month: "short", year: "numeric" });
+  }, []);
+
   /**
    * Takes the payment and returns the booking.
    *
@@ -292,6 +358,168 @@ export default function EventTickets() {
             Continue
           </button>
         </div>
+      </div>
+    );
+  }
+
+  if (step === "membership") {
+    return (
+      <div className="evt-page">
+        <header className="evt-header">
+          <button
+            type="button"
+            className="evt-back"
+            onClick={() => setStep("select")}
+            aria-label="Back"
+          >
+            <ArrowLeft size={18} />
+          </button>
+          <h1>Clubpass membership</h1>
+          {identity}
+        </header>
+
+        <div className="evt-body">
+          <h2 className="evt-upsell-title">Get instant ticket savings</h2>
+          <p className="evt-upsell-sub">
+            Get Member pricing on this ticket and unlock exclusive perks across all partner clubs.
+          </p>
+
+          <div className="evt-perks">
+            <div className="evt-perks-head">Exclusive perks</div>
+
+            {MEMBERSHIP_PERKS.map(([title, detail]) => (
+              <div key={title} className="evt-perk">
+                <b>{title}</b>
+                <span>{detail}</span>
+              </div>
+            ))}
+          </div>
+
+          <div className="evt-plan">
+            <div className="evt-plan-top">
+              <div>
+                <b>Monthly Membership</b>
+                <span>Full premium access</span>
+              </div>
+              <div className="evt-plan-price">${MEMBERSHIP_PRICE}/mo</div>
+            </div>
+
+            <div className="evt-plan-renews">
+              <Calendar size={15} />
+              <span>Renews automatically on {renewalDate}</span>
+            </div>
+          </div>
+        </div>
+
+        <footer className="evt-footer evt-footer--single">
+          <button
+            type="button"
+            className="evt-cta evt-cta--block"
+            onClick={() => setStep("membershipPayment")}
+          >
+            Subscribe Now
+          </button>
+        </footer>
+      </div>
+    );
+  }
+
+  if (step === "membershipPayment") {
+    const { flow, method: chosen, setMethod, sdkStatus, sdkError, eligible } = membership;
+    const canUse = (id) => sdkStatus !== "ready" || Boolean(eligible?.[id]);
+    const busy = flow.status === "processing";
+
+    return (
+      <div className="evt-page">
+        <header className="evt-header">
+          <button
+            type="button"
+            className="evt-back"
+            onClick={() => setStep("membership")}
+            aria-label="Back"
+          >
+            <ArrowLeft size={18} />
+          </button>
+          <h1>Select Payment Method</h1>
+          {identity}
+        </header>
+
+        <div className="evt-body">
+          <h2 className="evt-section-title">Choose Payment</h2>
+          <p className="evt-charge-note">
+            Charge: ${membership.price} for 1st Month Membership
+          </p>
+
+          {PAYMENT_METHODS.map(({ id, label, icon: Icon }) => {
+            const selected = chosen === id;
+            const available = canUse(id);
+
+            return (
+              <button
+                key={id}
+                type="button"
+                className={`evt-method${selected ? " is-selected" : ""}`}
+                disabled={!available || busy}
+                onClick={() => setMethod(id)}
+              >
+                {selected && (
+                  <span className="evt-method-icon">
+                    <Icon size={16} />
+                  </span>
+                )}
+                <span className="evt-method-label">{label}</span>
+                {!available && <span className="evt-method-hint">Not available here</span>}
+                <span className={`evt-radio${selected ? " is-on" : ""}`} />
+              </button>
+            );
+          })}
+
+          {/* PayPal's hosted card fields mount here. Kept in the tree while
+              card is the choice — remounting mid-entry tears the iframes down. */}
+          <div className={`evt-card-fields${chosen === "card" ? "" : " is-hidden"}`}>
+            <div ref={membership.cardHostRef} />
+          </div>
+
+          {sdkStatus === "loading" && <p className="evt-pay-note">Loading secure checkout…</p>}
+          {sdkStatus === "error" && <p className="evt-pay-error">{sdkError}</p>}
+          {busy && <p className="evt-pay-note">Activating your membership…</p>}
+
+          {flow.status === "error" && (
+            <p className="evt-pay-error">
+              {flow.message}
+              {flow.detail && <small>{flow.detail}</small>}
+            </p>
+          )}
+
+          {flow.status === "saveFailed" && (
+            <p className="evt-pay-error">
+              Your payment went through, but we couldn't activate the membership automatically.
+              Contact support with reference <b>{flow.transactionId}</b>.
+            </p>
+          )}
+
+          {SIMULATE && (
+            <button
+              type="button"
+              className="evt-sim-btn"
+              onClick={membership.simulatePayment}
+              disabled={busy}
+            >
+              Simulate successful payment
+            </button>
+          )}
+        </div>
+
+        <footer className="evt-footer evt-footer--single">
+          <button
+            type="button"
+            className="evt-cta evt-cta--block"
+            disabled={!chosen || busy}
+            onClick={() => membership.start(chosen)}
+          >
+            Continue
+          </button>
+        </footer>
       </div>
     );
   }
@@ -527,6 +755,13 @@ export default function EventTickets() {
       </header>
 
       <div className="evt-body">
+        {justSubscribed && (
+          <div className="evt-member-banner">
+            <CheckCircle2 size={18} />
+            <span>You're getting member prices</span>
+          </div>
+        )}
+
         {tiers.map((tier) => {
           const qty = quantities[tier.id] ?? 0;
           const locked = tier.status === "locked";
@@ -567,11 +802,22 @@ export default function EventTickets() {
 
               {tier.note && <p className="evt-card-note">{tier.note}</p>}
 
-              {locked && (
+              {/* Signed in, the pitch happens right here; signed out there's
+                  no account to put a membership on, so that still starts at
+                  the membership page's own sign-in gate. */}
+              {locked && (userName ? (
+                <button
+                  type="button"
+                  className="evt-unlock-btn"
+                  onClick={() => setStep("membership")}
+                >
+                  Unlock Member Price
+                </button>
+              ) : (
                 <Link className="evt-unlock-btn" to="/clubpass-app">
                   Unlock Member Price
                 </Link>
-              )}
+              ))}
 
               {(soldOut || upcoming || active) && (tier.salePeriod || soldOut) && (
                 <div className="evt-card-bottom">
