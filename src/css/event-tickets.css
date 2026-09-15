@@ -346,7 +346,7 @@
 
 .evt-upsell-title {
   margin: 10px 0 10px;
-  font-size: 26px;
+  font-size: 28px;
   font-weight: 900;
   line-height: 1.2;
 }
@@ -360,13 +360,14 @@
 
 .evt-perks {
   padding: 18px;
-  border-radius: 18px;
+  border-radius: 16px;
   background: var(--evt-card);
+      border: 1px solid #1E293B;
 }
 
 .evt-perks-head {
   margin-bottom: 18px;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 800;
   letter-spacing: .08em;
   text-transform: uppercase;
@@ -385,7 +386,7 @@
 }
 
 .evt-perk b {
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 700;
 }
 
@@ -727,7 +728,7 @@
   margin: 4px 0 8px;
   padding: 14px;
   border-radius: 14px;
-  background: #fff;
+      background: #181c2b;
 }
 
 .evt-card-fields.is-hidden {
