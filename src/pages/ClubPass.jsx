@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import {
   ArrowRight,
   Bell,
@@ -8,6 +8,7 @@ import {
   Minus,
   Plus,
   ChevronDown,
+  ChevronLeft,
   ChevronRight,
   Menu,
   UserRound,
@@ -146,12 +147,12 @@ const SAFETY_CARDS = [
   {
     icon: <img src="/images/cp-card.png" />,
     title: "Licensed operators",
-    text: "Full-size, air-conditioned coaches with professional drivers — not ad-hoc rides found at 3am.",
+    text: "Full-size, air-conditioned coaches with professional drivers not ad-hoc rides found at 3am.",
   },
   {
     icon: <img src="/images/rl-icon.png" />,
     title: "Ride with your crew",
-    text: "Same coach, seats together — the night ends the way it started.",
+    text: "Same coach, seats together the night ends the way it started.",
   },
 ];
 
@@ -165,7 +166,7 @@ const MEMBER_BENEFITS = [
 const FAQS = [
   {
     q: "What is Clubpass Home Express?",
-    a: "A monthly membership for scheduled late-night coaches: a pick-up loop through the city's nightlife spots, then express drop-offs in the East. Fixed schedule, fixed price — no surge, no waiting for a driver at 3am.",
+    a: "A monthly membership for scheduled late-night coaches: a pick-up loop through the city's nightlife spots, then express drop-offs in the East. Fixed schedule, fixed price, no surge, no waiting for a driver at 3am.",
   },
   {
     q: "Is this safe? Who operates the buses?",
@@ -173,19 +174,19 @@ const FAQS = [
   },
   {
     q: "How many rides do I get?",
-    a: "Your membership covers four operating nights a month — one night a week, every week. Exact timings and the published departure board live in the RewardLand app.",
+    a: "Your membership covers four operating nights a month one night a week, every week. Exact timings and the published departure board live in the RewardLand app.",
   },
   {
     q: "Do I need a new account or app?",
-    a: "No. Clubpass sits inside the RewardLand app you already have. If you're an existing user you're signed in automatically — no new account, no second app to download.",
+    a: "No. Clubpass sits inside the RewardLand app you already have. If you're an existing user you're signed in automatically no new account, no second app to download.",
   },
   {
     q: "How does billing and cancellation work?",
-    a: "S$19.90 is charged monthly to your payment method in the app and renews automatically. You can cancel in two taps from your membership screen — there's no lock-in and no cancellation fee.",
+    a: "S$19.90 is charged monthly to your payment method in the app and renews automatically. You can cancel in two taps from your membership screen there's no lock-in and no cancellation fee.",
   },
   {
     q: "My route isn't live yet — what can I do?",
-    a: "Register your interest for West, North or South. Each route unlocks once enough neighbours vote for it — one vote per route, five seconds. We'll notify you the moment yours goes live.",
+    a: "Register your interest for West, North or South. Each route unlocks once enough neighbours vote for it one vote per route, five seconds. We'll notify you the moment yours goes live.",
   },
 ];
 
@@ -283,6 +284,7 @@ function RouteMap() {
 }
 
 export default function ClubPass() {
+  const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
   const [openFaq, setOpenFaq] = useState(0);
   const [openRoute, setOpenRoute] = useState("easties");
@@ -340,6 +342,9 @@ export default function ClubPass() {
 
   const [activeHero, setActiveHero] = useState(0);
 
+  // Keyed on activeHero so the timer restarts whenever the slide changes —
+  // without that, clicking an arrow could be followed a moment later by the
+  // auto-advance firing on the old schedule.
   useEffect(() => {
     const interval = setInterval(() => {
       setActiveHero((prev) => {
@@ -348,7 +353,11 @@ export default function ClubPass() {
     }, 5000);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [activeHero]);
+
+  /** Steps the hero by `delta`, wrapping around at either end. */
+  const stepHero = (delta) =>
+    setActiveHero((prev) => (prev + delta + HERO_SLIDES.length) % HERO_SLIDES.length);
 
   const currentHero = HERO_SLIDES[activeHero];
 
@@ -372,10 +381,17 @@ export default function ClubPass() {
   const getRouteMaxHeight = (key) =>
     openRoute === key ? routeContentRefs.current[key]?.scrollHeight : 0;
 
-  // Nobody is signed in on the public page, so a tap can't be counted here —
-  // voting needs a membership record to spend the vote against. Send them to
-  // the app, which is where ClubPass lives anyway.
-  const voteRoute = () => {
+  // A vote is spent against an account — "free account required", as the vote
+  // box says — so a signed-out tap goes to login first and comes back here.
+  // Signed in, voting itself still happens in the app.
+  const voteRoute = (event) => {
+    event?.preventDefault();
+
+    if (!userName) {
+      navigate("/login", { state: { from: "/" } });
+      return;
+    }
+
     window.open(APP_LINK, "_blank", "noopener,noreferrer");
   };
 
@@ -385,7 +401,7 @@ export default function ClubPass() {
 
       <meta
         name="description"
-        content="Singapore's first late-night coach membership. Scheduled departures from the club district straight to the East — S$19.90/month, no surge, cancel anytime."
+        content="Singapore's first late-night coach membership. Scheduled departures from the club district straight to the East S$19.90/month, no surge, cancel anytime."
       />
 
       {/* ================= Header ================= */}
@@ -533,18 +549,38 @@ export default function ClubPass() {
                     Become a Founding Member
                   </Link>
                 ) : (
-                  <a
+                  <Link
                     className="cp-btn cp-btn-white"
-                    href={APP_LINK}
+                    to={'/signup'}
                     target="_blank"
                     rel="noopener noreferrer"
                   >
                     Become a Founding Member
-                  </a>
+                  </Link>
                 ))}
               </div>
             </div>
           </div>
+
+          {/* ================= Slider Arrows ================= */}
+
+          <button
+            type="button"
+            className="cp-hero-arrow cp-hero-arrow--prev"
+            onClick={() => stepHero(-1)}
+            aria-label="Previous slide"
+          >
+            <ChevronLeft size={22} />
+          </button>
+
+          <button
+            type="button"
+            className="cp-hero-arrow cp-hero-arrow--next"
+            onClick={() => stepHero(1)}
+            aria-label="Next slide"
+          >
+            <ChevronRight size={22} />
+          </button>
 
           {/* ================= Slider Dots ================= */}
 
@@ -574,7 +610,7 @@ export default function ClubPass() {
             <h2 className="cp-h2">
               More ways to enjoy going out.
             </h2>
-            <p>Clubpass brings together access, savings, rewards, and experiences — with more benefits rolling out as we grow.</p>
+            <p>Clubpass brings together access, savings, rewards, and experiences with more benefits rolling out as we grow.</p>
           </div>
 
           <div className="cp-compare">
@@ -639,8 +675,7 @@ export default function ClubPass() {
   <h2>Your membership already gets you in.</h2>
 
   <div className="intro">
-    Enjoy <strong>FREE ENTRY</strong> at selected Clubpass partner venues and events —
-    included with your membership
+    Enjoy <strong>FREE ENTRY</strong> at selected Clubpass partner venues and events included with your membership
   </div>
 
   <div className="benefits">
@@ -734,7 +769,7 @@ export default function ClubPass() {
       <div className="info-icon"><img src="/images/users.svg"/></div>
       <div>
         <div className="info-title">More venues. More events. More perks.</div>
-        <div className="info-copy">We're adding new partners and member benefits all the time — stay tuned!</div>
+        <div className="info-copy">We're adding new partners and member benefits all the time. Stay tuned!</div>
       </div>
     </div>
   </div>
@@ -862,14 +897,14 @@ Join the beta program, lock in the founder price and get exclusive launch reward
                     Become a founding member
                   </Link>
                 ) : (
-                  <a
+                  <Link
                     className="cpn-btn cpn-btn--white"
-                    href={APP_LINK}
+                    to={'/signup'}
                     target="_blank"
                     rel="noopener noreferrer"
                   >
                     Become a founding member
-                  </a>
+                  </Link>
                 ))}
 
                 <p className="cpn-ticket-fine">
@@ -906,7 +941,7 @@ Enjoy perks that keep growing.
                 </h2>
 
                 <p className="cp-note">
-                  Clubpass is your pass to exclusive access, rewards and experiences — with more benefits on the way.
+                  Clubpass is your pass to exclusive access, rewards and experiences with more benefits on the way.
                 </p>
               </div>
             </div>
@@ -1192,7 +1227,7 @@ Enjoy perks that keep growing.
                         <img src="./images/thumbs-up-ea.svg"/>
                     </div>
 
-                    <a href="#" className="vote-button">
+                    <a href="#" className="vote-button" onClick={voteRoute}>
                         Vote for East
                     </a>
 
@@ -1280,7 +1315,7 @@ Enjoy perks that keep growing.
                 <div className="vote-box">
                     <div className="vote-title">WESTIES, WE NEED YOU!</div>
                     <div className="vote-icon"><img src="./images/thumbs-up-we.svg"/></div>
-                    <a href="#" className="vote-button">Vote for West</a>
+                    <a href="#" className="vote-button" onClick={voteRoute}>Vote for West</a>
                     <div className="vote-description">
                         Free account required<br/>
                         No membership needed
@@ -1363,7 +1398,7 @@ Enjoy perks that keep growing.
                 <div className="vote-box">
                     <div className="vote-title">NORTH EASTIES, WE NEED YOU!</div>
                     <div className="vote-icon"><img src="./images/thumbs-up-ne.svg"/></div>
-                    <a href="#" className="vote-button">Vote Now</a>
+                    <a href="#" className="vote-button" onClick={voteRoute}>Vote Now</a>
                     <div className="vote-description">
                         Free account required<br/>
                         No membership needed
@@ -1446,7 +1481,7 @@ Enjoy perks that keep growing.
                 <div className="vote-box">
                     <div className="vote-title">NORTH WESTIES, WE NEED YOU!</div>
                     <div className="vote-icon"><img src="./images/thumbs-up-nw.svg"/></div>
-                    <a href="#" className="vote-button">Vote Now</a>
+                    <a href="#" className="vote-button" onClick={voteRoute}>Vote Now</a>
                     <div className="vote-description">
                         Free account required<br/>
                         No membership needed
@@ -1549,14 +1584,14 @@ Enjoy perks that keep growing.
             </p>
 
             {!userName && (
-              <a
+              <Link
                 className="cpn-btn cpn-btn--dark"
-                href={APP_LINK}
+                to="/login"
                 target="_blank"
                 rel="noopener noreferrer"
               >
                 Sign Up Now
-              </a>
+              </Link>
             )}
           </div>
         </div>

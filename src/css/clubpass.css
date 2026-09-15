@@ -249,6 +249,14 @@ a.cp-btn.cp-btn-ghost {
   gap: 20px;
 }
 
+/* The header is sticky, so a nav link landing its section flush against the
+   top of the viewport leaves the first slice of it hidden underneath. Stop
+   each anchor short by the header's height (62px + 10px padding either side)
+   plus a little breathing room. */
+.clubpass-page section[id] {
+  scroll-margin-top: 92px;
+}
+
 .cp-brand {
   display: inline-flex;
   align-items: center;
@@ -3075,6 +3083,48 @@ section#how-it-works {
   max-width: 100%;
 }
 
+/* Slider arrows */
+
+.cp-hero-arrow {
+  position: absolute;
+  z-index: 20;
+  top: 50%;
+  transform: translateY(-50%);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 46px;
+  height: 46px;
+  padding: 0;
+
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 50%;
+
+  background: rgba(15, 15, 15, 0.35);
+  backdrop-filter: blur(6px);
+  color: #fff;
+
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.cp-hero-arrow:hover {
+  background: rgba(15, 15, 15, 0.6);
+  border-color: #fff;
+}
+
+.cp-hero-arrow--prev {
+  left: 24px;
+}
+
+.cp-hero-arrow--next {
+  right: 24px;
+}
+
 /* Slider dots */
 
 .cp-hero-slider-dots {
@@ -3159,6 +3209,25 @@ height: 580px;
 
   .cp-hero-copy {
     width: 100%;
+  }
+
+  /* Centred on the phone the arrows would sit on top of the hero copy, so
+     they drop down to flank the dots instead. */
+  .cp-hero-arrow {
+    top: auto;
+    bottom: 56px;
+    transform: none;
+
+    width: 36px;
+    height: 36px;
+  }
+
+  .cp-hero-arrow--prev {
+    left: 20px;
+  }
+
+  .cp-hero-arrow--next {
+    right: 20px;
   }
 
   .cp-hero-inner {

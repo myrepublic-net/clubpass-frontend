@@ -94,11 +94,32 @@
     height: 250px;
 }
 
+/* The images sit in one wide row that scrolls, so a swipe moves the gallery
+   natively and snaps to whole photos. The scrollbar is hidden — the counter
+   and dots are the affordance. */
+.evd-track {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.evd-track::-webkit-scrollbar {
+  display: none;
+}
+
 .evd-hero-img {
+  flex: 0 0 100%;
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
+  scroll-snap-align: start;
 }
 
 .evd-counter {
