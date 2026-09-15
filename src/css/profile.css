@@ -1,0 +1,187 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&display=swap');
+
+/* ==========================================================================
+   My Membership — reached from the account menu in any header.
+   ========================================================================== */
+
+.prf-page {
+  --prf-teal: #06B6D0;
+  --prf-dark: #080B14;
+  --prf-card: #121728;
+  --prf-line: rgba(255, 255, 255, .08);
+  --prf-muted: #8B90A6;
+  --prf-gold: #F5B301;
+
+  font-family: "Outfit", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  color: #fff;
+  background: var(--prf-dark);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+.prf-page *,
+.prf-page *::before,
+.prf-page *::after {
+  box-sizing: border-box;
+}
+
+/* --- header --- */
+
+.prf-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 20px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.prf-header h1 {
+  flex: 1;
+  margin: 0;
+  font-size: 20px;
+  font-weight: 800;
+}
+
+.prf-back {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: none;
+  background: none;
+  color: #fff;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+
+/* --- body --- */
+
+.prf-body {
+  padding: 8px 20px 60px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* --- member card --- */
+
+.prf-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 20px;
+  border: 1.5px solid var(--prf-line);
+  border-radius: 16px;
+  background: var(--prf-card);
+}
+
+.prf-card.is-member {
+  border-color: var(--prf-teal);
+}
+
+.prf-name {
+  display: block;
+  font-size: 21px;
+  font-weight: 800;
+  text-transform: capitalize;
+}
+
+.prf-id {
+  display: block;
+  margin-top: 4px;
+  font-size: 13px;
+  color: var(--prf-muted);
+  word-break: break-all;
+}
+
+.prf-status {
+  padding: 7px 13px;
+  border-radius: 8px;
+  background: rgba(6, 182, 208, .16);
+  color: var(--prf-teal);
+  font-size: 11.5px;
+  font-weight: 800;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* --- stats --- */
+
+.prf-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-top: 16px;
+}
+
+.prf-stat {
+  padding: 16px;
+  border-radius: 14px;
+  background: var(--prf-card);
+}
+
+.prf-stat span {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 13px;
+  color: var(--prf-muted);
+}
+
+.prf-stat b {
+  font-size: 19px;
+  font-weight: 800;
+}
+
+.prf-coins {
+  color: var(--prf-gold);
+}
+
+/* --- perks --- */
+
+.prf-perks-head {
+  margin: 28px 0 16px;
+  font-size: 19px;
+  font-weight: 800;
+}
+
+.prf-perks {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.prf-perks li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 7px 0;
+  font-size: 14.5px;
+}
+
+.prf-perks svg {
+  flex-shrink: 0;
+  color: var(--prf-teal);
+  stroke-width: 3;
+}
+
+/* --- manage --- */
+
+.prf-manage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 26px;
+  padding: 18px;
+  border-radius: 14px;
+  background: var(--prf-card);
+  color: var(--prf-teal);
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: .03em;
+  text-transform: uppercase;
+}

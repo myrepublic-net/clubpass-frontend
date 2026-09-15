@@ -16,6 +16,7 @@ import {
 import { readMemberSession } from "../api/auth.js";
 import { isPaid, resolveClubpassUser } from "../api/clubpassUser.js";
 import { getEventById } from "../data/events.js";
+import UserMenu from "../components/UserMenu.jsx";
 import useMembershipCheckout, { SIMULATE } from "../hooks/useMembershipCheckout.js";
 import usePaypalSdk from "../hooks/usePaypalSdk.js";
 import "../css/event-tickets.css";
@@ -332,7 +333,7 @@ export default function EventTickets() {
 
   /** The header's right-hand slot: who you are, or a way to become someone. */
   const identity = userName ? (
-    <span className="evt-hi">Hi, {userName}</span>
+    <UserMenu userName={userName} />
   ) : (
     <Link className="evt-login-btn" to="/login" state={{ from: returnToMembership }}>
       Login / Signup

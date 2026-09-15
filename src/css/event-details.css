@@ -62,14 +62,6 @@
     flex-shrink: 0;
 }
 
-.evd-hi {
-    font-size: 12px;
-    font-weight: 400;
-    color: #fff;
-    white-space: nowrap;
-    text-transform: capitalize;
-}
-
 .evd-login-btn {
   display: inline-flex;
   align-items: center;

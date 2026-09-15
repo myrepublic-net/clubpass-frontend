@@ -62,13 +62,6 @@
   cursor: pointer;
 }
 
-.evt-hi {
-  font-size: 14px;
-  font-weight: 600;
-  white-space: nowrap;
-      text-transform: capitalize;
-}
-
 .evt-login-btn {
   display: inline-flex;
   align-items: center;

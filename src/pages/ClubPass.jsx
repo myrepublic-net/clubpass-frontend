@@ -18,8 +18,9 @@ import {
 import "../css/clubpass.css";
 import useRouteVoting from "../hooks/useRouteVoting.js";
 import "../css/clubpass-new.css";
-import { logout, readMemberSession } from "../api/auth.js";
+import { readMemberSession } from "../api/auth.js";
 import { isPaid, resolveClubpassUser } from "../api/clubpassUser.js";
+import UserMenu from "../components/UserMenu.jsx";
 
 const APP_LINK = "https://rewardland.onelink.me/EwIe/start";
 const SITE = "https://www.rewardland.sg";
@@ -294,7 +295,6 @@ export default function ClubPass() {
   // This page is public (not behind UserGate), so a signed-out visitor still
   // sees the full page — the header just reflects whichever state applies.
   const [session, setSession] = useState(() => readMemberSession());
-  const [loggingOut, setLoggingOut] = useState(false);
   const userName = session?.user?.username ?? null;
 
   // Resolved separately from the session: knowing someone is logged in isn't
@@ -324,17 +324,6 @@ export default function ClubPass() {
   }, [session]);
 
   const paid = isPaid(clubpassUser);
-
-  const handleLogout = async () => {
-    setLoggingOut(true);
-    try {
-      await logout();
-    } finally {
-      setSession(null);
-      setLoggingOut(false);
-      setMenuOpen(false);
-    }
-  };
 
   /* =========================================
      HERO SLIDER STATE
@@ -423,16 +412,6 @@ export default function ClubPass() {
               </a>
             ))}
 
-            {userName && (
-              <button
-                type="button"
-                className="cp-nav-logout"
-                onClick={handleLogout}
-                disabled={loggingOut}
-              >
-                {loggingOut ? "Logging out…" : "Logout"}
-              </button>
-            )}
           </nav>
 
           <div
@@ -440,7 +419,7 @@ export default function ClubPass() {
             style={{ gap: 8 }}
           >
             {userName ? (
-              <span className="cp-hi">Hi, {userName}</span>
+              <UserMenu userName={userName} onSignedOut={() => setSession(null)} />
             ) : (
               <Link
                 className="cp-btn cp-btn-purple cp-btn-sm"

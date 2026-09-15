@@ -3,6 +3,7 @@ import { Link, useLocation, useParams } from "react-router";
 import { ArrowLeft, Calendar, ChevronRight, MapPin, Play } from "lucide-react";
 
 import { readMemberSession } from "../api/auth.js";
+import UserMenu from "../components/UserMenu.jsx";
 import { getEventById } from "../data/events.js";
 import "../css/event-details.css";
 
@@ -73,7 +74,7 @@ export default function EventDetails() {
         <h1>Event Details</h1>
 
         {userName ? (
-          <span className="evd-hi">Hi, {userName}</span>
+          <UserMenu userName={userName} />
         ) : (
           <Link className="evd-login-btn" to="/login" state={loginState}>
             Login / Signup
