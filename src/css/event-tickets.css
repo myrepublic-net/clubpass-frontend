@@ -1132,12 +1132,12 @@
 .evt-cta:disabled {
   opacity: .4;
 }
-.evt-page, .evt-footer {
+.evt-page, .evt-footer, .prf-page {
     max-width: 600px;
     margin: auto;
     border-inline: 1px solid #2e323b;
 }
-body:has(.evt-page) {
+body:has(.evt-page), body:has(.prf-page) {
       background: #10131f;
 }
     /* .evt-header, .evt-footer, .evt-body {

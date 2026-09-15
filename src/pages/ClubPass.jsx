@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Link, useNavigate } from "react-router";
+import { Link, useLocation, useNavigate } from "react-router";
 import {
   ArrowRight,
   Bell,
@@ -286,6 +286,20 @@ function RouteMap() {
 
 export default function ClubPass() {
   const navigate = useNavigate();
+  const { hash } = useLocation();
+
+  // Arriving with a hash from another route (e.g. back out of an event, which
+  // returns to /#venues) doesn't scroll on its own — the section isn't in the
+  // document yet when the browser would have done it. A frame later it is.
+  useEffect(() => {
+    if (!hash) return;
+
+    const frame = requestAnimationFrame(() => {
+      document.querySelector(hash)?.scrollIntoView();
+    });
+
+    return () => cancelAnimationFrame(frame);
+  }, [hash]);
   const [menuOpen, setMenuOpen] = useState(false);
   const [openFaq, setOpenFaq] = useState(0);
   const [openRoute, setOpenRoute] = useState("easties");
@@ -648,7 +662,7 @@ export default function ClubPass() {
 
 
 
-<section className="membership-section cp-container">
+<section className="membership-section cp-container" id="venues">
   <div className="status">AVAILABLE NOW</div>
 
   <h2>Your membership already gets you in.</h2>
