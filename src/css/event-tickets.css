@@ -7,16 +7,16 @@
    ========================================================================== */
 
 .evt-page {
-  --evt-teal: #1FDBDA;
+  --evt-teal: #06B6D0;
   --evt-dark: #10131F;
   --evt-card: #171B2B;
   --evt-card-dim: #171B2B99;
   --evt-line: rgba(255, 255, 255, .1);
   --evt-muted: #8B90A6;
-  --evt-danger: #FF6B6B;
+  --evt-danger: #D91A1A;
 
   font-family: "Outfit", ui-sans-serif, system-ui, -apple-system, sans-serif;
-  color: #fff;
+   color: #fff;
   background: var(--evt-dark);
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;
@@ -38,7 +38,7 @@
   align-items: center;
   gap: 14px;
   padding: 16px 20px;
-  background: var(--evt-dark);
+     background: var(--evt-dark);
 }
 
 .evt-header h1 {
@@ -55,7 +55,7 @@
   width: 34px;
   height: 34px;
   border-radius: 10px;
-  background: rgba(255, 255, 255, .1);
+   background: rgba(255, 255, 255, .1);
   color: #fff;
   flex-shrink: 0;
 }
@@ -64,6 +64,7 @@
   font-size: 14px;
   font-weight: 600;
   white-space: nowrap;
+      text-transform: capitalize;
 }
 
 .evt-login-btn {
@@ -72,7 +73,7 @@
   padding: 8px 16px;
   border-radius: 999px;
   border: 1px solid rgba(255, 255, 255, .5);
-  color: #fff;
+   color: #fff;
   font-size: 13px;
   font-weight: 600;
   white-space: nowrap;
@@ -102,6 +103,7 @@
   padding: 16px;
   border-radius: 18px;
   background: var(--evt-card);
+  border: 1.5px solid  #1E293B;
 }
 
 .evt-card--locked,
@@ -139,7 +141,7 @@
 }
 
 .evt-card-price {
-  font-size: 16px;
+  font-size: 20px;
   font-weight: 800;
   white-space: nowrap;
 }
@@ -156,7 +158,6 @@
   gap: 10px;
   padding: 4px;
   border-radius: 999px;
-  background: rgba(255, 255, 255, .06);
   flex-shrink: 0;
 }
 
@@ -166,7 +167,7 @@
   justify-content: center;
   width: 26px;
   height: 26px;
-  border-radius: 50%;
+  border-radius: 4px;
   border: none;
   background: rgba(255, 255, 255, .1);
   color: #fff;
@@ -196,7 +197,7 @@
   justify-content: center;
   margin-top: 12px;
   padding: 12px;
-  border-radius: 12px;
+  border-radius: 8px;
   background: var(--evt-teal);
   color: #04302F;
   font-size: 14px;
@@ -209,6 +210,9 @@
   justify-content: space-between;
   gap: 10px;
   margin-top: 10px;
+  flex-direction: column;
+      border-top: 1px solid #1E293B;
+    padding-top: 10px;
 }
 
 .evt-tag {
@@ -226,14 +230,14 @@
 }
 
 .evt-sale-period {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  margin-left: auto;
-  font-size: 11.5px;
-  color: var(--evt-muted);
+    display: flex;
+    align-items: center;
+    margin-left: auto;
+    font-size: 12px;
+    color: var(--evt-muted);
+    justify-content: space-between;
+    width: 100%;
 }
-
 .evt-sale-period b {
   color: #fff;
   font-size: 13px;
@@ -311,33 +315,36 @@
 /* --- footer --- */
 
 .evt-footer {
-  position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 20;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  padding: 16px 20px;
-  background: var(--evt-dark);
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 20;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 16px 20px;
+     background: var(--evt-dark);
   border-top: 1px solid var(--evt-line);
+        flex-direction: column;
 }
 
 .evt-total {
-  display: flex;
-  flex-direction: column;
-  line-height: 1.1;
+    display: flex;
+    flex-direction: row;
+    line-height: 1.1;
+    justify-content: space-between;
+    width: 100%;
 }
 
 .evt-total span {
-  font-size: 12px;
-  color: var(--evt-muted);
+    font-size: 13px;
+    color: var(--evt-muted);
 }
 
 .evt-total b {
-  font-size: 20px;
+  font-size: 16px;
   font-weight: 800;
 }
 
@@ -346,7 +353,6 @@
   align-items: center;
   justify-content: center;
   width: 100%;
-  max-width: 220px;
   padding: 14px 28px;
   border: none;
   border-radius: 999px;

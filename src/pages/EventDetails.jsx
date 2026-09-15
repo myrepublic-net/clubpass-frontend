@@ -76,17 +76,18 @@ export default function EventDetails() {
         >
           <Play size={22} fill="currentColor" />
         </button>
-
-        <div className="evd-dots">
-          {event.images.map((image, index) => (
-            <button
-              key={image}
-              type="button"
-              className={`evd-dot${index === activeImage ? " is-active" : ""}`}
-              aria-label={`Show image ${index + 1}`}
-              onClick={() => setActiveImage(index)}
-            />
-          ))}
+        <div className="evd-dots-main">
+          <div className="evd-dots">
+            {event.images.map((image, index) => (
+              <button
+                key={image}
+                type="button"
+                className={`evd-dot${index === activeImage ? " is-active" : ""}`}
+                aria-label={`Show image ${index + 1}`}
+                onClick={() => setActiveImage(index)}
+              />
+            ))}
+          </div>
         </div>
       </div>
 

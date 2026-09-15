@@ -7,10 +7,10 @@
    ========================================================================== */
 
 .evd-page {
-  --evd-teal: #1FDBDA;
+  --evd-teal: #06B6D0;
   --evd-dark: #10131F;
   --evd-ink: #14061F;
-  --evd-muted: #6F6880;
+  --evd-muted: #0C165E;
   --evd-line: #EAE5F8;
 
   font-family: "Outfit", ui-sans-serif, system-ui, -apple-system, sans-serif;
@@ -18,6 +18,9 @@
   background: #fff;
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;
+  max-width: 600px;
+    margin: auto;
+    border-inline: 1px solid #eae5f8 !important;
 }
 
 .evd-page *,
@@ -36,34 +39,35 @@
   align-items: center;
   gap: 14px;
   padding: 16px 20px;
-  background: var(--evd-dark);
+      background: linear-gradient(180deg, #0C165E 0%, #0070DB 100%);
   color: #fff;
 }
 
 .evd-header h1 {
   flex: 1;
   margin: 0;
-  font-size: 17px;
-  font-weight: 700;
+  font-size: 22px;
+  font-weight: 800;
 }
 
 .evd-back {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 34px;
-  height: 34px;
-  border-radius: 10px;
-  background: rgba(255, 255, 255, .12);
-  color: #fff;
-  flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    background: #1FDBDA;
+    color: #0C165E;
+    flex-shrink: 0;
 }
 
 .evd-hi {
-  font-size: 14px;
-  font-weight: 600;
-  color: #fff;
-  white-space: nowrap;
+    font-size: 12px;
+    font-weight: 400;
+    color: #fff;
+    white-space: nowrap;
+    text-transform: capitalize;
 }
 
 .evd-login-btn {
@@ -81,11 +85,13 @@
 /* --- gallery --- */
 
 .evd-gallery {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 4 / 3;
-  background: #000;
-  overflow: hidden;
+    position: relative;
+    width: 100%;
+    background: #000;
+    overflow: hidden;
+    max-width: 600px;
+    margin: auto;
+    height: 250px;
 }
 
 .evd-hero-img {
@@ -124,19 +130,20 @@
 }
 
 .evd-dots {
-  position: absolute;
-  bottom: 14px;
-  left: 0;
-  right: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
+    position: absolute;
+    bottom: 20px;
+    left: inherit;
+    right: 20px;
+    background: #00000066;
+    padding: 5px 10px;
+    display: flex;
+    border-radius: 50px;
+    gap: 5px;
 }
 
 .evd-dot {
-  width: 6px;
-  height: 6px;
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
   background: rgba(255, 255, 255, .5);
   padding: 0;
@@ -145,7 +152,7 @@
 
 .evd-dot.is-active {
   background: #fff;
-  width: 16px;
+  /* width: 16px; */
   border-radius: 999px;
 }
 
@@ -158,29 +165,30 @@
 }
 
 .evd-title {
-  margin: 0 0 10px;
-  font-size: 22px;
-  font-weight: 800;
-  line-height: 1.25;
+    margin: 0 0 10px;
+    font-size: 24px;
+    font-weight: 800;
+    line-height: 1.25;
+    color: #0C165E;
 }
 
 .evd-datetime {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin: 0 0 18px;
-  color: var(--evd-muted);
-  font-size: 14px;
-  font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0 0 18px;
+    color: #0C165E;
+    font-size: 14px;
+    font-weight: 700;
 }
 
 .evd-venue-card {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 14px;
-  margin-bottom: 20px;
-  border: 1px solid var(--evd-teal);
+  padding: 12px;
+  margin-bottom: 40px;
+  border: 1.5px solid #1FDBDA;
   border-radius: 16px;
   color: var(--evd-ink);
 }
@@ -189,8 +197,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
+  width: 54px;
+  height: 54px;
   border-radius: 12px;
   background: rgba(31, 219, 218, .12);
   color: var(--evd-teal);
@@ -207,30 +215,31 @@
 
 .evd-venue-name {
   font-size: 15px;
-  font-weight: 700;
+  font-weight: 800;
+  color: #0C165E;
 }
 
 .evd-venue-address {
   font-size: 13px;
-  color: var(--evd-muted);
+  color: #0C165E;
 }
 
 .evd-venue-link {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--evd-teal);
+    font-size: 13px;
+    font-weight: 400;
+    color: #0C165E;
 }
 
 .evd-venue-chevron {
-  color: var(--evd-muted);
+  color: #1FDBDA;
   flex-shrink: 0;
 }
 
 .evd-description {
   margin: 0;
-  font-size: 14px;
+  font-size: 13px;
   line-height: 1.6;
-  color: var(--evd-ink);
+      color: #0C165E;
   white-space: pre-line;
   overflow: hidden;
   display: -webkit-box;
@@ -276,19 +285,21 @@
 }
 
 .evd-price {
-  display: flex;
-  flex-direction: column;
-  line-height: 1.1;
+    display: flex;
+    line-height: 1.1;
+    align-items: center;
+    gap: 5px;
 }
 
 .evd-price span {
-  font-size: 12px;
+  font-size: 14px;
   color: var(--evd-muted);
+  font-weight: 700;
 }
 
 .evd-price b {
-  font-size: 20px;
-  font-weight: 800;
+  font-size: 14px;
+  font-weight: 700;
 }
 
 .evd-cta {
@@ -309,7 +320,7 @@
 @media (min-width: 480px) {
   .evd-header,
   .evd-footer {
-    max-width: 600px;
+    max-width: 598px;
     margin: 0 auto;
     left: 0;
     right: 0;
