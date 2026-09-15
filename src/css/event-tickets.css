@@ -270,13 +270,124 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 100%;
   margin-top: 12px;
   padding: 12px;
+  border: none;
   border-radius: 8px;
   background: var(--evt-teal);
   color: #04302F;
+  font-family: inherit;
   font-size: 14px;
   font-weight: 800;
+  cursor: pointer;
+}
+
+/* --- membership upsell --- */
+
+.evt-upsell-title {
+  margin: 10px 0 10px;
+  font-size: 26px;
+  font-weight: 900;
+  line-height: 1.2;
+}
+
+.evt-upsell-sub {
+  margin: 0 0 22px;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--evt-muted);
+}
+
+.evt-perks {
+  padding: 18px;
+  border-radius: 18px;
+  background: var(--evt-card);
+}
+
+.evt-perks-head {
+  margin-bottom: 18px;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--evt-teal);
+}
+
+.evt-perk {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding-left: 14px;
+}
+
+.evt-perk + .evt-perk {
+  margin-top: 16px;
+}
+
+.evt-perk b {
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.evt-perk span {
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--evt-muted);
+}
+
+.evt-plan {
+  margin-top: 16px;
+  padding: 18px;
+  border: 1px solid var(--evt-teal);
+  border-radius: 18px;
+  background: var(--evt-card);
+}
+
+.evt-plan-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.evt-plan-top > div:first-child {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.evt-plan-top b {
+  font-size: 16px;
+  font-weight: 800;
+}
+
+.evt-plan-top span {
+  font-size: 13px;
+  color: var(--evt-muted);
+}
+
+.evt-plan-price {
+  font-size: 21px;
+  font-weight: 800;
+  color: var(--evt-teal);
+  white-space: nowrap;
+}
+
+.evt-plan-renews {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid var(--evt-line);
+  font-size: 12.5px;
+  color: var(--evt-muted);
+}
+
+.evt-plan-renews svg {
+  flex-shrink: 0;
 }
 
 .evt-card-bottom {
@@ -533,6 +644,67 @@
   margin-top: 14px;
   font-size: 13px;
   color: var(--evt-danger);
+}
+
+.evt-pay-error small {
+  display: block;
+  margin-top: 4px;
+  opacity: .8;
+}
+
+.evt-pay-note {
+  margin-top: 14px;
+  font-size: 13px;
+  color: var(--evt-muted);
+}
+
+.evt-charge-note {
+  margin: 0 0 18px;
+  font-size: 13.5px;
+  color: var(--evt-muted);
+}
+
+.evt-card-fields {
+  margin: 4px 0 8px;
+  padding: 14px;
+  border-radius: 14px;
+  background: #fff;
+}
+
+.evt-card-fields.is-hidden {
+  display: none;
+}
+
+.evt-sim-btn {
+  width: 100%;
+  margin-top: 18px;
+  padding: 12px;
+  border: 1px dashed var(--evt-muted);
+  border-radius: 12px;
+  background: none;
+  color: var(--evt-muted);
+  font-family: inherit;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+/* --- just-subscribed banner --- */
+
+.evt-member-banner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 4px 0 16px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: #16A06B;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.evt-member-banner svg {
+  flex-shrink: 0;
 }
 
 /* --- processing --- */
