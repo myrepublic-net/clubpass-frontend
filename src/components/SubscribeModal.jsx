@@ -12,13 +12,21 @@ const METHOD_LABELS = {
   applepay: "Apple Pay",
 };
 
+/** Shown above the price when the sheet is opened as a pitch rather than a checkout. */
+const UPSELL_PERKS = [
+  ["Up to 50% off all tickets", "Save on standard entrance prices always"],
+  ["3× R Coins Multiplier", "Earn and redeem points at 170+ partner brands"],
+  ["Home Express Shuttle", "Safe rides home from prime nightlife districts"],
+  ["Free Entry Days", "Complimentary admission to selected partner events"],
+];
+
 /**
  * ClubPass checkout as a bottom sheet. Everything about taking the payment
  * lives in useMembershipCheckout — this is the sheet's chrome, the method
  * tiles and the card fields' host, and it closes itself once the membership
  * is on the record.
  */
-export default function SubscribeModal({ open, onClose }) {
+export default function SubscribeModal({ open, onClose, withUpsell = false }) {
   const { userName, user, profile, setUser } = useClubpassUser();
 
   const {
@@ -100,8 +108,34 @@ export default function SubscribeModal({ open, onClose }) {
           </div>
         ) : (
           <>
+            {withUpsell && (
+              <div className="cps-upsell">
+                <p className="cps-upsell-kicker">Clubpass membership</p>
+                <h2>Get instant ticket savings</h2>
+                <p className="cps-upsell-sub">
+                  Unlock exclusive perks across all partner clubs and claim your member pricing.
+                </p>
+
+                <div className="cps-perks">
+                  <p className="cps-perks-head">Exclusive perks included</p>
+
+                  {UPSELL_PERKS.map(([title, detail]) => (
+                    <div key={title} className="cps-perk">
+                      <span className="cps-perk-tick" aria-hidden="true">
+                        ✓
+                      </span>
+                      <span>
+                        <b>{title}</b>
+                        <small>{detail}</small>
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
             <header className="cps-head">
-              <h2>Clubpass · Home Express</h2>
+              {!withUpsell && <h2>Clubpass · Home Express</h2>}
               <div className="cps-amount">
                 <b>S${price}</b>
                 <i>/month</i>

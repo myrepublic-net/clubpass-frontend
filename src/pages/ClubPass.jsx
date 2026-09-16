@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router";
 import {
   ArrowRight,
@@ -20,7 +20,9 @@ import useRouteVoting from "../hooks/useRouteVoting.js";
 import "../css/clubpass-new.css";
 import { readMemberSession } from "../api/auth.js";
 import { isPaid, resolveClubpassUser } from "../api/clubpassUser.js";
+import SubscribeModal from "../components/SubscribeModal.jsx";
 import UserMenu from "../components/UserMenu.jsx";
+import { ClubpassUserContext } from "../components/clubpassUserContext.js";
 
 const APP_LINK = "https://rewardland.onelink.me/EwIe/start";
 const SITE = "https://www.rewardland.sg";
@@ -339,6 +341,21 @@ export default function ClubPass() {
 
   const paid = isPaid(clubpassUser);
 
+  // The membership CTAs pitch in place rather than sending anyone off to the
+  // membership page — SubscribeModal reads its member off context, which this
+  // page isn't inside, so it's supplied around the sheet below.
+  const [subscribeOpen, setSubscribeOpen] = useState(false);
+
+  const subscribeUser = useMemo(
+    () => ({
+      userName: userName ?? "",
+      user: clubpassUser,
+      profile: session?.user ?? null,
+      setUser: setClubpassUser,
+    }),
+    [userName, clubpassUser, session],
+  );
+
   /* =========================================
      HERO SLIDER STATE
   ========================================= */
@@ -538,9 +555,13 @@ export default function ClubPass() {
               </div>
               <div className="cp-hero-actions">
                 {!paid && (userName ? (
-                  <Link className="cp-btn cp-btn-white" to="/clubpass-app">
+                  <button
+                    type="button"
+                    className="cp-btn cp-btn-white"
+                    onClick={() => setSubscribeOpen(true)}
+                  >
                     Become a Founding Member
-                  </Link>
+                  </button>
                 ) : (
                   <Link
                     className="cp-btn cp-btn-white"
@@ -886,9 +907,13 @@ Join the beta program, lock in the founder price and get exclusive launch reward
                 </dl>
 
                 {!paid && (userName ? (
-                  <Link className="cpn-btn cpn-btn--white" to="/clubpass-app">
+                  <button
+                    type="button"
+                    className="cpn-btn cpn-btn--white"
+                    onClick={() => setSubscribeOpen(true)}
+                  >
                     Become a founding member
-                  </Link>
+                  </button>
                 ) : (
                   <Link
                     className="cpn-btn cpn-btn--white"
@@ -1621,6 +1646,14 @@ Enjoy perks that keep growing.
           </div>
         </div>
       </footer>
+
+      <ClubpassUserContext.Provider value={subscribeUser}>
+        <SubscribeModal
+          open={subscribeOpen}
+          onClose={() => setSubscribeOpen(false)}
+          withUpsell
+        />
+      </ClubpassUserContext.Provider>
     </div>
   );
 }

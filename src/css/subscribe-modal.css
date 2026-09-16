@@ -6,7 +6,9 @@
 .cps-overlay {
   position: fixed;
   inset: 0;
-  z-index: 10000;
+  /* Above everything: the home page pulls its white "why" section over the
+     hero with z-index 99999, which would otherwise paint across the sheet. */
+  z-index: 100000;
   display: flex;
   align-items: flex-end;
   justify-content: center;
@@ -49,6 +51,84 @@
   border: 0;
   border-radius: 50%;
   cursor: pointer;
+}
+
+/* --- upsell pitch (only when the sheet is opened from a "become a member"
+   CTA rather than the membership page's own checkout) --- */
+
+.cps-upsell-kicker {
+  margin: 0 0 10px;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.cps-upsell h2 {
+  margin: 0 0 8px;
+  font-size: 25px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+.cps-upsell-sub {
+  margin: 0 0 20px;
+  font-size: 14px;
+  line-height: 1.55;
+  color: #6F6880;
+}
+
+.cps-perks {
+  padding: 18px;
+  border-radius: 16px;
+  background: #F6F7FB;
+}
+
+.cps-perks-head {
+  margin: 0 0 14px;
+  font-size: 11.5px;
+  font-weight: 800;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+  color: #06B6D0;
+}
+
+.cps-perk {
+  display: flex;
+  align-items: flex-start;
+  gap: 11px;
+}
+
+.cps-perk + .cps-perk {
+  margin-top: 15px;
+}
+
+.cps-perk-tick {
+  color: #06B6D0;
+  font-size: 14px;
+  font-weight: 800;
+  line-height: 1.4;
+  flex-shrink: 0;
+}
+
+.cps-perk b {
+  display: block;
+  font-size: 14.5px;
+  font-weight: 700;
+}
+
+.cps-perk small {
+  display: block;
+  margin-top: 2px;
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: #6F6880;
+}
+
+/* The pitch already carries the heading, so the price block just separates. */
+.cps-upsell + .cps-head {
+  margin-top: 22px;
+  padding-top: 22px;
+  border-top: 1px solid #EAE5F8;
 }
 
 .cps-head {
@@ -201,20 +281,28 @@
 /* Each field is a PayPal-hosted iframe; we own the box around it, PayPal owns
    the text inside it (see FIELD_STYLE in SubscribeModal). */
 .cps-field {
-    height: 42px;
-    padding: 0;
-    display: flex;
-    align-items: center;
-    border: none;
-    border-radius: 0;
-    background: #181c2b;
-    overflow: hidden;
-    margin-bottom: 8px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  padding: 0 14px;
+  border: 1px solid #EAE5F8;
+  border-radius: 12px;
+  /* Light box: PayPal draws the typed text in #191024 (see FIELD_STYLE), so
+     the field has to stay pale or the number is unreadable as it's typed. */
+  background: #fff;
+  overflow: hidden;
+  transition: border-color .15s ease, box-shadow .15s ease;
 }
-.cps-field.cps-field-expiry {
-    width: 50%;
-    float: left;
-    margin-right: 10px;
+
+.cps-field:hover {
+  border-color: #D8CEF9;
+}
+
+/* The focus ring lives on our box — the input itself is inside PayPal's
+   iframe, so it can't draw one that lines up with these corners. */
+.cps-field:focus-within {
+  border-color: #7C3AED;
+  box-shadow: 0 0 0 3px rgba(124, 58, 237, .12);
 }
 
 .cps-field > * {
