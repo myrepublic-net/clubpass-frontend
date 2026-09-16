@@ -284,16 +284,21 @@
   height: 48px;
   display: flex;
   align-items: center;
-  padding: 0 14px;
+  padding: 0;
   border: 1px solid #EAE5F8;
   border-radius: 12px;
+      margin-bottom: 10px;
   /* Light box: PayPal draws the typed text in #191024 (see FIELD_STYLE), so
      the field has to stay pale or the number is unreadable as it's typed. */
   background: #fff;
   overflow: hidden;
   transition: border-color .15s ease, box-shadow .15s ease;
 }
-
+.cps-field.cps-field-expiry {
+    float: left;
+    width: 50%;
+    margin-right: 10px;
+}
 .cps-field:hover {
   border-color: #D8CEF9;
 }

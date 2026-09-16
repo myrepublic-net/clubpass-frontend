@@ -748,7 +748,7 @@ export default function EventTickets() {
       <div className="evt-page">
         <div className="evt-body evt-body--confirm">
           <div className="evt-confirm-head">
-            <span className="evt-confirm-tick">✓</span>
+            <span className="evt-confirm-tick"><img src="/images/confirm.png"/></span>
             <h1>Order Confirmed</h1>
             <p>
               Your booking is confirmed. Your ticket will be sent to your email within 24 hours.
@@ -802,7 +802,19 @@ export default function EventTickets() {
               </button>
             </div>
           </div>
-
+          <div className="unlock-more">
+              <div className="unlock-header">clubpass member</div>
+              <div className="unlock-body">
+                <div className="unlock-left">
+                    <h3>Unlock more with Clubpass</h3>
+                    <p>Join Clubpass to get up to 50% off tickets, earn 3X R Coins, and access member-only events.</p>
+                </div>
+                 <div className="unlock-right">
+                    <img src="/images/Gemini.png"/>
+                 </div>
+              </div>
+              <div className="unlock-footer"><a class="unlock-cta" href="#" data-discover="true">JOIN CLUBPASS</a></div>
+          </div>
           {!userName && (
             <div className="evt-reward-card">
               <b>Get rewarded for your purchase</b>
