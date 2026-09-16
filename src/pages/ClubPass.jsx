@@ -10,7 +10,9 @@ import {
   ChevronDown,
   ChevronLeft,
   ChevronRight,
+  Info,
   Menu,
+  Star,
   UserRound,
   X,
 } from "lucide-react";
@@ -23,6 +25,7 @@ import { isPaid, resolveClubpassUser } from "../api/clubpassUser.js";
 import SubscribeModal from "../components/SubscribeModal.jsx";
 import UserMenu from "../components/UserMenu.jsx";
 import { ClubpassUserContext } from "../components/clubpassUserContext.js";
+import { useTickets } from "../hooks/useTickets.js";
 
 const APP_LINK = "https://rewardland.onelink.me/EwIe/start";
 const SITE = "https://www.rewardland.sg";
@@ -307,6 +310,9 @@ export default function ClubPass() {
   const [openRoute, setOpenRoute] = useState("easties");
   // Live tallies from Strapi. No user here, so nothing votes — see voteRoute.
   const { routes } = useRouteVoting();
+
+  // The venue grid is whatever events Strapi is publishing.
+  const { tickets: events, status: eventsStatus } = useTickets();
 
   // This page is public (not behind UserGate), so a signed-out visitor still
   // sees the full page — the header just reflects whichever state applies.
@@ -715,49 +721,53 @@ export default function ClubPass() {
 
   <div className="venue-grid">
 
-    <article className="venue">
-      <div className="venue-image">
-        <img src="/images/free-one.png"/>
-        <span className="venue-lock"><img src="/images/floating-badge.svg"/></span>
-      </div>
-      <div className="venue-name">Emporium</div>
-      <div className="tag"><span className="tag-icon"><img src="/images/Vector.svg"/></span> FREE ENTRY</div>
-      <div className="members">Clubpass Members</div>
-      <Link className="details" to="/events/emporium"><span>View event details</span><span className="arrow"><img src="/images/mam-arrow.svg"/></span></Link>
-    </article>
+    {eventsStatus === "loading" && (
+      <p className="venue-note">Loading events…</p>
+    )}
 
-    <article className="venue">
-      <div className="venue-image">
-         <img src="/images/free-two.png"/>
-        <span className="venue-lock"><img src="/images/floating-badge.svg"/></span>
-      </div>
-      <div className="venue-name">Zouk</div>
-      <div className="tag"><span className="tag-icon"><img src="/images/Vector.svg"/></span> FREE ENTRY</div>
-      <div className="members">Clubpass Members</div>
-      <Link className="details" to="/events/zouk"><span>View event details</span><span className="arrow"><img src="/images/mam-arrow.svg"/></span></Link>
-    </article>
+    {eventsStatus === "error" && (
+      <p className="venue-note">Events couldn't be loaded right now. Please try again shortly.</p>
+    )}
 
-    <article className="venue">
-      <div className="venue-image">
-        <img src="/images/free-three.png"/>
-        <span className="venue-lock"><img src="/images/floating-badge.svg"/></span>
-      </div>
-      <div className="venue-name">Marquee Singapore</div>
-      <div className="tag"><span className="tag-icon"><img src="/images/Vector.svg"/></span> FREE ENTRY</div>
-      <div className="members">Clubpass Members</div>
-      <Link className="details" to="/events/marquee-singapore"><span>View event details</span><span className="arrow"><img src="/images/mam-arrow.svg"/></span></Link>
-    </article>
+    {events.map((event) => (
+      <Link className="venue" key={event.id} to={`/events/${event.id}`}>
+        <div className="venue-image">
+          {event.images[0] && <img src={event.images[0]} alt="" />}
+          {event.dateBadge && <span className="venue-date">{event.dateBadge}</span>}
+        </div>
 
-    <article className="venue">
-      <div className="venue-image">
-        <img src="/images/free-four.png"/>
-        <span className="venue-lock"><img src="/images/floating-badge.svg"/></span>
-      </div>
-      <div className="venue-name">Kilo Lounge</div>
-      <div className="tag"><span className="tag-icon"><img src="/images/Vector.svg"/></span> FREE ENTRY</div>
-      <div className="members">Clubpass Members</div>
-      <Link className="details" to="/events/kilo-lounge"><span>View event details</span><span className="arrow"><img src="/images/mam-arrow.svg"/></span></Link>
-    </article>
+        <div className="venue-body">
+          {event.memberCoins != null && (
+            <p className="venue-coins">
+              Earn up to {event.memberCoins.toLocaleString()} R Coins
+              <Info size={13} />
+            </p>
+          )}
+
+          <h3 className="venue-title">{event.title}</h3>
+          <p className="venue-venue">{event.venue}</p>
+
+          <div className="venue-prices">
+            {event.publicTier && (
+              <div className="venue-price">
+                <span>{event.publicTier.label}</span>
+                <b>From ${event.publicTier.price}</b>
+              </div>
+            )}
+
+            {event.memberTier && (
+              <div className="venue-price venue-price--member">
+                <span>
+                  Member <Star size={11} fill="currentColor" />
+                </span>
+                <b>From ${event.memberTier.price}</b>
+                {event.memberSaving > 0 && <small>Save {event.memberSaving}%</small>}
+              </div>
+            )}
+          </div>
+        </div>
+      </Link>
+    ))}
 
     <article className="coming">
       <div className="plus">+</div>

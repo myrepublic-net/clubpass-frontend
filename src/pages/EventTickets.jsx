@@ -15,7 +15,7 @@ import {
 
 import { readMemberSession } from "../api/auth.js";
 import { isPaid, resolveClubpassUser } from "../api/clubpassUser.js";
-import { getEventById } from "../data/events.js";
+import { useTicket } from "../hooks/useTickets.js";
 import UserMenu from "../components/UserMenu.jsx";
 import useMembershipCheckout, { SIMULATE } from "../hooks/useMembershipCheckout.js";
 import usePaypalSdk from "../hooks/usePaypalSdk.js";
@@ -30,6 +30,9 @@ const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const MEMBER_COIN_RATE = 0.03;
 const FREE_COIN_RATE = 0.01;
 const COINS_PER_DOLLAR = 1000;
+
+// Remaining stock is only worth shouting about when it's genuinely short.
+const LOW_STOCK_AT = 10;
 
 // The same figure the subscribe flow charges, so the upsell can't quote a
 // price the checkout then contradicts.
@@ -54,63 +57,24 @@ const PAYMENT_METHODS = [
 ];
 
 /**
- * Every tier is priced off the event's own "from" price so each event gets a
- * sensible, internally consistent ladder without a second data file to keep
- * in sync: Member < Early Bird < Standard < Door.
- *
- * Which tiers show, and whether each is buyable, depends on the viewer:
- *  - Member Price is always listed, but locked behind an "Unlock Member
- *    Price" nudge until `paid` is true.
- *  - Standard Price only appears for a signed-in member who hasn't paid —
- *    it's the fallback once Early Bird is gone, and there's no equivalent
- *    guest nudge (a guest still has Early Bird to buy).
- *  - Door Price is always listed but always "upcoming" — door sales don't
- *    open until the event's sale calendar reaches it.
+ * The tiers, their prices, their per-buyer limits and their sale windows all
+ * come from Strapi (see api/tickets.js) — this only layers on the one rule
+ * the CMS doesn't express: Member Price is listed for everyone but stays
+ * locked behind the upsell until the viewer actually pays for a membership.
  */
-function buildTiers(event, { paid, loggedIn }) {
-  const base = event.priceFrom;
-  const loggedInNotPaid = loggedIn && !paid;
-
-  const tiers = [
-    {
-      id: "member",
-      label: "Member Price",
-      price: base - 20,
-      status: paid ? "active" : "locked",
-      maxQty: 1,
-      note: paid
-        ? "Limited to 1 ticket per member for this event."
-        : "Sign up for membership to unlock this price. Limited to 1 ticket per member.",
-    },
-    {
-      id: "early-bird",
-      label: "Early Bird",
-      price: base - 10,
-      salePeriod: "Sep 20 – Sep 27",
-      stockLeft: 10,
-      status: loggedInNotPaid ? "soldOut" : "active",
-    },
-  ];
-
-  if (loggedInNotPaid) {
-    tiers.push({
-      id: "standard",
-      label: "Standard Price",
-      price: base,
-      salePeriod: "Sep 27 – Oct 24",
-      status: "active",
-    });
-  }
-
-  tiers.push({
-    id: "door",
-    label: "Door Price",
-    price: base + 15,
-    salePeriod: "Oct 25 – Oct 31",
-    status: "upcoming",
-  });
-
-  return tiers;
+function buildTiers(event, { paid }) {
+  return event.tiers.map((tier) =>
+    tier.id === "member"
+      ? {
+          ...tier,
+          // A window that hasn't opened still can't be bought, member or not.
+          status: paid ? tier.status : "locked",
+          note: paid
+            ? `Limited to ${tier.maxQty ?? 1} ticket${tier.maxQty === 1 ? "" : "s"} per member for this event.`
+            : "Sign up for membership to unlock this price.",
+        }
+      : tier,
+  );
 }
 
 /** #GC-1234567 for a guest booking, #CP-1234567 for a signed-in one. */
@@ -128,7 +92,7 @@ export default function EventTickets() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const event = getEventById(id);
+  const { ticket: event, status: eventStatus } = useTicket(id);
 
   const session = useMemo(() => readMemberSession(), []);
   const userName = session?.user?.username ?? null;
@@ -154,8 +118,8 @@ export default function EventTickets() {
 
   const paid = isPaid(clubpassUser);
   const tiers = useMemo(
-    () => (event ? buildTiers(event, { paid, loggedIn: Boolean(userName) }) : []),
-    [event, paid, userName],
+    () => (event ? buildTiers(event, { paid }) : []),
+    [event, paid],
   );
 
   const [quantities, setQuantities] = useState({});
@@ -192,9 +156,9 @@ export default function EventTickets() {
   const ticketCount = lines.reduce((sum, line) => sum + line.qty, 0);
   const total = lines.reduce((sum, line) => sum + line.tier.price * line.qty, 0);
 
-  // What the same tickets would have cost at the event's standard price —
-  // only shown when the buyer is actually paying less than that.   
-  const standardTotal = event ? ticketCount * event.priceFrom : 0;
+  // What the same tickets would have cost undiscounted — only shown when the
+  // buyer is actually paying less than that.
+  const standardTotal = event?.fullPrice ? ticketCount * event.fullPrice : 0;
 
   // A guest earns nothing until they have an account, so the figure they're
   // shown is what a free account would have earned — that's what the "create
@@ -307,6 +271,22 @@ export default function EventTickets() {
       setStep("payment");
     }
   };
+
+  if (eventStatus === "loading") {
+    return (
+      <div className="evt-page">
+        <header className="evt-header">
+          <Link className="evt-back" to="/" aria-label="Back">
+            <ArrowLeft size={18} />
+          </Link>
+          <h1>Select Tickets</h1>
+        </header>
+        <div className="evt-body">
+          <p className="evt-not-found">Loading tickets…</p>
+        </div>
+      </div>
+    );
+  }
 
   if (!event) {
     return (
@@ -894,7 +874,7 @@ export default function EventTickets() {
         {tiers.map((tier) => {
           const qty = quantities[tier.id] ?? 0;
           const locked = tier.status === "locked";
-          const soldOut = tier.status === "soldOut";
+          const ended = tier.status === "ended";
           const upcoming = tier.status === "upcoming";
           const active = tier.status === "active";
 
@@ -944,10 +924,10 @@ export default function EventTickets() {
                 </button>
               )}
 
-              {(soldOut || upcoming || active) && (tier.salePeriod || soldOut) && (
+              {(ended || upcoming || active) && (tier.salePeriod || ended) && (
                 <div className="evt-card-bottom">
-                  {soldOut && <span className="evt-tag evt-tag--sold">Sold out</span>}
-                  {active && tier.stockLeft != null && (
+                  {ended && <span className="evt-tag evt-tag--sold">Sales closed</span>}
+                  {active && tier.stockLeft != null && tier.stockLeft <= LOW_STOCK_AT && (
                     <span className="evt-tag evt-tag--stock">Only {tier.stockLeft} left</span>
                   )}
                   {tier.salePeriod && (

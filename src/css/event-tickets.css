@@ -181,7 +181,7 @@
 }
 
 .evt-card--locked,
-.evt-card--soldOut,
+.evt-card--ended,
 .evt-card--upcoming {
   background: var(--evt-card-dim);
 }
@@ -203,7 +203,7 @@
 }
 
 .evt-card--locked .evt-card-label,
-.evt-card--soldOut .evt-card-label,
+.evt-card--ended .evt-card-label,
 .evt-card--upcoming .evt-card-label {
   color: var(--evt-muted);
 }
@@ -221,7 +221,7 @@
 }
 
 .evt-card--locked .evt-card-price,
-.evt-card--soldOut .evt-card-price,
+.evt-card--ended .evt-card-price,
 .evt-card--upcoming .evt-card-price {
   color: var(--evt-muted);
 }
