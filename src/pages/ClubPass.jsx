@@ -26,6 +26,7 @@ import SubscribeModal from "../components/SubscribeModal.jsx";
 import UserMenu from "../components/UserMenu.jsx";
 import { ClubpassUserContext } from "../components/clubpassUserContext.js";
 import { useTickets } from "../hooks/useTickets.js";
+import useHome from "../hooks/useHome.js";
 
 const APP_LINK = "https://rewardland.onelink.me/EwIe/start";
 const SITE = "https://www.rewardland.sg";
@@ -35,61 +36,71 @@ const IMG = "/images/cpn";
    HERO SLIDER
 ========================================================= */
 
-const HERO_SLIDES = [
-  {
-    image: `${IMG}/cp-one-banner.png`,
-    title: "Your pass to more.",
-    accent: "More access. More perks.",
-    text: "Free entries, member ticket prices, R coins and more - with new Clubpass benefits rolling out throughout the year. ",
+/**
+ * The copy the page ships with. Strapi replaces it once /api/home answers —
+ * see useHome — but it renders first so the landing page is never blank and
+ * survives the CMS being unreachable.
+ */
+const FALLBACK_CONTENT = {
+  hero: [
+    {
+      id: "fallback-hero",
+      image: `${IMG}/cp-one-banner.png`,
+      title: "Your pass to more.",
+      accent: "More access. More perks.",
+      text: "Free entries, member ticket prices, R coins and more - with new Clubpass benefits rolling out throughout the year.",
+      linkText: "See how it works",
+      linkUrl: "#how-it-works",
+      buttonText: "Become a Founding Member",
+      buttonLink: "/signup",
+    },
+  ],
+  beforeTickets: {
+    badge: "AVAILABLE NOW",
+    heading: "Your membership already gets you in.",
+    description:
+      "Enjoy **FREE ENTRY** at selected Clubpass partner venues and events included with your membership",
+    image: null,
+    benefits: [
+      { id: "b1", text: "Included from day one" },
+      { id: "b2", text: "No additional entry fee" },
+      { id: "b3", text: "One night out could already cover your membership" },
+    ],
   },
-  {
-    image: `${IMG}/clubpass-hero.png`,
-    title: "Your night starts here.",
-    accent: "We'll get you home.",
-    text: "Enjoy the night without worrying about surge fares or finding a ride home after the last train.",
+  why: {
+    eyebrow: "why clubpass?",
+    heading: "More ways to enjoy going out.",
+    description:
+      "Clubpass brings together access, savings, rewards, and experiences with more benefits rolling out as we grow.",
+    consHeading: "Tonight, without Clubpass",
+    cons: [
+      { id: "c1", text: "Regular ticket prices" },
+      { id: "c2", text: "Standard event access" },
+      { id: "c3", text: "No rewards for your spending" },
+      { id: "c4", text: "Getting home is still your problem" },
+    ],
+    proHeading: "Tonight, with Clubpass",
+    pro: [
+      { id: "p1", text: "Free entry at selected events & venues", pill: "AVAILABLE NOW", pillClass: "cl-box available" },
+      { id: "p2", text: "Exclusive member ticket prices", pill: "COMING OCT", pillClass: "cl-box coming-oct" },
+      { id: "p3", text: "Earn R coins on tickets & F&B coupons", pill: "COMING OCT", pillClass: "cl-box coming-oct" },
+      { id: "p4", text: "Clubpass Home Express", pill: "COMING SOON", pillClass: "cl-box coming-soon" },
+    ],
   },
-  {
-    image: `${IMG}/cp-one-banner.png`,
-    title: "Stay out late.",
-    accent: "Ride home easy.",
-    text: "Scheduled late-night coaches from the club district straight to the East. Fixed price. No surge.",
-  },
-];
+};
 
+/** Renders Strapi's **bold** markers, which the CMS copy uses inline. */
+function withBold(text) {
+  return String(text)
+    .split(/\*\*(.+?)\*\*/g)
+    .map((part, index) => (index % 2 ? <strong key={index}>{part}</strong> : part));
+}
 
 const NAV_LINKS = [
   { label: "How it works", href: "#how-it-works" },
   { label: "Route & schedule", href: "#routes" },
   { label: "Membership", href: "#membership" },
   { label: "FAQ", href: "#faq" },
-];
-
-const WITHOUT_CLUBPASS = [
-  "Regular ticket prices",
-  "Standard event access",
-  "No rewards for your spending",
-  "Getting home is still your problem",
-];
-
-const WITH_CLUBPASS = [{
-  "text":"Free entry at selected events & venues",
-  "pill_text":"AVAILABLE NOW",
-  "class":"cl-box available"
-
-},{
-  "text":"Exclusive member ticket prices",
-  "pill_text":"COMING OCT",
-   "class":"cl-box coming-oct"
-},{
-  "text":"Earn R coins on tickets & F&B coupons",
-  "pill_text":"COMING OCT",
-   "class":"cl-box coming-oct"
-},{
-  "text":"Clubpass Home Express",
-  "pill_text":"COMING SOON",
-   "class":"cl-box coming-soon"
-}
-  
 ];
 
 const STEPS = [
@@ -311,6 +322,9 @@ export default function ClubPass() {
   // Live tallies from Strapi. No user here, so nothing votes — see voteRoute.
   const { routes } = useRouteVoting();
 
+  // Everything above the venue grid is editorial, and comes from Strapi.
+  const { hero: heroSlides, beforeTickets, why } = useHome(FALLBACK_CONTENT);
+
   // The venue grid is whatever events Strapi is publishing.
   const { tickets: events, status: eventsStatus } = useTickets();
 
@@ -374,7 +388,7 @@ export default function ClubPass() {
   useEffect(() => {
     const interval = setInterval(() => {
       setActiveHero((prev) => {
-        return (prev + 1) % HERO_SLIDES.length;
+        return (prev + 1) % heroSlides.length;
       });
     }, 5000);
 
@@ -383,9 +397,9 @@ export default function ClubPass() {
 
   /** Steps the hero by `delta`, wrapping around at either end. */
   const stepHero = (delta) =>
-    setActiveHero((prev) => (prev + delta + HERO_SLIDES.length) % HERO_SLIDES.length);
+    setActiveHero((prev) => (prev + delta + heroSlides.length) % heroSlides.length);
 
-  const currentHero = HERO_SLIDES[activeHero];
+  const currentHero = heroSlides[activeHero] ?? heroSlides[0];
 
   const toggleFaq = (index) => {
     setOpenFaq((prev) => (prev === index ? null : index));
@@ -516,9 +530,9 @@ export default function ClubPass() {
 
               <a
                 className="cp-btn cp-btn-ghost"
-                href="#how-it-works"
+                href={currentHero.linkUrl || "#how-it-works"}
               >
-                See how it works
+                {currentHero.linkText || "See how it works"}
 
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -566,7 +580,7 @@ export default function ClubPass() {
                     className="cp-btn cp-btn-white"
                     onClick={() => setSubscribeOpen(true)}
                   >
-                    Become a Founding Member
+                    {currentHero.buttonText || "Become a Founding Member"}
                   </button>
                 ) : (
                   <Link
@@ -605,7 +619,7 @@ export default function ClubPass() {
           {/* ================= Slider Dots ================= */}
 
           <div className="cp-hero-slider-dots">
-            {HERO_SLIDES.map((_, index) => (
+            {heroSlides.map((_, index) => (
               <button
                 key={index}
                 type="button"
@@ -625,46 +639,43 @@ export default function ClubPass() {
       <section className="cp-section why-section">
         <div className="cp-container">
           <div className="cp-why-head cp-center">
-            <p className="cp-eyebrow">why clubpass?</p>
+            <p className="cp-eyebrow">{why.eyebrow}</p>
 
-            <h2 className="cp-h2">
-              More ways to enjoy going out.
-            </h2>
-            <p>Clubpass brings together access, savings, rewards, and experiences with more benefits rolling out as we grow.</p>
+            <h2 className="cp-h2">{why.heading}</h2>
+            <p>{why.description}</p>
           </div>
 
           <div className="cp-compare">
             <div className="cp-card-plain">
-              <p className="cp-card-label">
-                Tonight, without Clubpass
-              </p>
+              <p className="cp-card-label">{why.consHeading}</p>
 
               <ul className="cp-list">
-                {WITHOUT_CLUBPASS.map((item) => (
-                  <li key={item}>
+                {why.cons.map((item) => (
+                  <li key={item.id}>
                     <span className="cp-ico cp-ico-x">
                       <X size={14} strokeWidth={3} />
                     </span>
 
-                    {item}
+                    {item.text}
                   </li>
                 ))}
               </ul>
             </div>
 
             <div className="cp-card-dark">
-              <p className="cp-card-label">
-                Tonight, with Clubpass
-              </p>
+              <p className="cp-card-label">{why.proHeading}</p>
 
               <ul className="cp-list">
-                {WITH_CLUBPASS.map((item) => (
-                  <li key={item}>
+                {why.pro.map((item) => (
+                  <li key={item.id}>
                     <span className="cp-ico cp-ico-check">
                       <Check size={14} strokeWidth={3} /> 
                     </span>
 
-                    <div className="pl-item"><span>{item.text}</span> <span className={`${item.class}`}>{item.pill_text}</span></div>
+                    <div className="pl-item">
+                      <span>{item.text}</span>
+                      {item.pill && <span className={item.pillClass}>{item.pill}</span>}
+                    </div>
                     
                   </li>
                 ))}
@@ -681,7 +692,7 @@ export default function ClubPass() {
               className="cpn-dj"
               alt=""
               aria-hidden="true"
-              src="/images/dj-decks.png"
+              src={beforeTickets.image || "/images/dj-decks.png"}
             />
           </div>
         </div>
@@ -690,33 +701,21 @@ export default function ClubPass() {
 
 
 <section className="membership-section cp-container" id="venues">
-  <div className="status">AVAILABLE NOW</div>
+  <div className="status">{beforeTickets.badge}</div>
 
-  <h2>Your membership already gets you in.</h2>
+  <h2>{beforeTickets.heading}</h2>
 
-  <div className="intro">
-    Enjoy <strong>FREE ENTRY</strong> at selected Clubpass partner venues and events included with your membership
-  </div>
+  <div className="intro">{withBold(beforeTickets.description)}</div>
 
   <div className="benefits">
-    <div className="benefit">
-      <span className="cpn-mark cpn-mark--check">
-                    <Check size={13} strokeWidth={3} />
-                  </span>
-      <span>Included from day one</span>
-    </div>
-    <div className="benefit">
-      <span className="cpn-mark cpn-mark--check">
-                    <Check size={13} strokeWidth={3} />
-                  </span>
-      <span>No additional entry fee</span>
-    </div>
-    <div className="benefit">
-     <span className="cpn-mark cpn-mark--check">
-                    <Check size={13} strokeWidth={3} />
-                  </span>
-      <span>One night out could already cover your membership</span>
-    </div>
+    {beforeTickets.benefits.map((benefit) => (
+      <div className="benefit" key={benefit.id}>
+        <span className="cpn-mark cpn-mark--check">
+          <Check size={13} strokeWidth={3} />
+        </span>
+        <span>{benefit.text}</span>
+      </div>
+    ))}
   </div>
 
   <div className="venue-grid">

@@ -72,6 +72,18 @@ function bannerUrl(banner) {
   );
 }
 
+/**
+ * A banner as the gallery needs it. The type is carried through because a
+ * video has to render as one — and is the only thing that gets a play button.
+ * Strapi generates no image formats for video, so those use the original.
+ */
+function banner(item) {
+  const isVideo = (item?.mime ?? "").startsWith("video/");
+  const url = isVideo ? item?.url : bannerUrl(item);
+
+  return url ? { url, type: isVideo ? "video" : "image" } : null;
+}
+
 const WEEKDAYS = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
 
 /** "FRI, 15 SEP" for the event card's badge. */
@@ -119,6 +131,7 @@ function normalise(row) {
     };
   }).filter(Boolean);
 
+  const media = (row.banners ?? []).map(banner).filter(Boolean);
   const prices = tiers.map((tier) => tier.price);
 
   // What the card leads with: the member price against the best public one.
@@ -148,7 +161,10 @@ function normalise(row) {
     venue: row.venue?.name ?? "",
     address: row.venue?.address ?? "",
     mapsUrl: row.venue?.map_link || null,
-    images: (row.banners ?? []).map(bannerUrl).filter(Boolean),
+    media,
+    // Stills only: the card and the checkout thumbnail are <img>, and a video
+    // URL in one of those renders as a broken image.
+    images: media.filter((item) => item.type === "image").map((item) => item.url),
     tiers,
     priceFrom: prices.length ? Math.min(...prices) : null,
     // What a ticket costs without any discount, for the "you saved" line.

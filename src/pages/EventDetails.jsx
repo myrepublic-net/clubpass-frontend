@@ -28,9 +28,16 @@ export default function EventDetails() {
   const [activeImage, setActiveImage] = useState(0);
   const [expanded, setExpanded] = useState(false);
 
+  // Which slide is playing, so the overlay gets out of the way of the video's
+  // own controls once it starts.
+  const [playing, setPlaying] = useState(null);
+  const videoRefs = useRef([]);
+
   // The gallery is a native horizontal scroller, so swiping it is what moves
   // it — the counter and dots follow the scroll position rather than driving it.
   const trackRef = useRef(null);
+
+  const activeMedia = event?.media?.[activeImage] ?? null;
 
   const syncActiveImage = () => {
     const track = trackRef.current;
@@ -100,31 +107,48 @@ export default function EventDetails() {
 
       <div className="evd-gallery">
         <span className="evd-counter">
-          {activeImage + 1}/{event.images.length}
+          {activeImage + 1}/{event.media.length}
         </span>
 
         <div className="evd-track" ref={trackRef} onScroll={syncActiveImage}>
-          {event.images.map((image, index) => (
-            <img
-              key={image}
-              className="evd-hero-img"
-              src={image}
-              alt={`${event.title} — photo ${index + 1}`}
-            />
-          ))}
+          {event.media.map((item, index) =>
+            item.type === "video" ? (
+              <video
+                key={item.url}
+                ref={(node) => { videoRefs.current[index] = node; }}
+                className="evd-hero-img"
+                src={item.url}
+                playsInline
+                preload="metadata"
+                controls={playing === index}
+                onPlay={() => setPlaying(index)}
+                onPause={() => setPlaying((prev) => (prev === index ? null : prev))}
+              />
+            ) : (
+              <img
+                key={item.url}
+                className="evd-hero-img"
+                src={item.url}
+                alt={`${event.title} — photo ${index + 1}`}
+              />
+            ),
+          )}
         </div>
 
-        <button
-          type="button"
-          className="evd-play"
-          aria-label="Play event video"
-        >
-          <Play size={22} fill="currentColor" />
-        </button>
+        {activeMedia?.type === "video" && playing !== activeImage && (
+          <button
+            type="button"
+            className="evd-play"
+            onClick={() => videoRefs.current[activeImage]?.play()}
+            aria-label="Play event video"
+          >
+            <Play size={22} fill="currentColor" />
+          </button>
+        )}
 
         {/* Swiping covers touch; on a desktop there's no sideways gesture for
             a mouse, so the gallery needs buttons of its own. */}
-        {event.images.length > 1 && (
+        {event.media.length > 1 && (
           <>
             <button
               type="button"
@@ -140,7 +164,7 @@ export default function EventDetails() {
               type="button"
               className="evd-arrow evd-arrow--next"
               onClick={() => scrollToImage(activeImage + 1)}
-              disabled={activeImage === event.images.length - 1}
+              disabled={activeImage === event.media.length - 1}
               aria-label="Next image"
             >
               <ChevronRight size={20} />
@@ -149,9 +173,9 @@ export default function EventDetails() {
         )}
         <div className="evd-dots-main">
           <div className="evd-dots">
-            {event.images.map((image, index) => (
+            {event.media.map((item, index) => (
               <button
-                key={image}
+                key={item.url}
                 type="button"
                 className={`evd-dot${index === activeImage ? " is-active" : ""}`}
                 aria-label={`Show image ${index + 1}`}
