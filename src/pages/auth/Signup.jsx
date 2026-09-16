@@ -44,11 +44,11 @@ export default function Signup() {
   const location = useLocation();
 
   // Where signing up should land them. Nothing passes state on the way in from
-  // the home page, so that journey ends on the membership page; a signup
+  // the home page, so that journey ends back on it; a signup
   // started somewhere specific (a ticket checkout, say) carries that origin
   // through and returns to it. Signing up doesn't create a session, so the
   // destination is handed to the login step rather than navigated to here.
-  const afterSignup = location.state?.from ?? "/clubpass-app";
+  const afterSignup = location.state?.from ?? "/";
 
   const [step, setStep] = useState("account"); // account -> phone -> final -> success
   const [legalModal, setLegalModal] = useState(null); // null | "terms" | "privacy"

@@ -103,6 +103,60 @@ async function request(action, payload, extraHeaders = {}) {
   return body.data ?? {};
 }
 
+/**
+ * The read-only half of the channel API. `profile` and `points-balance` are
+ * GETs authorised by the member's own access token — the Lambda 405s a POST
+ * to them, so they can't go through `request()` above.
+ */
+async function requestGet(action, accessToken) {
+  const res = await fetch(`${API_URL}/${action}`, {
+    method: "GET",
+    headers: { Authorization: `Bearer ${accessToken}` },
+  });
+
+  const body = await res.json().catch(() => null);
+
+  if (!res.ok || body?.code !== "SUCCESS") {
+    const error = new Error(body?.errorMessage ?? `Request failed (${res.status})`);
+    error.code = body?.code ?? "INTERNAL_ERROR";
+    throw error;
+  }
+
+  return body.data ?? {};
+}
+
+/**
+ * The member's R Coin balance.
+ *
+ * GET {API_URL}/points-balance with the member's own access token; the reply
+ * is `{ points, valueUSD, conversionRate, pendingPoints, pendingValueUSD }`
+ * and `points` is the spendable balance.
+ *
+ * Null when there's no session or no API behind it, so the profile can show a
+ * dash rather than a made-up number.
+ */
+export async function fetchPointsBalance() {
+  const session = readMemberSession();
+  // Login stores { token, refreshToken, ssoToken, expiresAt, user } — `token`
+  // is the access JWT the bearer header wants.
+  const accessToken = session?.token;
+
+  if (SIMULATE) return null;
+
+  // No token means no request goes out at all, which from the network tab
+  // looks the same as a broken call — so say which keys the session did have.
+  if (!accessToken) {
+    console.warn(
+      "[auth] Skipping points-balance: the stored session has no `token`. " +
+        `It holds: ${Object.keys(session ?? {}).join(", ") || "(no session)"}`,
+    );
+    return null;
+  }
+
+  const { points } = await requestGet("points-balance", accessToken);
+  return typeof points === "number" ? points : null;
+}
+
 function tokenHeaders() {
   if (!registrationToken) {
     throw Object.assign(new Error("Your session expired — please start again."), {
