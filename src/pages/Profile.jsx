@@ -1,17 +1,23 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, Navigate, useNavigate } from "react-router";
-import { ArrowLeft, Check } from "lucide-react";
+import { ArrowLeft, Check, ChevronRight } from "lucide-react";
 
-import { readMemberSession } from "../api/auth.js";
+import { fetchPointsBalance, readMemberSession } from "../api/auth.js";
 import { isPaid, resolveClubpassUser } from "../api/clubpassUser.js";
+import SubscribeModal from "../components/SubscribeModal.jsx";
 import UserMenu from "../components/UserMenu.jsx";
+import { ClubpassUserContext } from "../components/clubpassUserContext.js";
 import "../css/profile.css";
 
+/** `lead` is the part the design picks out in teal. */
 const PERKS = [
-  "Save 30% on all ticket bookings",
-  "Earn 3X R Coins on check-ins",
-  "Unlimited free Clarke Quay express rides",
+  { lead: "", text: "Save 30% on all ticket bookings" },
+  { lead: "Earn 3X R Coins", text: " on check-ins" },
+  { lead: "", text: "Unlimited free Clarke Quay express rides" },
 ];
+
+/** R Coins are spent in the Reward Land app, so the balance card opens it. */
+const REWARD_LAND_APP = "https://rewardland.onelink.me/EwIe/start";
 
 const dateFormat = new Intl.DateTimeFormat("en-SG", {
   day: "numeric",
@@ -49,6 +55,17 @@ export default function Profile() {
   const userName = session?.user?.username ?? null;
 
   const [user, setUser] = useState(null);
+  const [coins, setCoins] = useState({ status: "loading", balance: null });
+
+  // Joining happens in the same sheet the home page uses, rather than sending
+  // anyone off to another screen. It reads its member off context, which this
+  // page isn't inside, so that's supplied around the sheet below.
+  const [subscribeOpen, setSubscribeOpen] = useState(false);
+
+  const subscribeUser = useMemo(
+    () => ({ userName: userName ?? "", user, profile: session?.user ?? null, setUser }),
+    [userName, user, session],
+  );
 
   useEffect(() => {
     if (!session?.user?.username) return;
@@ -57,6 +74,20 @@ export default function Profile() {
     resolveClubpassUser(session.user).then(
       (record) => { if (!cancelled) setUser(record); },
       (error) => { console.error("ClubPass user lookup failed", error); },
+    );
+    return () => { cancelled = true; };
+  }, [session]);
+
+  useEffect(() => {
+    if (!session?.user?.username) return;
+
+    let cancelled = false;
+    fetchPointsBalance().then(
+      (balance) => { if (!cancelled) setCoins({ status: "ready", balance }); },
+      (error) => {
+        console.error("R Coin balance failed to load", error);
+        if (!cancelled) setCoins({ status: "error", balance: null });
+      },
     );
     return () => { cancelled = true; };
   }, [session]);
@@ -83,7 +114,7 @@ export default function Profile() {
       </header>
 
       <div className="prf-body">
-        <div className={`prf-card${paid ? " is-member" : ""}`}>
+        <div className="prf-card">
           <div>
             <b className="prf-name">{userName}</b>
             <span className="prf-id">ID: {user?.documentId ? `CP-${user.documentId}` : "—"}</span>
@@ -92,13 +123,29 @@ export default function Profile() {
         </div>
 
         <div className="prf-stats">
-          <div className="prf-stat">
-            <span>R Coin Balance</span>
-            {/* No balance is stored anywhere yet — see the note in the PR. */}
-            <b className="prf-coins">—</b>
-          </div>
-          <div className="prf-stat">
-            <span>Next Renewal</span>
+          <a
+            className="prf-stat prf-stat--coins"
+            href={REWARD_LAND_APP}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <span className="prf-stat-label">R Coin Balance</span>
+            <b className="prf-coins">
+              {coins.status === "loading" ? (
+                "…"
+              ) : coins.balance == null ? (
+                "—"
+              ) : (
+                <>
+                  {coins.balance.toLocaleString()} <i>R Coins</i>
+                </>
+              )}
+            </b>
+            <ChevronRight className="prf-stat-chevron" size={22} />
+          </a>
+
+          <div className="prf-stat prf-stat--renewal">
+            <span className="prf-stat-label">Next Renewal</span>
             <b>{formatDate(user?.nextBillingOn)}</b>
           </div>
         </div>
@@ -106,17 +153,44 @@ export default function Profile() {
         <h2 className="prf-perks-head">Your Premium Perks</h2>
         <ul className="prf-perks">
           {PERKS.map((perk) => (
-            <li key={perk}>
-              <Check size={18} />
-              <span>{perk}</span>
+            <li key={perk.lead + perk.text}>
+              <span className="prf-tick" aria-hidden="true">
+                <Check size={12} strokeWidth={3.5} />
+              </span>
+              <span>
+                {perk.lead && <b>{perk.lead}</b>}
+                {perk.text}
+              </span>
             </li>
           ))}
         </ul>
 
-        <Link className="prf-manage" to="/clubpass-app">
-          {paid ? "Manage subscription" : "Become a member"}
+        <Link className="prf-explore" to="/#venues">
+          Explore events
         </Link>
+
+        {paid ? (
+          <Link className="prf-manage" to="/membership">
+            Manage subscription
+          </Link>
+        ) : (
+          <button
+            type="button"
+            className="prf-manage"
+            onClick={() => setSubscribeOpen(true)}
+          >
+            Become a member
+          </button>
+        )}
       </div>
+
+      <ClubpassUserContext.Provider value={subscribeUser}>
+        <SubscribeModal
+          open={subscribeOpen}
+          onClose={() => setSubscribeOpen(false)}
+          withUpsell
+        />
+      </ClubpassUserContext.Provider>
     </div>
   );
 }
