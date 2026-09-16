@@ -1,10 +1,10 @@
 import { useMemo, useRef, useState } from "react";
 import { Link, useLocation, useParams } from "react-router";
-import { ArrowLeft, Calendar, ChevronRight, MapPin, Play } from "lucide-react";
+import { ArrowLeft, Calendar, ChevronLeft, ChevronRight, MapPin, Play } from "lucide-react";
 
 import { readMemberSession } from "../api/auth.js";
 import UserMenu from "../components/UserMenu.jsx";
-import { getEventById } from "../data/events.js";
+import { useTicket } from "../hooks/useTickets.js";
 import "../css/event-details.css";
 
 /**
@@ -17,7 +17,7 @@ import "../css/event-details.css";
 export default function EventDetails() {
   const { id } = useParams();
   const location = useLocation();
-  const event = getEventById(id);
+  const { ticket: event, status } = useTicket(id);
 
   const session = useMemo(() => readMemberSession(), []);
   const userName = session?.user?.username ?? null;
@@ -46,6 +46,22 @@ export default function EventDetails() {
 
     track.scrollTo({ left: index * track.clientWidth, behavior: "smooth" });
   };
+
+  if (status === "loading") {
+    return (
+      <div className="evd-page">
+        <header className="evd-header">
+          <Link className="evd-back" to="/#venues" aria-label="Back">
+            <ArrowLeft size={18} />
+          </Link>
+          <h1>Event Details</h1>
+        </header>
+        <div className="evd-body">
+          <p className="evd-not-found">Loading event…</p>
+        </div>
+      </div>
+    );
+  }
 
   if (!event) {
     return (
@@ -105,6 +121,32 @@ export default function EventDetails() {
         >
           <Play size={22} fill="currentColor" />
         </button>
+
+        {/* Swiping covers touch; on a desktop there's no sideways gesture for
+            a mouse, so the gallery needs buttons of its own. */}
+        {event.images.length > 1 && (
+          <>
+            <button
+              type="button"
+              className="evd-arrow evd-arrow--prev"
+              onClick={() => scrollToImage(activeImage - 1)}
+              disabled={activeImage === 0}
+              aria-label="Previous image"
+            >
+              <ChevronLeft size={20} />
+            </button>
+
+            <button
+              type="button"
+              className="evd-arrow evd-arrow--next"
+              onClick={() => scrollToImage(activeImage + 1)}
+              disabled={activeImage === event.images.length - 1}
+              aria-label="Next image"
+            >
+              <ChevronRight size={20} />
+            </button>
+          </>
+        )}
         <div className="evd-dots-main">
           <div className="evd-dots">
             {event.images.map((image, index) => (
