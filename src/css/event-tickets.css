@@ -1241,3 +1241,13 @@ a.unlock-cta {
     right: 0;
   }
 }
+
+/* Covers the payment step instead of replacing it, so PayPal's card-field
+   iframes stay mounted for the submit in flight. */
+.evt-processing--overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  min-height: 0;
+  background: #fff;
+}
