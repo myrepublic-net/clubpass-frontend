@@ -67,6 +67,71 @@ const FALLBACK_CONTENT = {
       { id: "b3", text: "One night out could already cover your membership" },
     ],
   },
+  afterTickets: {
+    items: [
+      {
+        id: "info-1",
+        icon: "/images/gift.svg",
+        title: "Free entry is included is with your Clubpass membership.",
+        text: "Join for **S$17.90/month** and start enjoying participating venues and events now.",
+      },
+      {
+        id: "info-2",
+        icon: "/images/users.svg",
+        title: "More venues. More events. More perks.",
+        text: "We're adding new partners and member benefits all the time. Stay tuned!",
+      },
+    ],
+    declaration: "Free entry is subject to venue terms and conditions. Specific events and dates may apply.",
+  },
+  cta: {
+    heading: "Be one of the first 150.",
+    description:
+      "Founder pricing ends when the seats are gone. Lock in SGD$19.90/mth and be part of Clubpass from night one.",
+    buttonText: "Sign Up Now",
+    buttonLink: "/signup",
+    image: `${IMG}/music-girl.png`,
+  },
+  beta: {
+    kicker: "CLUBPASS BETA",
+    heading: "Be a founding member.\nHelp shape the future of Clubpass.",
+    description:
+      "Limited to 150 founding members only.\nJoin the beta program, lock in the founder price and get exclusive launch rewards.",
+    benefits: [
+      { id: "beta-1", text: "Founder price locked in" },
+      { id: "beta-2", text: "Exclusive launch rewards" },
+      { id: "beta-3", text: "Limited to 150 members" },
+      { id: "beta-4", text: "Cancel anytime, no lock-in" },
+    ],
+    ticket: {
+      title: "Clubpass",
+      tag: "BETA",
+      heading: "FOUNDER",
+      description: "Limited to first 150 members.",
+      price: "SGD $17.90/month",
+      uptoPrice: "(U.P. S$24.90)",
+      activeTag: "Active",
+      buttonText: "Become a founding member",
+      buttonLink: "/signup",
+      info: "Auto-renewed at founder rate. Cancel anytime.",
+      declaration: "Rate locked for 12 months",
+    },
+  },
+  faq: {
+    kicker: "FAQ",
+    heading: "Good questions, straight answers",
+    description: "Anything we missed?",
+    otherInfo: "Full details live in the RewardLand app.",
+    image: "/images/cp-bus.png",
+    items: [
+      { id: "faq-1", question: "What is Clubpass Home Express?", answer: "A monthly membership for scheduled late-night coaches: a pick-up loop through the city's nightlife spots, then express drop-offs in the East. Fixed schedule, fixed price, no surge, no waiting for a driver at 3am." },
+      { id: "faq-2", question: "Is this safe? Who operates the buses?", answer: "Rides are run by licensed Singapore coach operators with professional drivers and full-size, air-conditioned vehicles. Every seat is booked to a verified RewardLand member and boarding is QR-verified, so nobody rides who isn't a member." },
+      { id: "faq-3", question: "How many rides do I get?", answer: "Your membership covers four operating nights a month one night a week, every week. Exact timings and the published departure board live in the RewardLand app." },
+      { id: "faq-4", question: "Do I need a new account or app?", answer: "No. Clubpass sits inside the RewardLand app you already have. If you're an existing user you're signed in automatically no new account, no second app to download." },
+      { id: "faq-5", question: "How does billing and cancellation work?", answer: "S$19.90 is charged monthly to your payment method in the app and renews automatically. You can cancel in two taps from your membership screen there's no lock-in and no cancellation fee." },
+      { id: "faq-6", question: "My route isn't live yet — what can I do?", answer: "Register your interest for West, North or South. Each route unlocks once enough neighbours vote for it one vote per route, five seconds. We'll notify you the moment yours goes live." },
+    ],
+  },
   why: {
     eyebrow: "why clubpass?",
     heading: "More ways to enjoy going out.",
@@ -88,6 +153,19 @@ const FALLBACK_CONTENT = {
     ],
   },
 };
+
+/**
+ * Line breaks in CMS copy. Strapi's text field keeps real newlines, but some
+ * entries have "\\n" typed in as literal characters — both mean a new line.
+ */
+function multiline(text) {
+  return String(text)
+    .split(/\r?\n|\\n/)
+    .flatMap((line, index) => (index ? [<br key={index} />, line] : [line]));
+}
+
+/** Local benefit illustrations, used when a CMS benefit has no image. */
+const BETA_ICONS = ["/images/cb-one.png", "/images/cb-two.png", "/images/cb-three.png", "/images/cb-four.png"];
 
 /** Renders Strapi's **bold** markers, which the CMS copy uses inline. */
 function withBold(text) {
@@ -178,33 +256,6 @@ const MEMBER_BENEFITS = [
   "All city pick-up points on the loop",
   "Express drop-offs across the East",
   "Founder Member status & launch rewards",
-];
-
-const FAQS = [
-  {
-    q: "What is Clubpass Home Express?",
-    a: "A monthly membership for scheduled late-night coaches: a pick-up loop through the city's nightlife spots, then express drop-offs in the East. Fixed schedule, fixed price, no surge, no waiting for a driver at 3am.",
-  },
-  {
-    q: "Is this safe? Who operates the buses?",
-    a: "Rides are run by licensed Singapore coach operators with professional drivers and full-size, air-conditioned vehicles. Every seat is booked to a verified RewardLand member and boarding is QR-verified, so nobody rides who isn't a member.",
-  },
-  {
-    q: "How many rides do I get?",
-    a: "Your membership covers four operating nights a month one night a week, every week. Exact timings and the published departure board live in the RewardLand app.",
-  },
-  {
-    q: "Do I need a new account or app?",
-    a: "No. Clubpass sits inside the RewardLand app you already have. If you're an existing user you're signed in automatically no new account, no second app to download.",
-  },
-  {
-    q: "How does billing and cancellation work?",
-    a: "S$19.90 is charged monthly to your payment method in the app and renews automatically. You can cancel in two taps from your membership screen there's no lock-in and no cancellation fee.",
-  },
-  {
-    q: "My route isn't live yet — what can I do?",
-    a: "Register your interest for West, North or South. Each route unlocks once enough neighbours vote for it one vote per route, five seconds. We'll notify you the moment yours goes live.",
-  },
 ];
 
 const TOP_EDGE =
@@ -323,7 +374,7 @@ export default function ClubPass() {
   const { routes } = useRouteVoting();
 
   // Everything above the venue grid is editorial, and comes from Strapi.
-  const { hero: heroSlides, beforeTickets, why } = useHome(FALLBACK_CONTENT);
+  const { hero: heroSlides, beforeTickets, afterTickets, cta, faq, beta, why } = useHome(FALLBACK_CONTENT);
 
   // The venue grid is whatever events Strapi is publishing.
   const { tickets: events, status: eventsStatus } = useTickets();
@@ -777,29 +828,23 @@ export default function ClubPass() {
   </div>
 
   <div className="info">
-    <div className="info-item">
-      <div className="info-icon"><img src="/images/gift.svg"/></div>
-      
-      <div>
-        <div className="info-title">Free entry is included is with your Clubpass membership.</div>
-        <div className="info-copy">Join for <b>S$17.90/month</b> and start enjoying participating venues and events now.</div>
-      </div>
-    </div>
-
-    <div className="info-divider"></div>
-
-    <div className="info-item">
-      <div className="info-icon"><img src="/images/users.svg"/></div>
-      <div>
-        <div className="info-title">More venues. More events. More perks.</div>
-        <div className="info-copy">We're adding new partners and member benefits all the time. Stay tuned!</div>
-      </div>
-    </div>
+    {afterTickets.items.map((item, index) => (
+      <React.Fragment key={item.id}>
+        {index > 0 && <div className="info-divider"></div>}
+        <div className="info-item">
+          {item.icon && (
+            <div className="info-icon"><img src={item.icon} alt="" /></div>
+          )}
+          <div>
+            <div className="info-title">{item.title}</div>
+            <div className="info-copy">{withBold(item.text)}</div>
+          </div>
+        </div>
+      </React.Fragment>
+    ))}
   </div>
 
-  <div className="terms">
-    Free entry is subject to venue terms and conditions. Specific events and dates may apply.
-  </div>
+  {afterTickets.declaration && <div className="terms">{afterTickets.declaration}</div>}
 </section>
 
   {/* ================= Membership ================= */}
@@ -812,37 +857,19 @@ export default function ClubPass() {
         <div className="tt-membership">
         <div className="cpn-container cpn-membership-grid">
           <div className="cpn-membership-copy">
-            <p className="cpn-kicker cpn-kicker--orange">
-              CLUBPASS BETA
-            </p>
+            <p className="cpn-kicker cpn-kicker--orange">{beta.kicker}</p>
 
-            <h2 className="cpn-h2">
-             Be a founding member.<br/> 
-Help shape the future of Clubpass.
+            <h2 className="cpn-h2">{multiline(beta.heading)}</h2>
 
-            </h2>
+            <p className="cpn-membership-lead">{multiline(beta.description)}</p>
 
-            <p className="cpn-membership-lead">
-              Limited to 150 founding members only.<br/> 
-Join the beta program, lock in the founder price and get exclusive launch rewards. 
-            </p>
               <ul className="col-mb-list">
-                <li>
-                  <img src="/images/cb-one.png"/>
-                  <p>Founder price locked in</p>
-                </li>
-                <li>
-                  <img src="/images/cb-two.png"/>
-                  <p>Exclusive launch rewards</p>
-                </li>
-                <li>
-                  <img src="/images/cb-three.png"/>
-                  <p>Limited to 150 members</p>
+                {beta.benefits.map((benefit, index) => (
+                  <li key={benefit.id}>
+                    <img src={benefit.image || BETA_ICONS[index % BETA_ICONS.length]} alt="" />
+                    <p>{benefit.text}</p>
                   </li>
-                <li>
-                  <img src="/images/cb-four.png"/>
-                  <p>Cancel anytime, no lock-in</p>
-                  </li>
+                ))}
               </ul>
             {/* <ul className="cpn-benefits">
               {MEMBER_BENEFITS.map((benefit) => (
@@ -877,19 +904,14 @@ Join the beta program, lock in the founder price and get exclusive launch reward
 
             <div className="cpn-ticket">
               <div className="cpn-ticket-head">
-                <span>Clubpass</span>
-                <span>BETA</span>
+                <span>{beta.ticket.title}</span>
+                <span>{beta.ticket.tag}</span>
               </div>
 
               <div className="cpn-ticket-body">
-                <div className="cpn-price">
-                  FOUNDER
-                 
-                </div>
+                <div className="cpn-price">{beta.ticket.heading}</div>
 
-                <p className="cpn-ticket-note">
-                  Limited to first 150 members.
-                </p>
+                <p className="cpn-ticket-note">{beta.ticket.description}</p>
               </div>
 
               <div className="cpn-ticket-rip" />
@@ -910,9 +932,12 @@ Join the beta program, lock in the founder price and get exclusive launch reward
                     <dt>Boarding</dt>
                     <dd>QR in app</dd>
                   </div> */}
-                  <span className="ticket-price">SGD $17.90/month <br/>
-<p>(U.P. S$24.90)</p></span>
-<span className="ticket-active">Active</span>
+                  <span className="ticket-price">
+                    {beta.ticket.price}
+                    <br />
+                    {beta.ticket.uptoPrice && <p>{beta.ticket.uptoPrice}</p>}
+                  </span>
+                  {beta.ticket.activeTag && <span className="ticket-active">{beta.ticket.activeTag}</span>}
                 </dl>
 
                 {!paid && (userName ? (
@@ -921,28 +946,28 @@ Join the beta program, lock in the founder price and get exclusive launch reward
                     className="cpn-btn cpn-btn--white"
                     onClick={() => setSubscribeOpen(true)}
                   >
-                    Become a founding member
+                    {beta.ticket.buttonText || "Become a founding member"}
                   </button>
                 ) : (
                   <Link
                     className="cpn-btn cpn-btn--white"
-                    to={'/signup'}
+                    to={beta.ticket.buttonLink || "/signup"}
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    Become a founding member
+                    {beta.ticket.buttonText || "Become a founding member"}
                   </Link>
                 ))}
 
-                <p className="cpn-ticket-fine">
-                  Auto-renewed at founder rate. Cancel anytime.
-                </p>
+                <p className="cpn-ticket-fine">{beta.ticket.info}</p>
               </div>
             </div>
-            <div className="locked-text">
-            <img src="/images/lock.svg"/>
-            <p>Rate locked for 12 months</p>
-            </div>
+            {beta.ticket.declaration && (
+              <div className="locked-text">
+                <img src="/images/lock.svg" alt="" />
+                <p>{beta.ticket.declaration}</p>
+              </div>
+            )}
           </div>
         </div>
         </div>
@@ -1532,35 +1557,32 @@ Enjoy perks that keep growing.
 
       <section className="cpn-section cpn-faq" id="faq">
         <div className="cpn-container">
-          <p className="cpn-kicker cpn-kicker--orange">
-            FAQ
-          </p>
+          <p className="cpn-kicker cpn-kicker--orange">{faq.kicker}</p>
 
           <div className="cpn-faq-copy">
-            <h2 className="cpn-h2">
-              Good questions,
-              straight answers
-            </h2>
+            <h2 className="cpn-h2">{faq.heading}</h2>
 
             <p>
-              Anything we missed?
-              <br />
-              Full details live in the RewardLand app.
+              {faq.description}
+              {faq.description && faq.otherInfo && <br />}
+              {faq.otherInfo}
             </p>
           </div>
 
           <div className="cpn-faq-grid">
-            <div className="cp-faq-image">
-              <img src="/images/cp-bus.png" />
-            </div>
+            {faq.image && (
+              <div className="cp-faq-image">
+                <img src={faq.image} alt="" />
+              </div>
+            )}
 
             <div className="cpn-acc">
-              {FAQS.map((faq, index) => (
+              {faq.items.map((item, index) => (
                 <div
                   className={`cpn-acc-item${
                     openFaq === index ? " is-open" : ""
                   }`}
-                  key={faq.q}
+                  key={item.id}
                 >
                   <button
                     type="button"
@@ -1571,7 +1593,7 @@ Enjoy perks that keep growing.
                       )
                     }
                   >
-                    <span>{faq.q}</span>
+                    <span>{item.question}</span>
 
                     {openFaq === index ? (
                       <Minus size={18} />
@@ -1581,7 +1603,7 @@ Enjoy perks that keep growing.
                   </button>
 
                   <div className="cpn-acc-panel">
-                    <p>{faq.a}</p>
+                    <p>{item.answer}</p>
                   </div>
                 </div>
               ))}
@@ -1595,29 +1617,22 @@ Enjoy perks that keep growing.
       <section className="cpn-cta-wrap">
         <div className="cpn-container">
           <div className="cpn-cta">
-            <img
-              className="cpn-cta-bus"
-              src={`${IMG}/music-girl.png`}
-              alt=""
-              aria-hidden="true"
-            />
+            {cta.image && (
+              <img className="cpn-cta-bus" src={cta.image} alt="" aria-hidden="true" />
+            )}
 
-            <h2>Be one of the first 150.</h2>
+            <h2>{cta.heading}</h2>
 
-            <p>
-              Founder pricing ends when the seats are gone. Lock
-              in SGD$19.90/mth and be part of Clubpass from night
-              one.
-            </p>
+            <p>{cta.description}</p>
 
             {!userName && (
               <Link
                 className="cpn-btn cpn-btn--dark"
-                to="/login"
+                to={cta.buttonLink || "/signup"}
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                Sign Up Now
+                {cta.buttonText || "Sign Up Now"}
               </Link>
             )}
           </div>

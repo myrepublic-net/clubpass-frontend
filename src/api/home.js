@@ -15,15 +15,28 @@ const QUERY =
   "populate[hero_section][populate]=*" +
   "&populate[why_section][populate][cons][populate]=*" +
   "&populate[why_section][populate][pro][populate]=*" +
-  "&populate[before_ticket_section][populate]=*";
+  "&populate[before_ticket_section][populate]=*" +
+  "&populate[after_ticket_section][populate]=*" +
+  "&populate[cta_section][populate]=*" +
+  "&populate[faq_section][populate]=*" +
+  // Named populates here rather than "*": benefits carry an image that needs
+  // its own level, and naming one sibling stops Strapi populating the rest —
+  // so ticket has to be listed too or the ticket card comes back empty.
+  "&populate[clubpass_beta_section][populate][benefits][populate]=*" +
+  "&populate[clubpass_beta_section][populate][ticket][populate]=*";
 
-/** Largest format Strapi generated, falling back to the original upload. */
+/**
+ * The best size of an upload to show. Strapi only generates a format when the
+ * original is bigger than it, so with no large or medium the original is
+ * already modest — use it rather than the downscaled "small", which is lower
+ * resolution and can even be heavier (the FAQ bus: small 177 KB, original 48 KB).
+ */
 function mediaUrl(item) {
   return (
     item?.formats?.large?.url ??
     item?.formats?.medium?.url ??
-    item?.formats?.small?.url ??
     item?.url ??
+    item?.formats?.small?.url ??
     null
   );
 }
@@ -51,6 +64,10 @@ function normalise(data) {
   }));
 
   const before = data?.before_ticket_section;
+  const after = data?.after_ticket_section;
+  const cta = data?.cta_section;
+  const faq = data?.faq_section;
+  const beta = data?.clubpass_beta_section;
   const why = data?.why_section;
 
   const items = (side) =>
@@ -72,6 +89,66 @@ function normalise(data) {
           benefits: (before.benefits ?? []).map((benefit) => ({
             id: benefit.id,
             text: benefit.title ?? "",
+          })),
+        }
+      : null,
+    // The two notes and the small print under the venue grid.
+    afterTickets: after
+      ? {
+          items: [
+            { id: "info-1", icon: mediaUrl(after.icon1), title: after.title1 ?? "", text: after.description1 ?? "" },
+            { id: "info-2", icon: mediaUrl(after.icon2), title: after.title2 ?? "", text: after.description2 ?? "" },
+          ],
+          declaration: after.declaration ?? "",
+        }
+      : null,
+    // The closing "be one of the first 150" band.
+    cta: cta
+      ? {
+          heading: cta.heading ?? "",
+          description: cta.description ?? "",
+          buttonText: cta.button_text ?? "",
+          buttonLink: cta.button_link ?? "",
+          image: mediaUrl(cta.image),
+        }
+      : null,
+    // The founding-member section and its ticket card.
+    beta: beta
+      ? {
+          kicker: beta.title ?? "",
+          heading: beta.heading ?? "",
+          description: beta.description ?? "",
+          benefits: (beta.benefits ?? []).map((benefit) => ({
+            id: benefit.id,
+            text: benefit.title ?? "",
+            image: mediaUrl(benefit.image),
+          })),
+          ticket: {
+            title: beta.ticket?.title ?? "",
+            tag: beta.ticket?.tag ?? "",
+            heading: beta.ticket?.heading ?? "",
+            description: beta.ticket?.description ?? "",
+            price: beta.ticket?.price ?? "",
+            uptoPrice: beta.ticket?.upto_price ?? "",
+            activeTag: beta.ticket?.active_tag ?? "",
+            buttonText: beta.ticket?.button_text ?? "",
+            buttonLink: beta.ticket?.button_link ?? "",
+            info: beta.ticket?.info ?? "",
+            declaration: beta.ticket?.declaration ?? "",
+          },
+        }
+      : null,
+    faq: faq
+      ? {
+          kicker: faq.title ?? "",
+          heading: faq.heading ?? "",
+          description: faq.description ?? "",
+          otherInfo: faq.other_info ?? "",
+          image: mediaUrl(faq.image),
+          items: (faq.faqs ?? []).map((item) => ({
+            id: item.id,
+            question: item.title ?? "",
+            answer: item.body ?? "",
           })),
         }
       : null,
