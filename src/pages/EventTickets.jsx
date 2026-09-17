@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useNavigate, useParams, useSearchParams } from "react-router";
 import {
   ArrowLeft,
+  ArrowRight,
   Calendar,
   CheckCircle2,
   CreditCard,
@@ -805,6 +806,22 @@ export default function EventTickets() {
               </button>
             </div>
           </div>
+          {/* Members are the ones who can ride Home Express, so they get pointed at it. */}
+          {userName && paid && (
+            <div className="evt-ride-home">
+              <h3>Need a ride home?</h3>
+              <p>
+                ClubPass Home Express provides scheduled late-night rides for Clubpass Members.
+              </p>
+              <Link className="evt-ride-home-link" to="/">
+                Explore Home Express <ArrowRight size={16} />
+              </Link>
+            </div>
+          )}
+
+          {/* The membership pitch is only for signed-in buyers who aren't members yet —
+              guests get the free-account card below instead. */}
+          {userName && !paid && (
           <div className="unlock-more">
               <div className="unlock-header">clubpass member</div>
               <div className="unlock-body">
@@ -816,8 +833,9 @@ export default function EventTickets() {
                     <img src="/images/Gemini.png"/>
                  </div>
               </div>
-              <div className="unlock-footer"><a class="unlock-cta" href="#" data-discover="true">JOIN CLUBPASS</a></div>
+              <div className="unlock-footer"><a className="unlock-cta" href="#" data-discover="true">JOIN CLUBPASS</a></div>
           </div>
+          )}
           {!userName && (
             <div className="evt-reward-card">
               <b>Get rewarded for your purchase</b>
