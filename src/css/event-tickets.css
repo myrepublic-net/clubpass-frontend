@@ -839,7 +839,7 @@
 }
 
 .evt-page:has(.evt-body--confirm ) {
-    background: linear-gradient(180deg, #030712 0%, #080f4a 15%, #111f86 28%, #0874d1 40%, #102477 60%, #0b155f 80%, #030711 100%);
+    background: linear-gradient(180deg, #0C165E 40.87%, #060B2F 70.43%, #000000 100%);
 }
 .evt-confirm-head {
   padding: 20px 0 40px;
@@ -848,7 +848,7 @@
 
 .evt-confirm-head h1 {
     margin: 16px 0 10px;
-    font-size: 28px;
+    font-size: 50px;
     font-weight: 800;
     text-transform: uppercase;
         color: #1FDBDA;
@@ -856,8 +856,7 @@
 
 .evt-confirm-head p {
   margin: 0 auto;
-  max-width: 330px;
-  font-size: 13.5px;
+  font-size: 20px;
   line-height: 1.6;
   color: #fff;
 }
@@ -1161,7 +1160,7 @@
   opacity: .4;
 }
 .evt-page, .evt-footer, .prf-page {
-    max-width: 600px;
+    /* max-width: 600px; */
     margin: auto;
         border-inline: 1px solid #eae5f8 !important;
 }
@@ -1278,4 +1277,50 @@ a.unlock-cta {
   font-size: 11.5px;
   font-weight: 500;
   color: var(--evt-muted);
+}
+
+/* Order confirmed, paid members: the Home Express pointer under the booking. */
+.evt-ride-home {
+  margin-top: 20px;
+  padding: 22px 22px 20px;
+  border-radius: 16px;
+  background: linear-gradient(180deg, #111F86 0%, #0B155F 100%);
+  color: #fff;
+}
+
+.evt-ride-home h3 {
+  margin: 0 0 8px;
+  font-size: 20px;
+  font-weight: 800;
+  line-height: 1.25;
+  color: #fff;
+}
+
+.evt-ride-home p {
+  margin: 0 0 14px;
+  font-size: 14px;
+  line-height: 1.55;
+  color: rgba(255, 255, 255, .85);
+}
+
+.evt-ride-home-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 15px;
+  font-weight: 700;
+  color: #1FDBDA;
+  text-decoration: none;
+}
+
+.evt-ride-home-link:hover {
+  text-decoration: underline;
+}
+@media (max-width: 767px) {
+.evt-confirm-head h1 {
+    font-size: 28px;
+}
+.evt-confirm-head p {
+  font-size: 14px;
+}
 }

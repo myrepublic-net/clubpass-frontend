@@ -83,7 +83,7 @@
     overflow: hidden;
     max-width: 600px;
     margin: auto;
-    height: 250px;
+    /* height: 250px; */
 }
 
 /* The images sit in one wide row that scrolls, so a swipe moves the gallery

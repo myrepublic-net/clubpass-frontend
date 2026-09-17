@@ -115,6 +115,7 @@ export default function Profile() {
       </header>
 
       <div className="prf-body">
+        <div className="prf-in-text">
         <div className="prf-card">
           <div>
             <b className="prf-name">{userName}</b>
@@ -188,6 +189,10 @@ export default function Profile() {
             Become a member
           </button>
         )}
+        </div>
+        <div className="prf-in-image">
+          <img src="/images/account.png"/>
+        </div>
       </div>
 
       <ClubpassUserContext.Provider value={subscribeUser}>
