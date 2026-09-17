@@ -1,11 +1,15 @@
+import { readMemberSession } from "./auth.js";
 import { driverToken, signOutDriver } from "./driverAuth.js";
+import { ensureMember } from "./subscribe.js";
 
 /** The exact message the Strapi verify route's policy replies with. */
 const DRIVER_REQUIRED = "Driver sign-in required";
 
 const BASE_URL =
   import.meta.env.VITE_STRAPI_URL ?? "https://exciting-flower-bc33aab938.strapiapp.com";
-const TOKEN = import.meta.env.VITE_STRAPI_TOKEN;
+// Read-only. Every write to a member record goes through the clubpass-subscribe
+// Lambda, so nothing in this bundle can create members or mark one paid.
+const TOKEN = import.meta.env.VITE_STRAPI_TOKEN_GET;
 
 async function request(path, options = {}) {
   const res = await fetch(`${BASE_URL}/api${path}`, {
@@ -50,55 +54,53 @@ export async function findUserByEmail(email) {
   return body?.data?.[0] ?? null;
 }
 
-export async function createUser({ userName, email }) {
-  const body = await request("/clubpass-users?status=published", {
-    method: "POST",
-    body: JSON.stringify({ data: { userName, ...(email && { email }) } }),
-  });
-
-  return body?.data ?? null;
+/** One month on from `from`, clamped so the 31st doesn't skip February. */
+function monthAfter(from) {
+  const next = new Date(from);
+  const day = next.getDate();
+  next.setMonth(next.getMonth() + 1);
+  if (next.getDate() < day) next.setDate(0);
+  return next;
 }
 
-/** Keeps Strapi's email current when the login API returns a different one. */
-async function updateUserEmail(documentId, email) {
-  const body = await request(`/clubpass-users/${documentId}?status=published`, {
-    method: "PUT",
-    body: JSON.stringify({ data: { email } }),
-  });
+/** A renewal a few days late (PayPal and our own job both retry) doesn't cut access. */
+const GRACE_MS = 3 * 86_400_000;
 
-  return body?.data ?? null;
-}
+/**
+ * Whether this member has access right now. Must match hasAccess() in
+ * clubpass-subscribe/lib/membership.mjs, which applies it server-side.
+ *
+ *   never paid (no paidOn)  → not paid
+ *   no billingStatus (records from before billing was tracked) → paid, as before
+ *   active / paypal-managed → until nextBillingOn + grace (no date: paid)
+ *   manual-renewal          → one month from paidOn, + grace
+ *   cancelled               → until the paid period ends (accessEndsOn)
+ *   lapsed / suspended      → not paid
+ *
+ * paidOn rather than secretCode: the API blanks secretCode once trips run out,
+ * and a member with no rides left this month is still a member.
+ */
+export function isPaid(user, now = Date.now()) {
+  if (!user?.paidOn) return false;
 
-/** A user is subscribed once a payment has written their boarding code. */
-export function isPaid(user) {
-  return Boolean(user?.secretCode && user?.paidOn);
-}
+  const at = (value) => (value ? new Date(value).getTime() : NaN);
+  const until = (ms) => !Number.isNaN(ms) && ms > now;
+  // An unparseable paidOn gives no month to measure (NaN), rather than throwing.
+  const monthAfterPaid = monthAfter(user.paidOn).getTime();
 
-/** Six-digit boarding code, zero-padded so it's always six characters. */
-function generateSecretCode() {
-  const [n] = crypto.getRandomValues(new Uint32Array(1));
-  return String(n % 1_000_000).padStart(6, "0");
-}
-
-/** Writes the membership onto the user record after PayPal approves. */
-export async function markUserPaid({ documentId, userName, email, transactionId }) {
-  const body = await request(`/clubpass-users/${documentId}?status=published`, {
-    method: "PUT",
-    body: JSON.stringify({
-      data: {
-        // Don't blank out an existing email if PayPal didn't give us one.
-        ...(email && { email }),
-        tripLeft: 4,
-        paidOn: new Date().toISOString(),
-        secretCode: generateSecretCode(),
-        transactionId,
-      },
-    }),
-  });
-
-  // Only the read endpoints mint a scan token, so read the record back — the
-  // PUT response alone can't be rendered as a boarding QR.
-  return (userName && (await findUserByUserName(userName))) ?? body?.data ?? null;
+  switch (user.billingStatus ?? "") {
+    case "":
+      return true;
+    case "active":
+    case "paypal-managed":
+      return !user.nextBillingOn || until(at(user.nextBillingOn) + GRACE_MS);
+    case "manual-renewal":
+      return until((user.nextBillingOn ? at(user.nextBillingOn) : monthAfterPaid) + GRACE_MS);
+    case "cancelled":
+      return until(user.accessEndsOn ? at(user.accessEndsOn) : monthAfterPaid);
+    default:
+      return false;
+  }
 }
 
 /* ==========================================================================
@@ -215,19 +217,19 @@ export function resolveClubpassUser(identity) {
 
   if (!pending) {
     pending = (async () => {
+      // The common case — an existing member with an up-to-date email — stays
+      // a single read from the browser.
       const existing = await findUserByUserName(userName);
-      if (existing) {
-        return email && existing.email !== email ? await updateUserEmail(existing.documentId, email) : existing;
-      }
+      if (existing && (!email || existing.email === email)) return existing;
 
-      // No record under this username — but the same person may already have
-      // one under a different username with this email (e.g. a Reward Land
-      // username change). Reuse that record rather than creating a second one
-      // for the same email.
-      const existingByEmail = email ? await findUserByEmail(email) : null;
-      if (existingByEmail) return existingByEmail;
-
-      return createUser({ userName, email });
+      // Creating the record or syncing its email is a write, so the Lambda
+      // does it, against the member's own login session.
+      const { user } = await ensureMember({
+        userName,
+        email,
+        accessToken: readMemberSession()?.token,
+      });
+      return user ?? existing;
     })();
 
     // A network blip shouldn't poison retries — only successes stay cached.

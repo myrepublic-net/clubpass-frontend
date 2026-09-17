@@ -73,19 +73,19 @@ export default function ManageSubscription() {
 
   if (!userName) return <Navigate to="/login" state={{ from: "/membership" }} replace />;
 
-  const endsOn = cancelState.accessEndsOn ?? user?.nextBillingOn;
+  const endsOn = cancelState.accessEndsOn ?? user?.accessEndsOn ?? user?.nextBillingOn;
 
   const confirmCancel = async () => {
     setCancelState({ status: "working" });
 
     try {
       const { accessEndsOn } = await cancelSubscription({
-        subscriptionId: user?.subscriptionId,
         userName,
+        accessToken: session?.token,
       });
 
       // Reflect it locally rather than re-reading; the page shows this record.
-      setUser((prev) => ({ ...prev, billingStatus: "cancelled" }));
+      setUser((prev) => ({ ...prev, billingStatus: "cancelled", accessEndsOn, nextBillingOn: null }));
       setCancelState({ status: "done", accessEndsOn });
       setStep("ended");
     } catch (error) {

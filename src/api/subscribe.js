@@ -51,16 +51,16 @@ export function createSubscription({ userName, email }) {
 }
 
 /** Reads the approved subscription back so we save a confirmed one, not a pending one. */
-export function activateSubscription({ subscriptionId, userName }) {
-  return call("activate-subscription", { subscriptionId, userName });
+export function activateSubscription({ subscriptionId, userName, email }) {
+  return call("activate-subscription", { subscriptionId, userName, email });
 }
 
 /**
  * Stops the renewal. The member keeps the nights already paid for — the Lambda
  * returns the date access runs out.
  */
-export function cancelSubscription({ subscriptionId, userName }) {
-  return call("cancel-subscription", { subscriptionId, userName });
+export function cancelSubscription({ userName, accessToken }) {
+  return call("cancel-subscription", { userName, accessToken });
 }
 
 /**
@@ -89,8 +89,18 @@ export function createOrder({ method, userName, email }) {
 }
 
 /** Captures the approved order and stores the vault token against the member. */
-export function captureOrder({ orderId, method, userName }) {
-  return call("capture-order", { orderId, method, userName });
+export function captureOrder({ orderId, method, userName, email }) {
+  return call("capture-order", { orderId, method, userName, email });
+}
+
+/** Finds or creates the member's Strapi record and syncs its email. Returns `{ user }`. */
+export function ensureMember({ userName, email, accessToken }) {
+  return call("ensure-member", { userName, email, accessToken });
+}
+
+/** Spends the member's one route vote. Returns `{ voted }`, the route's new tally. */
+export function castRouteVote({ userName, routeId, accessToken }) {
+  return call("cast-vote", { userName, routeId, accessToken });
 }
 
 /**
