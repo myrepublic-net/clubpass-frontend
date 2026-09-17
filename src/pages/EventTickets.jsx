@@ -767,6 +767,24 @@ export default function EventTickets() {
                 <dd>{booking?.bookingReference && `#${booking.bookingReference}`}</dd>
               </div>
               <div>
+                <dt>{booking?.tickets?.length === 1 ? "Ticket Number" : "Ticket Numbers"}</dt>
+                <dd>
+                  {booking?.tickets?.length ? (
+                    <ul className="evt-ticket-numbers">
+                      {booking.tickets.map((ticket) => (
+                        <li key={ticket.ticketNumber}>
+                          <b>{ticket.ticketNumber}</b>
+                          <span>{ticket.tierLabel}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    // Issuing can lag the payment; the Lambda finishes it on retry.
+                    "Being issued — you'll receive them by email"
+                  )}
+                </dd>
+              </div>
+              <div>
                 <dt>Ticket Status</dt>
                 <dd>Preparing your ticket</dd>
               </div>

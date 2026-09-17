@@ -36,7 +36,8 @@ function pick(session, names, label) {
  * order and writes a pending Strapi order; the browser approves it with the
  * chosen method; the Lambda captures, marks the order paid and deducts stock.
  *
- * `onPaid` receives `{ bookingReference, transactionId, email, total }`.
+ * `onPaid` receives `{ bookingReference, transactionId, email, total, tickets }`,
+ * where `tickets` is one `{ ticketNumber, tier, tierLabel }` per ticket sold.
  */
 export default function useTicketCheckout({
   active,
@@ -191,7 +192,19 @@ export default function useTicketCheckout({
       setFlow({ status: "processing" });
 
       const { orderId } = await openOrder("googlepay");
-      await session.confirmOrder({ orderId, paymentMethodData: paymentData.paymentMethodData });
+      const confirm = () =>
+        session.confirmOrder({ orderId, paymentMethodData: paymentData.paymentMethodData });
+
+      // PayPal intermittently answers INTERNAL_SERVICE_ERROR here, and the same
+      // Google Pay token goes through on a second attempt — so try once more
+      // before telling the buyer it failed.
+      try {
+        await confirm();
+      } catch (error) {
+        console.warn("[googlepay] confirmOrder failed, retrying once", error);
+        await new Promise((resolve) => setTimeout(resolve, 800));
+        await confirm();
+      }
       await capture(orderId);
     } catch (error) {
       if (error?.statusCode === "CANCELED") {
@@ -273,6 +286,13 @@ export default function useTicketCheckout({
         transactionId: null,
         email: latest.current.email ?? "",
         total: latest.current.total,
+        tickets: Object.entries(latest.current.quantities ?? {}).flatMap(([tier, qty]) =>
+          Array.from({ length: qty }, (_, i) => ({
+            ticketNumber: `CPT-SIM${i}-${tier.slice(0, 4).toUpperCase()}`,
+            tier,
+            tierLabel: tier,
+          })),
+        ),
       });
       return;
     }

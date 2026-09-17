@@ -1240,3 +1240,31 @@ a.unlock-cta {
   min-height: 0;
   background: #fff;
 }
+
+/* One row per issued ticket: number on the left, ticket type under it. */
+.evt-ticket-numbers {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.evt-ticket-numbers li {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.evt-ticket-numbers b {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 13px;
+  letter-spacing: .04em;
+}
+
+.evt-ticket-numbers span {
+  font-size: 11.5px;
+  font-weight: 500;
+  color: var(--evt-muted);
+}
