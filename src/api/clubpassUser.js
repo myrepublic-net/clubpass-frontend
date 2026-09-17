@@ -35,9 +35,13 @@ async function request(path, options = {}) {
  * status=draft finds users that were created but never published — otherwise
  * we would create a duplicate for them on every visit.
  */
+/** The route a member voted for — a relation, so it has to be asked for. */
+const VOTED_ROUTE = { "populate[voted_route][fields][0]": "route_name" };
+
 export async function findUserByUserName(userName) {
   const query = new URLSearchParams({
     "filters[userName][$eq]": userName,
+    ...VOTED_ROUTE,
   });
 
   const body = await request(`/clubpass-users?${query}`);
@@ -48,6 +52,7 @@ export async function findUserByUserName(userName) {
 export async function findUserByEmail(email) {
   const query = new URLSearchParams({
     "filters[email][$eq]": email,
+    ...VOTED_ROUTE,
   });
 
   const body = await request(`/clubpass-users?${query}`);

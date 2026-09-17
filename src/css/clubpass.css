@@ -3312,3 +3312,17 @@ height: 580px;
     left: 10%;
 }
 }
+/* Route voting: a spent vote (or one still waiting on the account lookup)
+   dims the button rather than hiding it, so the box keeps its shape. */
+.route-wrapper .vote-button.is-disabled {
+  opacity: .55;
+  cursor: default;
+  pointer-events: none;
+}
+
+.route-wrapper .vote-error {
+  margin-top: 8px;
+  font-size: 12px;
+  line-height: 1.4;
+  color: #DC2626;
+}
