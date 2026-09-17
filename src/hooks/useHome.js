@@ -27,6 +27,7 @@ export default function useHome(fallback) {
           faq: loaded.faq?.items?.length ? loaded.faq : current.faq,
           beta: loaded.beta ?? current.beta,
           why: loaded.why ?? current.why,
+          howItWorks: loaded.howItWorks?.steps?.length ? loaded.howItWorks : current.howItWorks,
         }));
       },
       (error) => console.error("ClubPass home content failed to load", error),
