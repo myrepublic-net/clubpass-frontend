@@ -3,6 +3,7 @@ import { Link, useLocation, useParams } from "react-router";
 import { ArrowLeft, Calendar, ChevronLeft, ChevronRight, MapPin, Play } from "lucide-react";
 
 import { readMemberSession } from "../api/auth.js";
+import Markdown from "../components/Markdown.jsx";
 import UserMenu from "../components/UserMenu.jsx";
 import { useTicket } from "../hooks/useTickets.js";
 import "../css/event-details.css";
@@ -211,16 +212,23 @@ export default function EventDetails() {
           <ChevronRight size={18} className="evd-venue-chevron" />
         </a>
 
-        <p className={`evd-description${expanded ? " is-expanded" : ""}`}>
-          {event.description}
-        </p>
-        <button
-          type="button"
-          className="evd-see-more"
-          onClick={() => setExpanded((prev) => !prev)}
-        >
-          {expanded ? "See less" : "See more"}
-        </button>
+        {event.description && (
+          <>
+            <Markdown className={`evd-description${expanded ? " is-expanded" : ""}`}>
+              {event.description}
+            </Markdown>
+            {/* Short descriptions fit in the collapsed box — no toggle for those. */}
+            {event.description.length > 220 && (
+              <button
+                type="button"
+                className="evd-see-more"
+                onClick={() => setExpanded((prev) => !prev)}
+              >
+                {expanded ? "See less" : "See more"}
+              </button>
+            )}
+          </>
+        )}
       </div>
 
       <footer className="evd-footer">

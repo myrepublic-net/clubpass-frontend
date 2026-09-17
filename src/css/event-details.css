@@ -286,21 +286,69 @@
   flex-shrink: 0;
 }
 
+/* Rich text from Strapi, so it's several blocks — line-clamp only works on a
+   single one, so the collapsed state is a height with a fade instead. */
 .evd-description {
+  position: relative;
   margin: 0;
+  max-height: 64px;
+  overflow: hidden;
   font-size: 13px;
   line-height: 1.6;
-      color: #0C165E;
-  white-space: pre-line;
-  overflow: hidden;
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
+  color: #0C165E;
+}
+
+.evd-description::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 28px;
+  background: linear-gradient(rgba(255, 255, 255, 0), #fff);
 }
 
 .evd-description.is-expanded {
-  -webkit-line-clamp: unset;
-  display: block;
+  max-height: none;
+}
+
+.evd-description.is-expanded::after {
+  display: none;
+}
+
+.evd-description > :first-child {
+  margin-top: 0;
+}
+
+.evd-description p,
+.evd-description ul,
+.evd-description ol {
+  margin: 0 0 10px;
+}
+
+.evd-description ul,
+.evd-description ol {
+  padding-left: 20px;
+}
+
+.evd-description h3,
+.evd-description h4,
+.evd-description h5,
+.evd-description h6 {
+  margin: 16px 0 8px;
+  font-size: 15px;
+  font-weight: 800;
+  line-height: 1.35;
+  color: #0C165E;
+}
+
+.evd-description strong {
+  font-weight: 700;
+}
+
+.evd-description a {
+  color: #0070DB;
+  text-decoration: underline;
 }
 
 .evd-see-more {

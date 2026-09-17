@@ -172,11 +172,17 @@ function normalise(row) {
   };
 }
 
-// One request serves the grid, the event page and the ticket page.
+// One request serves the grid, the event page and the ticket page — but only
+// briefly, so CMS edits and stock sold since show up without a hard reload.
+const CACHE_MS = 30_000;
 let pending = null;
+let fetchedAt = 0;
 
 export function fetchTickets() {
+  if (pending && Date.now() - fetchedAt > CACHE_MS) pending = null;
+
   if (!pending) {
+    fetchedAt = Date.now();
     pending = (async () => {
       const res = await fetch(`${BASE_URL}/api/tickets?populate=*`, {
         headers: {

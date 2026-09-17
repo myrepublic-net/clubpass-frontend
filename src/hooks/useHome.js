@@ -22,6 +22,10 @@ export default function useHome(fallback) {
         setContent((current) => ({
           hero: loaded.hero?.length ? loaded.hero : current.hero,
           beforeTickets: loaded.beforeTickets ?? current.beforeTickets,
+          afterTickets: loaded.afterTickets ?? current.afterTickets,
+          cta: loaded.cta ?? current.cta,
+          faq: loaded.faq?.items?.length ? loaded.faq : current.faq,
+          beta: loaded.beta ?? current.beta,
           why: loaded.why ?? current.why,
         }));
       },

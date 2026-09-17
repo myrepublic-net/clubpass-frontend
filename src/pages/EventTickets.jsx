@@ -18,7 +18,7 @@ import { isPaid, resolveClubpassUser } from "../api/clubpassUser.js";
 import { useTicket } from "../hooks/useTickets.js";
 import UserMenu from "../components/UserMenu.jsx";
 import useMembershipCheckout, { SIMULATE } from "../hooks/useMembershipCheckout.js";
-import usePaypalSdk from "../hooks/usePaypalSdk.js";
+import useTicketCheckout from "../hooks/useTicketCheckout.js";
 import "../css/event-tickets.css";
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -77,12 +77,6 @@ function buildTiers(event, { paid }) {
   );
 }
 
-/** #GC-1234567 for a guest booking, #CP-1234567 for a signed-in one. */
-function bookingReference(loggedIn) {
-  const [n] = crypto.getRandomValues(new Uint32Array(1));
-  return `#${loggedIn ? "CP" : "GC"}-${String(n % 10_000_000).padStart(7, "0")}`;
-}
-
 /**
  * Reached from EventDetails.jsx's "Get Tickets Now". Public, like that page —
  * a guest can still browse and pick tickets, they just don't get the Member
@@ -129,12 +123,7 @@ export default function EventTickets() {
   const [guestEmail, setGuestEmail] = useState("");
   const [method, setMethod] = useState("card");
   const [booking, setBooking] = useState(null);
-  const [payError, setPayError] = useState("");
   const emailValid = EMAIL_PATTERN.test(guestEmail.trim());
-
-  // Only spin the SDK up on the payment step — it's a script load plus an
-  // eligibility round trip, and nothing before that step needs it.
-  const { eligible, status: sdkStatus } = usePaypalSdk(step === "payment");
 
   // A tier can cap quantity for two different reasons: `maxQty` is a per-
   // member purchase limit (Member Price: 1 per event), `stockLeft` is how
@@ -239,38 +228,23 @@ export default function EventTickets() {
     return date.toLocaleDateString("en-SG", { day: "numeric", month: "short", year: "numeric" });
   }, []);
 
-  /**
-   * Takes the payment and returns the booking.
-   *
-   * The PayPal Lambda we already use can't charge this yet: its create-order
-   * action prices every order at CLUBPASS_PRICE and vaults it against a
-   * member's userName, because it exists to sell the membership. Ticket
-   * orders need an amount and no membership, so this approves locally until
-   * that Lambda grows a ticket-order action — this is the one place to swap.
-   */
-  const payForTickets = async () => {
-    console.warn(
-      "[tickets] No ticket-order endpoint yet — approving locally. " +
-        "The subscribe Lambda prices orders at CLUBPASS_PRICE and requires a member userName.",
-    );
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-    return { reference: bookingReference(Boolean(userName)) };
-  };
-
-  const pay = async () => {
-    setPayError("");
-    setStep("processing");
-
-    try {
-      const result = await payForTickets();
+  // Real charge: the Lambda prices the basket from Strapi, PayPal takes the
+  // payment, and the paid order plus the stock deduction land in Strapi.
+  const checkout = useTicketCheckout({
+    active: step === "payment",
+    method,
+    ticketId: event?.id,
+    quantities: Object.fromEntries(lines.map((line) => [line.tier.id, line.qty])),
+    total,
+    userName,
+    email: userName ? session?.user?.email : guestEmail.trim(),
+    accessToken: session?.token,
+    onPaid: (result) => {
       setBooking(result);
       setStep("confirmed");
-    } catch (error) {
-      console.error("Ticket payment failed", error);
-      setPayError(error?.message ?? "That payment didn't go through. Please try again.");
-      setStep("payment");
-    }
-  };
+    },
+  });
+  const { eligible, sdkStatus, flow: payFlow } = checkout;
 
   if (eventStatus === "loading") {
     return (
@@ -661,6 +635,7 @@ export default function EventTickets() {
     // Until PayPal answers we don't know what this browser can use, so nothing
     // is greyed out yet — a method only goes disabled once it says no.
     const canUse = (id) => sdkStatus !== "ready" || Boolean(eligible?.[id]);
+    const processing = payFlow.status === "processing";
 
     return (
       <div className="evt-page">
@@ -694,7 +669,7 @@ export default function EventTickets() {
                 key={id}
                 type="button"
                 className={`evt-method${selected ? " is-selected" : ""}`}
-                disabled={!available}
+                disabled={!available || processing}
                 onClick={() => setMethod(id)}
               >
                 {selected && (
@@ -709,29 +684,39 @@ export default function EventTickets() {
             );
           })}
 
-          {payError && <p className="evt-pay-error">{payError}</p>}
+          {/* PayPal's hosted card fields. Never unmounted mid-payment — the
+              processing screen covers them instead, because tearing the
+              iframes down would abort the submit in flight. */}
+          <div className={`evt-card-fields${method === "card" && !SIMULATE ? "" : " is-hidden"}`}>
+            <div ref={checkout.cardHostRef} />
+          </div>
+
+          {sdkStatus === "loading" && <p className="evt-pay-note">Loading secure checkout…</p>}
+          {sdkStatus === "error" && <p className="evt-pay-error">{checkout.sdkError}</p>}
+          {payFlow.status === "error" && <p className="evt-pay-error">{payFlow.message}</p>}
         </div>
 
         <footer className="evt-footer evt-footer--single">
-          <button type="button" className="evt-cta evt-cta--block" onClick={pay}>
-            Pay Now (${total})
+          <button
+            type="button"
+            className="evt-cta evt-cta--block"
+            disabled={processing || (!SIMULATE && sdkStatus !== "ready")}
+            onClick={checkout.pay}
+          >
+            Pay Now (${total.toFixed(2)})
           </button>
         </footer>
-      </div>
-    );
-  }
 
-  if (step === "processing") {
-    return (
-      <div className="evt-page">
-        <div className="evt-processing">
-          <span className="evt-spinner" role="status" aria-label="Processing payment" />
-          <h2>Processing Payment…</h2>
-          <p>
-            Please don't close this screen or tap the back button. We are securely validating
-            your booking.
-          </p>
-        </div>
+        {processing && (
+          <div className="evt-processing evt-processing--overlay">
+            <span className="evt-spinner" role="status" aria-label="Processing payment" />
+            <h2>Processing Payment…</h2>
+            <p>
+              Please don't close this screen or tap the back button. We are securely validating
+              your booking.
+            </p>
+          </div>
+        )}
       </div>
     );
   }
@@ -779,7 +764,25 @@ export default function EventTickets() {
               </div>
               <div>
                 <dt>Booking Reference</dt>
-                <dd>{booking?.reference}</dd>
+                <dd>{booking?.bookingReference && `#${booking.bookingReference}`}</dd>
+              </div>
+              <div>
+                <dt>{booking?.tickets?.length === 1 ? "Ticket Number" : "Ticket Numbers"}</dt>
+                <dd>
+                  {booking?.tickets?.length ? (
+                    <ul className="evt-ticket-numbers">
+                      {booking.tickets.map((ticket) => (
+                        <li key={ticket.ticketNumber}>
+                          <b>{ticket.ticketNumber}</b>
+                          <span>{ticket.tierLabel}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    // Issuing can lag the payment; the Lambda finishes it on retry.
+                    "Being issued — you'll receive them by email"
+                  )}
+                </dd>
               </div>
               <div>
                 <dt>Ticket Status</dt>
