@@ -1712,6 +1712,7 @@ h5.island-text-mobile {
     text-align: center;
     color: #161616;
         width: 31.5%;
+        min-height: 400px;
     
 }
 .membership-section .plus {
