@@ -73,11 +73,17 @@
 /* --- body --- */
 
 .prf-body {
-  padding: 20px;
-  max-width: 600px;
-  margin: 0 auto;
+        padding: 60px 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    gap: 20px;
 }
-
+.prf-in-image img {
+    width: 100%;
+}
 /* --- member card --- */
 
 .prf-card {
@@ -250,4 +256,13 @@
 .prf-manage {
   background: var(--prf-teal);
   color: var(--prf-navy);
+}
+@media (max-width: 600px) {
+.prf-body {
+    grid-template-columns: 1fr;
+    padding:  20px;
+}
+.prf-in-image {
+    display: none;
+}
 }
