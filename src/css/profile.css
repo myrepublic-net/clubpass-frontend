@@ -155,7 +155,7 @@
 /* Tappable: R Coins are redeemed in the Reward Land app. */
 .prf-stat--coins {
   display: block;
-  background: linear-gradient(115deg, #AFD4F6 0%, #C7CCEF 100%);
+      background: linear-gradient(275.47deg, #83BCFF 11.4%, #DBEBFE 51.39%);
   color: var(--prf-navy);
   text-decoration: none;
   padding-right: 34px;
@@ -188,7 +188,7 @@
 
 .prf-perks-head {
   margin: 26px 0 16px;
-  font-size: 19px;
+  font-size: 20px;
   font-weight: 800;
   color: var(--prf-navy);
 }
@@ -204,7 +204,7 @@
   align-items: center;
   gap: 11px;
   padding: 7px 0;
-  font-size: 14.5px;
+  font-size: 15px;
 }
 
 .prf-tick {
@@ -235,12 +235,12 @@
   justify-content: center;
   width: 100%;
   margin-top: 14px;
-  padding: 18px;
+  padding: 15px;
   border: none;
   border-radius: 10px;
   font-family: inherit;
-  font-size: 15px;
-  font-weight: 800;
+  font-size: 18px;
+  font-weight: 700;
   letter-spacing: .03em;
   text-transform: uppercase;
   text-decoration: none;
@@ -264,5 +264,9 @@
 }
 .prf-in-image {
     display: none;
+}
+.prf-explore,
+.prf-manage {
+  font-size: 15px;
 }
 }
