@@ -490,11 +490,11 @@ export default function ClubPass() {
 
   return (
     <div className="clubpass-page cpn-page">
-      <title>Clubpass Home Express | RewardLand</title>
+      <title>Clubpass by Reward Land | Exclusive Perks, Events &amp; Member Benefits</title>
 
       <meta
         name="description"
-        content="Singapore's first late-night coach membership. Scheduled departures from the club district straight to the East S$17.90/month, no surge, cancel anytime."
+        content="Discover Clubpass by Reward Land, a membership for exclusive perks, special rates, R Coins and curated experiences across Singapore."
       />
 
       {/* ================= Header ================= */}
