@@ -14,6 +14,10 @@ import UserGate from "./components/UserGate.jsx";
 import NotFound from "./pages/NotFound.jsx";
 import Profile from "./pages/Profile.jsx";
 import ManageSubscription from "./pages/ManageSubscription.jsx";
+import Terms from "./pages/Terms.jsx";
+import PrivacyPolicy from "./pages/PrivacyPolicy.jsx";
+import ContactUs from "./pages/ContactUs.jsx";
+import Faq from "./pages/Faq.jsx";
 
 const router = createBrowserRouter([
   { path: "/", element: <ClubPass /> },
@@ -60,6 +64,11 @@ const router = createBrowserRouter([
   { path: "/profile", element: <Profile /> },
   // Managing an existing membership: plan, cancel, reactivate.
   { path: "/membership", element: <ManageSubscription /> },
+  // Clubpass Terms & Conditions, Privacy Policy and Contact Us — public, same layout.
+  { path: "/terms-and-conditions", element: <Terms /> },
+  { path: "/privacy-policy", element: <PrivacyPolicy /> },
+  { path: "/contact-us", element: <ContactUs /> },
+  { path: "/faq", element: <Faq /> },
   // Catch-all, last: anything the routes above didn't claim. Without it a bad
   // URL renders React Router's own error screen, which talks about routing
   // rather than to the person reading it.

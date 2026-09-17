@@ -1,0 +1,70 @@
+/* ==========================================================================
+   Site footer. Mirrors the home page's .cp-footer rules, but carries its own
+   variables and sizes so it looks the same on pages that don't load
+   clubpass.css or sit inside .clubpass-page (Terms, Privacy, Contact).
+   ========================================================================== */
+
+.site-footer {
+  --cp-container: 1200px;
+  --cp-line: #ECE8F6;
+
+  padding: 26px 0;
+  border-top: 1px solid var(--cp-line);
+  background-color: #0a0705;
+}
+
+.site-footer .cp-container {
+  width: 100%;
+  max-width: var(--cp-container);
+  margin: 0 auto;
+  padding: 0 24px;
+  box-sizing: border-box;
+}
+
+.site-footer .cp-footer-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.site-footer .cp-brand {
+  display: inline-flex;
+  align-items: center;
+}
+
+.site-footer .cp-brand img {
+  display: block;
+  width: 220px;
+  height: auto;
+}
+
+.site-footer .cp-footer-links {
+  display: flex;
+  align-items: center;
+  gap: 26px;
+}
+
+.site-footer .cp-footer-links a {
+  font-size: 12px;
+  color: #fff;
+  text-decoration: none;
+}
+
+.site-footer .cp-footer-links a:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 767px) {
+  .site-footer .cp-brand img {
+    width: 150px;
+  }
+
+  .site-footer .cp-footer-inner,
+  .site-footer .cp-footer-links {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+  }
+}

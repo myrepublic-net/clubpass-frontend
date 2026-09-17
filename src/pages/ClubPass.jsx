@@ -24,11 +24,11 @@ import { readMemberSession } from "../api/auth.js";
 import { isPaid, resolveClubpassUser } from "../api/clubpassUser.js";
 import SubscribeModal from "../components/SubscribeModal.jsx";
 import UserMenu from "../components/UserMenu.jsx";
+import SiteFooter from "../components/SiteFooter.jsx";
 import { ClubpassUserContext } from "../components/clubpassUserContext.js";
 import { useTickets } from "../hooks/useTickets.js";
 import useHome from "../hooks/useHome.js";
 
-const SITE = "https://www.rewardland.sg";
 const IMG = "/images/cpn";
 
 /* =========================================================
@@ -111,7 +111,7 @@ const FALLBACK_CONTENT = {
   cta: {
     heading: "Be one of the first 150.",
     description:
-      "Founder pricing ends when the seats are gone. Lock in SGD$19.90/mth and be part of Clubpass from night one.",
+      "Founder pricing ends when the seats are gone. Lock in SGD$17.90/mth and be part of Clubpass from night one.",
     buttonText: "Sign Up Now",
     buttonLink: "/signup",
     image: `${IMG}/music-girl.png`,
@@ -152,7 +152,7 @@ const FALLBACK_CONTENT = {
       { id: "faq-2", question: "Is this safe? Who operates the buses?", answer: "Rides are run by licensed Singapore coach operators with professional drivers and full-size, air-conditioned vehicles. Every seat is booked to a verified RewardLand member and boarding is QR-verified, so nobody rides who isn't a member." },
       { id: "faq-3", question: "How many rides do I get?", answer: "Your membership covers four operating nights a month one night a week, every week. Exact timings and the published departure board live in the RewardLand app." },
       { id: "faq-4", question: "Do I need a new account or app?", answer: "No. Clubpass sits inside the RewardLand app you already have. If you're an existing user you're signed in automatically no new account, no second app to download." },
-      { id: "faq-5", question: "How does billing and cancellation work?", answer: "S$19.90 is charged monthly to your payment method in the app and renews automatically. You can cancel in two taps from your membership screen there's no lock-in and no cancellation fee." },
+      { id: "faq-5", question: "How does billing and cancellation work?", answer: "S$17.90 is charged monthly to your payment method in the app and renews automatically. You can cancel in two taps from your membership screen there's no lock-in and no cancellation fee." },
       { id: "faq-6", question: "My route isn't live yet — what can I do?", answer: "Register your interest for West, North or South. Each route unlocks once enough neighbours vote for it one vote per route, five seconds. We'll notify you the moment yours goes live." },
     ],
   },
@@ -494,7 +494,7 @@ export default function ClubPass() {
 
       <meta
         name="description"
-        content="Singapore's first late-night coach membership. Scheduled departures from the club district straight to the East S$19.90/month, no surge, cancel anytime."
+        content="Singapore's first late-night coach membership. Scheduled departures from the club district straight to the East S$17.90/month, no surge, cancel anytime."
       />
 
       {/* ================= Header ================= */}
@@ -1385,35 +1385,7 @@ export default function ClubPass() {
 
       {/* ================= Footer ================= */}
 
-      <footer className="cp-footer">
-        <div className="cp-container cp-footer-inner">
-          <div className="cp-brand">
-            <img src="./images/cp-logo.png" />
-            {/* <span className="cp-brand-mark">R</span>
-
-            <span className="cp-brand-name">
-              reward<label className="cl-color">land</label>
-            </span>
-
-            <span className="cp-footer-tag">
-              Shop. Earn. Redeem. Repeat.
-            </span> */}
-          </div>
-
-          <div className="cp-footer-links">
-            <a href={SITE}>About RewardLand</a>
-            <a href={`${SITE}/terms-and-conditions`}>
-              Terms of Use
-            </a>
-            <a href={`${SITE}/privacy-policy`}>
-              Privacy Policy
-            </a>
-            <a href={`${SITE}/contact`}>
-              Contact Us
-            </a>
-          </div>
-        </div>
-      </footer>
+      <SiteFooter />
 
       <ClubpassUserContext.Provider value={subscribeUser}>
         <SubscribeModal

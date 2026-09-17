@@ -29,6 +29,8 @@ const SIMULATE = !API_URL;
 const COUNTRY_CODE_DIGITS = "65";
 
 let registrationToken = null;
+// Who `registrationToken` was issued for.
+let registeredAs = null;
 
 /**
  * The member's own sign-in — the only way into /clubpass-app now that rr_sso
@@ -208,12 +210,28 @@ function simulateVerifyOtp(identifier, otp) {
 export async function requestEmailOtp({ username, email }) {
   if (SIMULATE) return simulateSendOtp(email);
 
-  if (!registrationToken) {
+  // The token is bound to the username and email it was registered with. If
+  // either has changed since (a typo fixed, a different address), start a new
+  // registration — reusing the old token fails with
+  // REGISTRATION_TOKEN_OR_EMAIL_MISMATCH.
+  if (!registrationToken || registeredAs?.username !== username || registeredAs?.email !== email) {
     const data = await request("register", { username, email });
     registrationToken = data.registrationToken;
+    registeredAs = { username, email };
   }
 
-  return request("request-otp", { email }, tokenHeaders());
+  try {
+    return await request("request-otp", { email }, tokenHeaders());
+  } catch (error) {
+    // A stale or rejected token: drop it so the next attempt registers afresh.
+    if (error.code === "REGISTRATION_TOKEN_OR_EMAIL_MISMATCH") {
+      registrationToken = null;
+      registeredAs = null;
+      // Reward Land answers this when the email is already registered.
+      error.message = "Email address already exists.";
+    }
+    throw error;
+  }
 }
 
 export async function verifyEmailOtp({ email }, otp) {
@@ -269,6 +287,7 @@ export async function signup({ email, phoneNumber, password, referralCode, promo
 
   // The journey is done — a second signup in the same tab should start clean.
   registrationToken = null;
+  registeredAs = null;
   return data;
 }
 
