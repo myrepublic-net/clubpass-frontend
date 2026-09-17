@@ -326,7 +326,7 @@ export default function MemberDashboard({ onRestart }) {
                       onClick={() => vote(route)}
                       disabled={Boolean(votedRoute) || !route.open}
                     >
-                      {votedRoute === route.name ? "Counted" : votedRoute ? "Voted" : "I want this"}
+                      {votedRoute === route.id ? "Counted" : votedRoute ? "Voted" : "I want this"}
                     </button>
                   </li>
                 ))}

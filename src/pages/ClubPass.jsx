@@ -28,7 +28,6 @@ import { ClubpassUserContext } from "../components/clubpassUserContext.js";
 import { useTickets } from "../hooks/useTickets.js";
 import useHome from "../hooks/useHome.js";
 
-const APP_LINK = "https://rewardland.onelink.me/EwIe/start";
 const SITE = "https://www.rewardland.sg";
 const IMG = "/images/cpn";
 
@@ -41,6 +40,18 @@ const IMG = "/images/cpn";
  * see useHome — but it renders first so the landing page is never blank and
  * survives the CMS being unreachable.
  */
+/**
+ * What the CMS doesn't carry per route: the pin and route-map artwork, and the
+ * fallback thumbs-up when a route has no voting image. Keyed by the route's
+ * slug ("NORTH EASTIES" -> "north-easties"), which is also its CSS class.
+ */
+const ROUTE_THEMES = {
+  easties: { pin: "/images/map-pin.png", map: "/images/map-easties.svg", thumb: "/images/thumbs-up-ea.svg", highlight: true },
+  westies: { pin: "/images/map-pin-we.png", map: "/images/map-westies.svg", thumb: "/images/thumbs-up-we.svg" },
+  "north-easties": { pin: "/images/map-pin-ne.png", map: "/images/map-north-e.svg", thumb: "/images/thumbs-up-ne.svg" },
+  "north-westies": { pin: "/images/map-pin-nw.png", map: "/images/map-north-w.svg", thumb: "/images/thumbs-up-nw.svg" },
+};
+
 const FALLBACK_CONTENT = {
   howItWorks: {
     eyebrow: "how it works",
@@ -351,8 +362,6 @@ export default function ClubPass() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [openFaq, setOpenFaq] = useState(0);
   const [openRoute, setOpenRoute] = useState("easties");
-  // Live tallies from Strapi. No user here, so nothing votes — see voteRoute.
-  const { routes } = useRouteVoting();
 
   // Everything above the venue grid is editorial, and comes from Strapi.
   const { hero: heroSlides, beforeTickets, afterTickets, cta, faq, beta, why, howItWorks } =
@@ -393,6 +402,13 @@ export default function ClubPass() {
   }, [session]);
 
   const paid = isPaid(clubpassUser);
+
+  // Routes, their tallies and the member's one vote — all from Strapi.
+  const { routes, votedRoute, vote, error: voteError } = useRouteVoting({
+    user: clubpassUser,
+    setUser: setClubpassUser,
+  });
+  const [lastVotedRoute, setLastVotedRoute] = useState(null);
 
   // The membership CTAs pitch in place rather than sending anyone off to the
   // membership page — SubscribeModal reads its member off context, which this
@@ -457,15 +473,19 @@ export default function ClubPass() {
   // A vote is spent against an account — "free account required", as the vote
   // box says — so a signed-out tap goes to login first and comes back here.
   // Signed in, voting itself still happens in the app.
-  const voteRoute = (event) => {
+  const voteRoute = (route) => (event) => {
     event?.preventDefault();
 
     if (!userName) {
-      navigate("/login", { state: { from: "/" } });
+      navigate("/login", { state: { from: "/#routes" } });
       return;
     }
 
-    window.open(APP_LINK, "_blank", "noopener,noreferrer");
+    // One vote per account, and only once the member record has loaded.
+    if (!clubpassUser || votedRoute || !route.open) return;
+
+    setLastVotedRoute(route.id);
+    vote(route);
   };
 
   return (
@@ -1142,385 +1162,131 @@ export default function ClubPass() {
               </div>
             </div>
 
-    <div className={`route-item easties${openRoute === "easties" ? " active" : ""}`}>
+    {routes.map((route) => {
+      const key = route.slug;
+      const theme = ROUTE_THEMES[key] ?? ROUTE_THEMES.easties;
+      const isOpen = openRoute === key;
+      const isMine = votedRoute === route.id;
+      // Waiting on the member lookup counts as "can't vote yet", not "voted".
+      const locked = Boolean(votedRoute) || !route.open || (userName && !clubpassUser);
 
-        <div className="route-header" onClick={() => toggleRoute("easties")}>
-
+      return (
+        <div key={route.id} className={`route-item ${key}${isOpen ? " active" : ""}`}>
+          <div className="route-header" onClick={() => toggleRoute(key)}>
             <div className="route-left">
-                <div className="route-title-row">
-                    <div className="route-title">EASTIES</div>
-                    <div className="route-route">— EAST ROUTE</div>
-                </div>
+              <div className="route-title-row">
+                <div className="route-title">{route.title}</div>
+                <div className="route-route">— {route.name} ROUTE</div>
+              </div>
 
-                <div className="route-description">
-                    Traveling towards the East.
-                </div>
+              <div className="route-description">{route.subTitle}</div>
             </div>
 
             <div className="progress-area">
-                <div className="progress-top">
-                    <div>
-                        <span className="progress-number">137</span>
-                        <span className="progress-total">/ 200</span>
-                    </div>
+              <div className="progress-top">
+                <div>
+                  <span className="progress-number">{route.voted}</span>
+                  <span className="progress-total">/ {route.required}</span>
                 </div>
+              </div>
 
-                <div className="progress-bar">
-                    <div className="progress-fill"></div>
-                </div>
+              <div className="progress-bar">
+                <div className="progress-fill" style={{ width: `${route.progress}%` }}></div>
+              </div>
             </div>
 
             <div className="unlock">
-                <strong>63 more to unlock</strong>
-                <span>Active Campaign</span>
+              <strong>
+                {route.remaining > 0 ? `${route.remaining} more to unlock` : "Unlocked"}
+              </strong>
+              <span>Active Campaign</span>
             </div>
 
-            <div className="toggle">{openRoute === "easties" ? "−" : "+"}</div>
+            <div className="toggle">{isOpen ? "−" : "+"}</div>
+          </div>
 
-        </div>
-
-
-        <div
-          className="route-content"
-          ref={setRouteContentRef("easties")}
-          style={{ maxHeight: getRouteMaxHeight("easties") }}
-        >
-
+          <div
+            className="route-content"
+            ref={setRouteContentRef(key)}
+            style={{ maxHeight: getRouteMaxHeight(key) }}
+          >
             <div className="route-content-inner">
+              <div className="dropoff">
+                <div className="dropoff-title">{route.dropoffHeading}</div>
 
+                <ul className="dropoff-list">
+                  {route.dropPoints.map((point) => (
+                    <li key={point.id}>
+                      <img src={theme.pin} alt="" />
+                      {point.name}
+                    </li>
+                  ))}
+                </ul>
 
-                <div className="dropoff">
+                {route.mapLinkText && (
+                  <a
+                    href={route.mapLink ?? "#"}
+                    className="route-link"
+                    {...(route.mapLink && route.mapLink !== "#"
+                      ? { target: "_blank", rel: "noopener noreferrer" }
+                      : {})}
+                  >
+                    {route.mapLinkText} <img src={theme.map} alt="" />
+                  </a>
+                )}
+              </div>
 
-                    <div className="dropoff-title">
-                        DROP-OFF POINTS (EAST)
+              {/* The mini map is drawn for four stops, so only the first four are labelled. */}
+              <div className="map-box">
+                <div className="map-line"></div>
+
+                {route.dropPoints.slice(0, 4).map((point, index) => (
+                  <React.Fragment key={point.id}>
+                    <div className={`map-point point-${index + 1}`}></div>
+                    <div className={`map-label label-${index + 1}`}>
+                      {point.name.replace(/\s+MRT$/i, "")}
                     </div>
+                  </React.Fragment>
+                ))}
 
-                    <ul className="dropoff-list">
-                        <li><img src="./images/map-pin.png"/>Paya Lebar MRT</li>
-                        <li><img src="./images/map-pin.png"/>Bedok MRT</li>
-                        <li><img src="./images/map-pin.png"/>Tampines MRT</li>
-                        <li><img src="./images/map-pin.png"/>Pasir Ris MRT</li>
-                    </ul>
-
-                    <a href="#" className="route-link">
-                        View route map <img src="/images/map-easties.svg"/>
-                    </a>
-
-                </div>
-
-
-  
-                <div className="map-box">
-
-                    <div className="map-line"></div>
-
-                    <div className="map-point point-1"></div>
-                    <div className="map-point point-2"></div>
-                    <div className="map-point point-3"></div>
-                    <div className="map-point point-4"></div>
-
+                {theme.highlight && route.dropPoints[2] && (
+                  <>
                     <div className="map-highlight">
-                        Tampines
+                      {route.dropPoints[2].name.replace(/\s+MRT$/i, "")}
                     </div>
+                    <div className="map-location location-2"><img src="/images/map-pin.png" alt="" /></div>
+                    <div className="map-location location-3"><img src="/images/map-pin.png" alt="" /></div>
+                  </>
+                )}
+              </div>
 
-                    <div className="map-label label-1">
-                        Paya Lebar 
-                    </div>
+              <div className="vote-box">
+                <div className="vote-title">{route.votingTitle}</div>
 
-                    <div className="map-label label-2">
-                        Bedok 
-                    </div>
-
-                    <div className="map-label label-3">
-                        Tampines 
-                    </div>
-
-                    <div className="map-label label-4">
-                        Pasir Ris
-                    </div>
-
-                    {/* <div className="map-location location-1">♧</div> */}
-                    <div className="map-location location-2"><img src="/images/map-pin.png"/></div>
-                    <div className="map-location location-3"><img src="/images/map-pin.png"/></div>
-
+                <div className="vote-icon">
+                  <img src={route.votingImage ?? theme.thumb} alt="" />
                 </div>
 
+                <a
+                  href="#"
+                  className={`vote-button${locked && userName ? " is-disabled" : ""}`}
+                  aria-disabled={Boolean(locked && userName)}
+                  onClick={voteRoute(route)}
+                >
+                  {isMine ? "Your vote is counted" : votedRoute ? "Already voted" : route.votingButtonText}
+                </a>
 
- 
-                <div className="vote-box">
+                {voteError && route.id === lastVotedRoute && (
+                  <div className="vote-error">{voteError}</div>
+                )}
 
-                    <div className="vote-title">
-                        EASTIES, WE NEED YOU!
-                    </div>
-
-                    <div className="vote-icon">
-                        <img src="./images/thumbs-up-ea.svg"/>
-                    </div>
-
-                    <a href="#" className="vote-button" onClick={voteRoute}>
-                        Vote for East
-                    </a>
-
-                    <div className="vote-description">
-                        Free account required<br/>
-                        No membership needed
-                    </div>
-
-                </div>
-
+                <div className="vote-description">{multiline(route.moreInfo)}</div>
+              </div>
             </div>
-
+          </div>
         </div>
-
-    </div>
-
-
-    <div className={`route-item westies${openRoute === "westies" ? " active" : ""}`}>
-
-        <div className="route-header" onClick={() => toggleRoute("westies")}>
-
-            <div className="route-left">
-                <div className="route-title-row">
-                    <div className="route-title">WESTIES</div>
-                    <div className="route-route">— WEST ROUTE</div>
-                </div>
-
-                <div className="route-description">
-                    Traveling towards the West.
-                </div>
-            </div>
-
-            <div className="progress-area">
-                <div className="progress-top">
-                    <div>
-                        <span className="progress-number">84</span>
-                        <span className="progress-total">/ 200</span>
-                    </div>
-                </div>
-
-                <div className="progress-bar">
-                    <div className="progress-fill"></div>
-                </div>
-            </div>
-
-            <div className="unlock">
-                <strong>116 more to unlock</strong>
-                <span>Active Campaign</span>
-            </div>
-
-            <div className="toggle">{openRoute === "westies" ? "−" : "+"}</div>
-
-        </div>
-
-        <div
-          className="route-content"
-          ref={setRouteContentRef("westies")}
-          style={{ maxHeight: getRouteMaxHeight("westies") }}
-        >
-            <div className="route-content-inner">
-                <div className="dropoff">
-                    <div className="dropoff-title">DROP-OFF POINTS (WEST)</div>
-                    <ul className="dropoff-list">
-                        <li><img src="./images/map-pin-we.png"/>Jurong East MRT</li>
-                        <li><img src="./images/map-pin-we.png"/>West Coast</li>
-                        <li><img src="./images/map-pin-we.png"/>Clementi MRT</li>
-                        <li><img src="./images/map-pin-we.png"/>Buona Vista MRT</li>
-                    </ul>
-                    <a href="#" className="route-link"> View route map <img src="/images/map-westies.svg"/></a>
-                </div>
-
-                <div className="map-box">
-                    <div className="map-line"></div>
-                    <div className="map-point point-1"></div>
-                    <div className="map-point point-2"></div>
-                    <div className="map-point point-3"></div>
-                    <div className="map-point point-4"></div>
-
-                     <div className="map-label label-1"> Jurong East </div>
-                   <div className="map-label label-2"> West Coast </div>
-                    <div className="map-label label-3"> Clementi </div>
-                    <div className="map-label label-4"> Buona Vista</div>
-                </div>
-
-                <div className="vote-box">
-                    <div className="vote-title">WESTIES, WE NEED YOU!</div>
-                    <div className="vote-icon"><img src="./images/thumbs-up-we.svg"/></div>
-                    <a href="#" className="vote-button" onClick={voteRoute}>Vote for West</a>
-                    <div className="vote-description">
-                        Free account required<br/>
-                        No membership needed
-                    </div>
-                </div>
-            </div>
-        </div>
-
-    </div>
-
-
-
-    <div className={`route-item north-easties${openRoute === "north-easties" ? " active" : ""}`}>
-
-        <div className="route-header" onClick={() => toggleRoute("north-easties")}>
-
-            <div className="route-left">
-                <div className="route-title-row">
-                    <div className="route-title">NORTH EASTIES</div>
-                    <div className="route-route">— NORTH EAST ROUTE</div>
-                </div>
-
-                <div className="route-description">
-                    Traveling towards the North East.
-                </div>
-            </div>
-
-            <div className="progress-area">
-                <div className="progress-top">
-                    <div>
-                        <span className="progress-number">126</span>
-                        <span className="progress-total">/ 200</span>
-                    </div>
-                </div>
-
-                <div className="progress-bar">
-                    <div className="progress-fill"></div>
-                </div>
-            </div>
-
-            <div className="unlock">
-                <strong>74 more to unlock</strong>
-                <span>Active Campaign</span>
-            </div>
-
-            <div className="toggle">{openRoute === "north-easties" ? "−" : "+"}</div>
-
-        </div>
-
-        <div
-          className="route-content"
-          ref={setRouteContentRef("north-easties")}
-          style={{ maxHeight: getRouteMaxHeight("north-easties") }}
-        >
-            <div className="route-content-inner">
-                <div className="dropoff">
-                    <div className="dropoff-title">DROP-OFF POINTS</div>
-                    <ul className="dropoff-list">
-                        <li><img src="./images/map-pin-ne.png"/>Serangoon MRT</li>
-                        <li><img src="./images/map-pin-ne.png"/>Hougang MRT</li>
-                        <li><img src="./images/map-pin-ne.png"/>Sengkang MRT</li>
-                        <li><img src="./images/map-pin-ne.png"/>Punggol MRT</li>
-                    </ul>
-                    <a href="#" className="route-link">View route map  <img src="/images/map-north-e.svg"/></a>
-                </div>
-
-                <div className="map-box">
-                    <div className="map-line"></div>
-                    <div className="map-point point-1"></div>
-                    <div className="map-point point-2"></div>
-                    <div className="map-point point-3"></div>
-                    <div className="map-point point-4"></div>
-                     <div className="map-label label-1"> Serangoon </div>
-                   <div className="map-label label-2"> Hougang </div>
-                    <div className="map-label label-3"> Sengkang </div>
-                    <div className="map-label label-4"> Punggol</div>
-                    
-                </div>
-
-                <div className="vote-box">
-                    <div className="vote-title">NORTH EASTIES, WE NEED YOU!</div>
-                    <div className="vote-icon"><img src="./images/thumbs-up-ne.svg"/></div>
-                    <a href="#" className="vote-button" onClick={voteRoute}>Vote Now</a>
-                    <div className="vote-description">
-                        Free account required<br/>
-                        No membership needed
-                    </div>
-                </div>
-            </div>
-        </div>
-
-    </div>
-
-
-
-    <div className={`route-item north-westies${openRoute === "north-westies" ? " active" : ""}`}>
-
-        <div className="route-header" onClick={() => toggleRoute("north-westies")}>
-
-            <div className="route-left">
-                <div className="route-title-row">
-                    <div className="route-title">NORTH WESTIES</div>
-                    <div className="route-route">— NORTH WEST ROUTE</div>
-                </div>
-
-                <div className="route-description">
-                    Traveling towards the North West.
-                </div>
-            </div>
-
-            <div className="progress-area">
-                <div className="progress-top">
-                    <div>
-                        <span className="progress-number">61</span>
-                        <span className="progress-total">/ 200</span>
-                    </div>
-                </div>
-
-                <div className="progress-bar">
-                    <div className="progress-fill"></div>
-                </div>
-            </div>
-
-            <div className="unlock">
-                <strong>139 more to unlock</strong>
-                <span>Active Campaign</span>
-            </div>
-
-            <div className="toggle">{openRoute === "north-westies" ? "−" : "+"}</div>
-
-        </div>
-
-        <div
-          className="route-content"
-          ref={setRouteContentRef("north-westies")}
-          style={{ maxHeight: getRouteMaxHeight("north-westies") }}
-        >
-            <div className="route-content-inner">
-                <div className="dropoff">
-                    <div className="dropoff-title">DROP-OFF POINTS</div>
-                    <ul className="dropoff-list">
-                        <li><img src="./images/map-pin-nw.png"/>Bukit Batok MRT</li>
-                        <li><img src="./images/map-pin-nw.png"/>Choa Chu Kang MRT</li>
-                        <li><img src="./images/map-pin-nw.png"/>Bukit Panjang MRT</li>
-                        <li><img src="./images/map-pin-nw.png"/>Woodlands MRT</li>
-                    </ul>
-                    <a href="#" className="route-link">View route map  <img src="/images/map-north-w.svg"/></a>
-                </div>
-
-                <div className="map-box">
-                    <div className="map-line"></div>
-                    <div className="map-point point-1"></div>
-                    <div className="map-point point-2"></div>
-                    <div className="map-point point-3"></div>
-                    <div className="map-point point-4"></div>
-
-                    <div className="map-label label-1"> Bukit Batok </div>
-                   <div className="map-label label-2"> Choa Chu Kang </div>
-                    <div className="map-label label-3">Bukit Panjang </div>
-                    <div className="map-label label-4"> Woodlands</div>
-                </div>
-
-                <div className="vote-box">
-                    <div className="vote-title">NORTH WESTIES, WE NEED YOU!</div>
-                    <div className="vote-icon"><img src="./images/thumbs-up-nw.svg"/></div>
-                    <a href="#" className="vote-button" onClick={voteRoute}>Vote Now</a>
-                    <div className="vote-description">
-                        Free account required<br/>
-                        No membership needed
-                    </div>
-                </div>
-            </div>
-        </div>
-
-    </div>
+      );
+    })}
 
 </div>
           </div>
