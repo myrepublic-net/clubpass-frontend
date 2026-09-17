@@ -92,3 +92,24 @@ export function createOrder({ method, userName, email }) {
 export function captureOrder({ orderId, method, userName }) {
   return call("capture-order", { orderId, method, userName });
 }
+
+/**
+ * Tickets, step 1. The Lambda prices the basket from Strapi — `expectedTotal`
+ * only lets it refuse if that no longer matches what the buyer was shown.
+ */
+export function createTicketOrder({ ticketId, quantities, method, userName, email, accessToken, expectedTotal }) {
+  return call("create-ticket-order", {
+    ticketId,
+    quantities,
+    method,
+    userName,
+    email,
+    accessToken,
+    expectedTotal,
+  });
+}
+
+/** Tickets, step 2: capture, mark the order paid and deduct the stock. */
+export function captureTicketOrder({ orderId }) {
+  return call("capture-ticket-order", { orderId });
+}
