@@ -174,6 +174,12 @@ export default function Signup() {
             }
           />
 
+          {/* A failed request never opens the OTP boxes, which is where errors
+              normally show — so surface it here instead. */}
+          {!emailOtp.sent && emailOtp.error && (
+            <p className="auth-field-error" role="alert">{emailOtp.error}</p>
+          )}
+
           {emailOtp.sent && (
             <div>
               <label className="auth-otp-label">Enter OTP</label>
@@ -214,6 +220,12 @@ export default function Signup() {
               </button>
             }
           />
+
+          {/* A failed request never opens the OTP boxes, which is where errors
+              normally show — so surface it here instead. */}
+          {!phoneOtp.sent && phoneOtp.error && (
+            <p className="auth-field-error" role="alert">{phoneOtp.error}</p>
+          )}
 
           {phoneOtp.sent && (
             <div>
