@@ -347,7 +347,7 @@ export default function ClubPassApp() {
               {routesStatus === "error" && <small>Routes are unavailable right now.</small>}
 
               {routes.map((route) => {
-                const isMine = votedRoute === route.name;
+                const isMine = votedRoute === route.id;
 
                 return (
                   <div className="cpm-vote" key={route.id}>

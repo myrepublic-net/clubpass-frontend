@@ -51,7 +51,7 @@ export default function useRouteVoting({ user, setUser } = {}) {
         ),
       );
 
-      setUser?.({ ...user, [route.name.toLowerCase()]: true });
+      setUser?.({ ...user, voted_route: { documentId: route.id, route_name: route.name } });
       setError("");
 
       try {
