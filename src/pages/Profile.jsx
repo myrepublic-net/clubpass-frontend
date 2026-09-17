@@ -11,9 +11,10 @@ import "../css/profile.css";
 
 /** `lead` is the part the design picks out in teal. */
 const PERKS = [
-  { lead: "", text: "Save 30% on all ticket bookings" },
-  { lead: "Earn 3X R Coins", text: " on check-ins" },
-  { lead: "", text: "Unlimited free Clarke Quay express rides" },
+  { lead: "", text: "Up to 50% off all tickets" },
+  { lead: "3X R Coins Multiplier" },
+  { lead: "", text: "Access to Clubpass Home Express" },
+  { lead: "", text: "Free Entry tickets for selected events " },
 ];
 
 /** R Coins are spent in the Reward Land app, so the balance card opens it. */
@@ -45,7 +46,7 @@ function membershipStatus(user, paid) {
     case "suspended":
       return "Payment issue";
     default:
-      return "Active member";
+      return "CLUBPASS MEMBER";
   }
 }
 
@@ -157,7 +158,7 @@ export default function Profile() {
           </div>
         </div>
 
-        <h2 className="prf-perks-head">Your Premium Perks</h2>
+        <h2 className="prf-perks-head">Clubpass Membership Perks</h2>
         <ul className="prf-perks">
           {PERKS.map((perk) => (
             <li key={perk.lead + perk.text}>
