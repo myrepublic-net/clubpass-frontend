@@ -1,3 +1,6 @@
+import { readMemberSession } from "./auth.js";
+import { castRouteVote } from "./subscribe.js";
+
 /**
  * Route voting.
  *
@@ -9,7 +12,8 @@
 
 const BASE_URL =
   import.meta.env.VITE_STRAPI_URL ?? "https://exciting-flower-bc33aab938.strapiapp.com";
-const TOKEN = import.meta.env.VITE_STRAPI_TOKEN;
+// Read-only — the vote itself is written by the Lambda.
+const TOKEN = import.meta.env.VITE_STRAPI_TOKEN_GET;
 
 /** Route name → the boolean column on clubpass-user that records the vote. */
 export const VOTE_COLUMNS = {
@@ -81,21 +85,15 @@ export function votedRouteOf(user) {
  * needing a server-side counter.
  */
 export async function castVote({ route, user }) {
-  const column = VOTE_COLUMNS[route.name];
-
-  if (!column) throw new Error(`${route.name} isn't a votable route.`);
+  if (!VOTE_COLUMNS[route.name]) throw new Error(`${route.name} isn't a votable route.`);
   if (votedRouteOf(user)) throw new Error("You've already voted for a route.");
-  if (!user?.documentId) throw new Error("We couldn't find your membership record.");
+  if (!user?.userName) throw new Error("We couldn't find your membership record.");
 
-  await request(`/routes/${route.id}?status=published`, {
-    method: "PUT",
-    body: JSON.stringify({ data: { voted: route.voted + 1 } }),
+  const { voted } = await castRouteVote({
+    userName: user.userName,
+    routeId: route.id,
+    accessToken: readMemberSession()?.token,
   });
 
-  await request(`/clubpass-users/${user.documentId}?status=published`, {
-    method: "PUT",
-    body: JSON.stringify({ data: { [column]: true } }),
-  });
-
-  return { ...route, voted: route.voted + 1, remaining: Math.max(route.remaining - 1, 0) };
+  return { ...route, voted, remaining: Math.max(route.required - voted, 0) };
 }

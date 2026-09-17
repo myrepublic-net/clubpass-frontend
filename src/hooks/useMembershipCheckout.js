@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
-import { markUserPaid, resolveClubpassUser } from "../api/clubpassUser.js";
 import {
   activateSubscription,
   captureOrder,
@@ -111,32 +110,24 @@ export default function useMembershipCheckout({
     setMethod(null);
   }, [active]);
 
-  /** Writes the membership to Strapi once a payment is approved. */
-  const activate = useCallback(async ({ transactionId, email }) => {
-    setFlow({ status: "processing" });
+  /**
+   * Hands the member record the Lambda wrote back to the caller. The Lambda
+   * writes the membership itself as part of confirming the payment, so there
+   * is nothing left for the browser to save.
+   */
+  const activate = useCallback(async ({ user: updated, transactionId }) => {
+    const { setUser: commit, onPaid: done } = latest.current;
 
-    try {
-      const { userName: name, user: current, setUser: commit, onPaid: done } = latest.current;
-      // The gate's lookup can have failed — resolve again rather than drop a
-      // payment we've already taken.
-      const record = current ?? (await resolveClubpassUser(name));
-
-      const updated = await markUserPaid({
-        documentId: record.documentId,
-        userName: record.userName ?? name,
-        email,
-        transactionId,
-      });
-
-      // Anything reading the pass off this record needs it before the caller
-      // switches screens.
-      commit?.(updated ?? record);
-      setFlow({ status: "idle" });
-      done?.(updated ?? record);
-    } catch (error) {
-      console.error("ClubPass membership save failed", error);
+    if (!updated) {
       setFlow({ status: "saveFailed", transactionId });
+      return;
     }
+
+    // Anything reading the pass off this record needs it before the caller
+    // switches screens.
+    commit?.(updated);
+    setFlow({ status: "idle" });
+    done?.(updated);
   }, []);
 
   const fail = useCallback((error, message) => {
@@ -159,16 +150,14 @@ export default function useMembershipCheckout({
 
       setFlow({ status: "processing" });
 
-      const { transactionId, email } = await captureOrder({
+      const { transactionId, user } = await captureOrder({
         orderId,
         method: payMethod,
         userName: latest.current.userName,
+        email: latest.current.profile?.email,
       });
 
-      await activate({
-        transactionId,
-        email: email || latest.current.profile?.email || "",
-      });
+      await activate({ transactionId, user });
     },
     [activate],
   );
@@ -194,14 +183,12 @@ export default function useMembershipCheckout({
         onApprove: async (data) => {
           setFlow({ status: "processing" });
           try {
-            const { email } = await activateSubscription({
+            const { user } = await activateSubscription({
               subscriptionId: data.subscriptionId,
               userName: latest.current.userName,
+              email: latest.current.profile?.email,
             });
-            await activate({
-              transactionId: data.subscriptionId,
-              email: email || latest.current.profile?.email || "",
-            });
+            await activate({ transactionId: data.subscriptionId, user });
           } catch (error) {
             fail(error);
           }
@@ -233,16 +220,13 @@ export default function useMembershipCheckout({
       setFlow({ status: "processing" });
 
       try {
-        const { transactionId, email } = await subscribeWithCard({
+        const { transactionId, user } = await subscribeWithCard({
           setupTokenId,
           userName: latest.current.userName,
           email: latest.current.profile?.email,
         });
 
-        await activate({
-          transactionId,
-          email: email || latest.current.profile?.email || "",
-        });
+        await activate({ transactionId, user });
       } catch (error) {
         fail(error);
       }
@@ -489,14 +473,25 @@ export default function useMembershipCheckout({
   );
 
   /** Dev-only stand-in for an approval, running the identical Strapi activation. */
-  const simulatePayment = useCallback(
-    () =>
-      activate({
-        transactionId: `I-SANDBOX${Date.now().toString().slice(-9)}`,
-        email: latest.current.profile?.email ?? `${latest.current.userName}@sandbox.example.com`,
-      }),
-    [activate],
-  );
+  // Dev-only, and deliberately not saved anywhere: the browser can no longer
+  // write memberships, so this only flips the member on for this page view.
+  const simulatePayment = useCallback(() => {
+    const now = new Date();
+    const next = new Date(now);
+    next.setMonth(next.getMonth() + 1);
+
+    return activate({
+      transactionId: `I-SANDBOX${Date.now().toString().slice(-9)}`,
+      user: {
+        ...(latest.current.user ?? { userName: latest.current.userName }),
+        paidOn: now.toISOString(),
+        secretCode: "000000",
+        tripLeft: 4,
+        billingStatus: "active",
+        nextBillingOn: next.toISOString(),
+      },
+    });
+  }, [activate]);
 
   return {
     flow,

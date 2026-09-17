@@ -42,6 +42,7 @@ function membershipStatus(user, paid) {
     case "cancelled":
       return "Cancelled";
     case "lapsed":
+    case "suspended":
       return "Payment issue";
     default:
       return "Active member";
@@ -145,8 +146,13 @@ export default function Profile() {
           </a>
 
           <div className="prf-stat prf-stat--renewal">
-            <span className="prf-stat-label">Next Renewal</span>
-            <b>{formatDate(user?.nextBillingOn)}</b>
+            {/* A cancelled membership doesn't renew — it runs to the end of the paid period. */}
+            <span className="prf-stat-label">
+              {user?.billingStatus === "cancelled" ? "Access Ends" : "Next Renewal"}
+            </span>
+            <b>
+              {formatDate(user?.billingStatus === "cancelled" ? user?.accessEndsOn : user?.nextBillingOn)}
+            </b>
           </div>
         </div>
 
