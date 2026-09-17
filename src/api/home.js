@@ -23,7 +23,11 @@ const QUERY =
   // its own level, and naming one sibling stops Strapi populating the rest —
   // so ticket has to be listed too or the ticket card comes back empty.
   "&populate[clubpass_beta_section][populate][benefits][populate]=*" +
-  "&populate[clubpass_beta_section][populate][ticket][populate]=*";
+  "&populate[clubpass_beta_section][populate][ticket][populate]=*" +
+  // how_it_works[populate]=* stops one level short of each step's two images,
+  // so steps is named — which means the section image has to be named too.
+  "&populate[how_it_works][populate][steps][populate]=*" +
+  "&populate[how_it_works][populate][image]=true";
 
 /**
  * The best size of an upload to show. Strapi only generates a format when the
@@ -69,6 +73,7 @@ function normalise(data) {
   const faq = data?.faq_section;
   const beta = data?.clubpass_beta_section;
   const why = data?.why_section;
+  const howItWorks = data?.how_it_works;
 
   const items = (side) =>
     (side?.items ?? []).map((item) => ({
@@ -149,6 +154,22 @@ function normalise(data) {
             id: item.id,
             question: item.title ?? "",
             answer: item.body ?? "",
+          })),
+        }
+      : null,
+    howItWorks: howItWorks
+      ? {
+          eyebrow: howItWorks.title ?? "",
+          heading: howItWorks.heading ?? "",
+          paragraph: howItWorks.paragraph ?? "",
+          image: mediaUrl(howItWorks.image),
+          steps: (howItWorks.steps ?? []).map((step) => ({
+            id: step.id,
+            title: step.heading ?? "",
+            text: step.description ?? "",
+            // step_image is the big number, image the small illustration under it.
+            img: mediaUrl(step.step_image),
+            meta: mediaUrl(step.image),
           })),
         }
       : null,

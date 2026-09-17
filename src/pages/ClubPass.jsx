@@ -42,6 +42,19 @@ const IMG = "/images/cpn";
  * survives the CMS being unreachable.
  */
 const FALLBACK_CONTENT = {
+  howItWorks: {
+    eyebrow: "how it works",
+    heading: "Join the club.\nEnjoy perks that keep growing.",
+    paragraph:
+      "Clubpass is your pass to exclusive access, rewards and experiences with more benefits on the way.",
+    image: null,
+    steps: [
+      { id: "step-1", img: "/images/one.png", meta: "/images/join-one.png", title: "CREATE\nACCOUNT", text: "Create a free account and subscribe to Clubpass membership. " },
+      { id: "step-2", img: "/images/two.png", meta: "/images/join-two.png", title: "EXPLORE & \nENJOY", text: "Discover events, enjoy free entries and member perks. More benefits coming soon!" },
+      { id: "step-3", img: "/images/three.png", meta: "/images/join-three.png", title: "EARN REWARDS \n(COMING SOON) ", text: "Earn R coins (reward points) when you buy tickets and F&B coupons. " },
+      { id: "step-4", img: "/images/four.png", meta: "/images/join-four.png", title: "RIDE HOME \n(COMING SOON)", text: "Unlock your route and enjoy a safe, comfortable ride home after the party." },
+    ],
+  },
   hero: [
     {
       id: "fallback-hero",
@@ -179,38 +192,6 @@ const NAV_LINKS = [
   { label: "Route & schedule", href: "#routes" },
   { label: "Membership", href: "#membership" },
   { label: "FAQ", href: "#faq" },
-];
-
-const STEPS = [
-  {
-    img: "/images/one.png",
-    num: "01",
-    title: "CREATE\nACCOUNT",
-    text: "Create a free account and subscribe to Clubpass membership. ",
-    meta: "/images/join-one.png",
-  },
-  {
-    img: "/images/two.png",
-    num: "02",
-    title: "EXPLORE & \nENJOY",
-    text: "Discover events, enjoy free entries and member perks. More benefits coming soon!",
-    meta: "/images/join-two.png",
-  },
-  {
-    img: "/images/three.png",
-    num: "03",
-    title: "EARN REWARDS \n(COMING SOON) ",
-    text: "Earn R coins (reward points) when you buy tickets and F&B coupons. ",
-    img: "/images/three.png",
-    meta: "/images/join-three.png",
-  },
-  {
-    img: "/images/four.png",
-    num: "04",
-    title: "RIDE HOME \n(COMING SOON)",
-    text: "Unlock your route and enjoy a safe, comfortable ride home after the party.",
-    meta: "/images/join-four.png",
-  },
 ];
 
 const PICKUPS = [
@@ -374,7 +355,8 @@ export default function ClubPass() {
   const { routes } = useRouteVoting();
 
   // Everything above the venue grid is editorial, and comes from Strapi.
-  const { hero: heroSlides, beforeTickets, afterTickets, cta, faq, beta, why } = useHome(FALLBACK_CONTENT);
+  const { hero: heroSlides, beforeTickets, afterTickets, cta, faq, beta, why, howItWorks } =
+    useHome(FALLBACK_CONTENT);
 
   // The venue grid is whatever events Strapi is publishing.
   const { tickets: events, status: eventsStatus } = useTickets();
@@ -985,48 +967,44 @@ export default function ClubPass() {
           <div className="cp-container">
             <div className="cp-split-head">
               <div className="cp-work-text">
-                <p className="cp-eyebrow">how it works</p>
+                <p className="cp-eyebrow">{howItWorks.eyebrow}</p>
 
-                <h2 className="cp-h2">
-                 Join the club.<br/>
-Enjoy perks that keep growing.
-                </h2>
+                <h2 className="cp-h2">{multiline(howItWorks.heading)}</h2>
 
-                <p className="cp-note">
-                  Clubpass is your pass to exclusive access, rewards and experiences with more benefits on the way.
-                </p>
+                <p className="cp-note">{howItWorks.paragraph}</p>
               </div>
             </div>
 
             <div className="cp-steps">
-              {STEPS.map((step) => (
-                <div className="cp-step" key={step.num}>
-                  <div className="cp-step-num">
-                    <img 
-                      src={step.img}
-                      alt={step.title}
-                    />
-                    <span className="cp-step-meta mobile-mt">
-                    <img src={step.meta}/>
-                  </span>
+              {howItWorks.steps.map((step, index) => {
+                // A step saved without its images keeps the shipped artwork.
+                const fallback = FALLBACK_CONTENT.howItWorks.steps[index];
+                const img = step.img ?? fallback?.img;
+                const meta = step.meta ?? fallback?.meta;
+
+                return (
+                  <div className="cp-step" key={step.id}>
+                    <div className="cp-step-num">
+                      {img && <img src={img} alt={step.title} />}
+                      {meta && (
+                        <span className="cp-step-meta mobile-mt">
+                          <img src={meta} alt="" />
+                        </span>
+                      )}
+                    </div>
+
+                    <h3 className="step-title">{multiline(step.title)}</h3>
+
+                    <p>{step.text}</p>
+
+                    {meta && (
+                      <span className="cp-step-meta desk-mt">
+                        <img src={meta} alt="" />
+                      </span>
+                    )}
                   </div>
-
-                  <h3 className="step-title">
-  {step.title.split("\n").map((line, index) => (
-    <React.Fragment key={index}>
-      {line}
-      {index < step.title.split("\n").length - 1 && <br />}
-    </React.Fragment>
-  ))}
-</h3>
-
-                  <p>{step.text}</p>
-
-                  <span className="cp-step-meta desk-mt">
-                    <img src={step.meta}/>
-                  </span>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         </section>
