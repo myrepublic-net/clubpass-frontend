@@ -50,17 +50,17 @@
 }
 
 .evt-back {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 34px;
-  height: 34px;
-  border: none;
-  border-radius: 10px;
-   background: rgba(255, 255, 255, .1);
-  color: #fff;
-  flex-shrink: 0;
-  cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    border: none;
+    border-radius: 10px;
+    background: #1FDBDA;
+    color: #0C165E;
+    flex-shrink: 0;
+    cursor: pointer;
 }
 
 .evt-login-btn {
@@ -122,10 +122,10 @@
 .evt-input {
   width: 100%;
   padding: 14px 16px;
-  border: 1px solid var(--evt-line);
+  border: 1px solid #0C165E;
   border-radius: 12px;
   background: var(--evt-card);
-  color: #fff;
+  color: #0C165E;
   font-family: inherit;
   font-size: 15px;
 }
@@ -183,6 +183,7 @@
 
 .evt-card--locked, .evt-plan {
       background: linear-gradient(72.64deg, #DBEBFE 48.7%, #83BCFF 91.47%);
+          border: none;
 }
 
 .evt-card--ended,
@@ -303,30 +304,28 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-height: 62vh;
+  min-height: 90vh;
   text-align: center;
 }
 
 .evt-signup-badge {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 150px;
-  height: 150px;
-  margin-bottom: 40px;
-  border: 2px solid var(--evt-teal);
-  border-radius: 50%;
-  background: radial-gradient(circle, #16203A 0%, #0E1626 70%);
-  color: var(--evt-teal);
-  /* The glow in the design: a tight ring plus a soft halo around it. */
-  box-shadow:
-    0 0 22px rgba(31, 219, 218, .45),
-    0 0 70px rgba(31, 219, 218, .22);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 150px;
+    height: 150px;
+    margin-bottom: 32px;
+    border: 20px solid #1FDBDA1F;
+    border-radius: 50%;
+    /* background: radial-gradient(circle, #16203A 0%, #0E1626 70%); */
+    color: var(--evt-teal);
+    box-shadow: 0 0 40px rgba(31, 219, 218, .45), 0 0 80px rgba(31, 219, 218, .22);
+    outline: 1.5px solid #1FDBDA;
 }
 
 .evt-signup h2 {
   margin: 0 0 14px;
-  font-size: 25px;
+  font-size: 26px;
   font-weight: 800;
   line-height: 1.25;
 }
@@ -690,18 +689,30 @@
 }
 
 .evt-radio {
-  width: 16px;
-  height: 16px;
+  width: 20px;
+  height: 20px;
   border-radius: 50%;
-  border: 1px solid var(--evt-muted);
+  border: 2px solid var(--evt-muted);
   flex-shrink: 0;
 }
 
 .evt-radio.is-on {
-  border-color: var(--evt-teal);
-  background: var(--evt-teal);
+     border-color: var(--evt-teal);
+    background: transparent;
+    border: 2px solid #1fdbda;
+    position: relative;
 }
-
+.evt-radio.is-on:after {
+    content: "";
+    position: absolute;
+    background: #1fdbda;
+    top: 50%;
+    left: 50%;
+    width: 12px;
+    height: 12px;
+    transform: translate(-50%, -50%);
+    border-radius: 50px;
+}
 .evt-pay-error {
   margin-top: 14px;
   font-size: 13px;
