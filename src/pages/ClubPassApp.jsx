@@ -50,7 +50,7 @@ const FAQS = [
   },
   {
     q: "How does billing work?",
-    a: "S$19.90 is charged monthly through secure PayPal checkout and renews automatically. Cancel in two taps from your membership screen — no lock-in, no cancellation fee.",
+    a: "S$17.90 is charged monthly through secure PayPal checkout and renews automatically. Cancel in two taps from your membership screen — no lock-in, no cancellation fee.",
   },
   {
     q: "My area isn't covered yet?",
@@ -102,7 +102,7 @@ export default function ClubPassApp() {
       <title>Clubpass Home Express | RewardLand</title>
       <meta
         name="description"
-        content="Late-night coaches from the club district straight to the East. S$19.90/month, no surge, cancel anytime — inside the RewardLand app."
+        content="Late-night coaches from the club district straight to the East. S$17.90/month, no surge, cancel anytime — inside the RewardLand app."
       />
       <meta name="theme-color" content="#14061F" />
 
@@ -525,7 +525,7 @@ export default function ClubPassApp() {
         </footer>
         {!paid && (
           <div className=" cpm-pad bt-stciky-btn">
-            <button type="button" className="bt-btn cpm-btn cpm-btn-white cpm-btn-lg" onClick={() => setSubscribeOpen(true)}><span>Subscribe now</span><span>S$19.90/mo</span></button>
+            <button type="button" className="bt-btn cpm-btn cpm-btn-white cpm-btn-lg" onClick={() => setSubscribeOpen(true)}><span>Subscribe now</span><span>S$17.90/mo</span></button>
           </div>
         )}
       </div>

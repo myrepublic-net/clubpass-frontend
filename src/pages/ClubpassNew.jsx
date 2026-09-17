@@ -53,7 +53,7 @@ const WITHOUT_CLUBPASS = [
 ];
 
 const WITH_CLUBPASS = [
-  "One fixed price all month — S$19.90",
+  "One fixed price all month — S$17.90",
   "A scheduled coach waiting on the loop",
   "Drop-off minutes from your MRT",
 ];
