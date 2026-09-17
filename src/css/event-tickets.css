@@ -1279,3 +1279,41 @@ a.unlock-cta {
   font-weight: 500;
   color: var(--evt-muted);
 }
+
+/* Order confirmed, paid members: the Home Express pointer under the booking. */
+.evt-ride-home {
+  margin-top: 20px;
+  padding: 22px 22px 20px;
+  border-radius: 16px;
+  background: linear-gradient(180deg, #111F86 0%, #0B155F 100%);
+  color: #fff;
+}
+
+.evt-ride-home h3 {
+  margin: 0 0 8px;
+  font-size: 20px;
+  font-weight: 800;
+  line-height: 1.25;
+  color: #fff;
+}
+
+.evt-ride-home p {
+  margin: 0 0 14px;
+  font-size: 14px;
+  line-height: 1.55;
+  color: rgba(255, 255, 255, .85);
+}
+
+.evt-ride-home-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 15px;
+  font-weight: 700;
+  color: #1FDBDA;
+  text-decoration: none;
+}
+
+.evt-ride-home-link:hover {
+  text-decoration: underline;
+}
