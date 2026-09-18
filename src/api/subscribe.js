@@ -131,3 +131,12 @@ export function captureTicketOrder({ orderId }) {
 export function claimFreeTickets({ ticketId, quantities, userName, email, accessToken }) {
   return call("claim-free-tickets", { ticketId, quantities, userName, email, accessToken });
 }
+
+/**
+ * Undoes a cancel while the paid period is still running — billing resumes on
+ * the original schedule, nothing charged now. Replies `{ resumed, user }` or
+ * `{ needsPayment: true }` when it has to go through checkout instead.
+ */
+export function reactivateMembership({ userName, accessToken }) {
+  return call("reactivate-membership", { userName, accessToken });
+}

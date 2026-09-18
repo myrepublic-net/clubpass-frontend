@@ -4,7 +4,7 @@ import { ArrowLeft } from "lucide-react";
 
 import { readMemberSession } from "../api/auth.js";
 import { isPaid, resolveClubpassUser } from "../api/clubpassUser.js";
-import { cancelSubscription } from "../api/subscribe.js";
+import { cancelSubscription, reactivateMembership } from "../api/subscribe.js";
 import SubscribeModal from "../components/SubscribeModal.jsx";
 import UserMenu from "../components/UserMenu.jsx";
 import { ClubpassUserContext } from "../components/clubpassUserContext.js";
@@ -55,6 +55,7 @@ export default function ManageSubscription() {
   const [step, setStep] = useState("manage");
   const [cancelState, setCancelState] = useState({ status: "idle" });
   const [resubscribeOpen, setResubscribeOpen] = useState(false);
+  const [reactivateState, setReactivateState] = useState({ status: "idle", message: "" });
 
   useEffect(() => {
     if (!session?.user?.username) return;
@@ -74,6 +75,36 @@ export default function ManageSubscription() {
   if (!userName) return <Navigate to="/login" state={{ from: "/membership" }} replace />;
 
   const endsOn = cancelState.accessEndsOn ?? user?.accessEndsOn ?? user?.nextBillingOn;
+
+  /**
+   * Resumes the membership they cancelled — no charge while the paid period is
+   * still running. Only when that isn't possible (period over, or a PayPal
+   * subscription that can't be restarted) does it fall back to checkout.
+   */
+  const reactivate = async () => {
+    setReactivateState({ status: "working", message: "" });
+
+    try {
+      const result = await reactivateMembership({ userName, accessToken: session?.token });
+
+      if (result.needsPayment) {
+        setReactivateState({ status: "idle", message: "" });
+        setResubscribeOpen(true);
+        return;
+      }
+
+      if (result.user) setUser(result.user);
+      setCancelState({ status: "idle" });
+      setReactivateState({ status: "idle", message: "" });
+      setStep("manage");
+    } catch (error) {
+      console.error("ClubPass reactivate failed", error);
+      setReactivateState({
+        status: "error",
+        message: error?.message ?? "We couldn't reactivate your membership. Please try again.",
+      });
+    }
+  };
 
   const confirmCancel = async () => {
     setCancelState({ status: "working" });
@@ -174,12 +205,17 @@ export default function ManageSubscription() {
             <p>Reactivate at any time to preserve your billing cycle and continuous savings.</p>
           </div>
 
+          {reactivateState.status === "error" && (
+            <p className="ms-error" role="alert">{reactivateState.message}</p>
+          )}
+
           <button
             type="button"
             className="ms-btn ms-btn--teal"
-            onClick={() => setResubscribeOpen(true)}
+            disabled={reactivateState.status === "working"}
+            onClick={reactivate}
           >
-            Reactivate membership
+            {reactivateState.status === "working" ? "Reactivating…" : "Reactivate membership"}
           </button>
         </div>
 
