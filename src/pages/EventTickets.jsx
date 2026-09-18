@@ -924,7 +924,7 @@ export default function EventTickets() {
             </div>
           </div>
           {/* Members are the ones who can ride Home Express, so they get pointed at it. */}
-          {userName && paid && (
+          {/* {userName && paid && (
             <div className="evt-ride-home">
               <h3>Need a ride home?</h3>
               <p>
@@ -934,7 +934,7 @@ export default function EventTickets() {
                 Explore Home Express <ArrowRight size={16} />
               </Link>
             </div>
-          )}
+          )} */}
 
           {/* The membership pitch is only for signed-in buyers who aren't members yet —
               guests get the free-account card below instead. */}
