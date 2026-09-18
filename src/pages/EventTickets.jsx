@@ -17,7 +17,9 @@ import {
 import { readMemberSession } from "../api/auth.js";
 import { isPaid, resolveClubpassUser } from "../api/clubpassUser.js";
 import { useTicket } from "../hooks/useTickets.js";
+import SubscribeModal from "../components/SubscribeModal.jsx";
 import UserMenu from "../components/UserMenu.jsx";
+import { ClubpassUserContext } from "../components/clubpassUserContext.js";
 import useMembershipCheckout, { SIMULATE } from "../hooks/useMembershipCheckout.js";
 import useTicketCheckout from "../hooks/useTicketCheckout.js";
 import { claimFreeTickets } from "../api/subscribe.js";
@@ -189,6 +191,8 @@ export default function EventTickets() {
   // that, which is what unlocks the Member Price row behind this screen.
   const [justSubscribed, setJustSubscribed] = useState(false);
   const [coinsSheetOpen, setCoinsSheetOpen] = useState(false);
+  // "Join Clubpass" on the confirmation: the same membership popup as the home page.
+  const [joinOpen, setJoinOpen] = useState(false);
 
   // Signing up leaves the site (signup, then login), so the intent to buy a
   // membership can't live in component state — it rides back on the URL that
@@ -938,7 +942,9 @@ export default function EventTickets() {
 
           {/* The membership pitch is only for signed-in buyers who aren't members yet —
               guests get the free-account card below instead. */}
-          {userName && !paid && (
+          {/* Anyone who isn't a member yet: a free account gets the membership
+              popup, a guest is sent to sign up first. */}
+          {!paid && (
           <div className="unlock-more">
               <div className="unlock-header">clubpass member</div>
               <div className="unlock-body">
@@ -950,7 +956,23 @@ export default function EventTickets() {
                     <img src="/images/Gemini.png"/>
                  </div>
               </div>
-              <div className="unlock-footer"><a className="unlock-cta" href="#" data-discover="true">JOIN CLUBPASS</a></div>
+              <div className="unlock-footer">
+                {userName ? (
+                  <button type="button" className="unlock-cta" onClick={() => setJoinOpen(true)}>
+                    JOIN CLUBPASS
+                  </button>
+                ) : (
+                  // After signing up and logging in, they land on the membership
+                  // step for this event (the same route "Unlock Member Price" uses).
+                  <Link
+                    className="unlock-cta"
+                    to="/signup"
+                    state={{ from: `/events/${event.id}/tickets?next=membership` }}
+                  >
+                    JOIN CLUBPASS
+                  </Link>
+                )}
+              </div>
           </div>
           )}
           {!userName && (
@@ -967,6 +989,19 @@ export default function EventTickets() {
             Back to event
           </Link>
         </div>
+
+        {userName && (
+          <ClubpassUserContext.Provider
+            value={{
+              userName,
+              user: clubpassUser,
+              profile: session?.user ?? null,
+              setUser: setClubpassUser,
+            }}
+          >
+            <SubscribeModal open={joinOpen} onClose={() => setJoinOpen(false)} withUpsell />
+          </ClubpassUserContext.Provider>
+        )}
 
         {coinsSheetOpen && (
           <div
