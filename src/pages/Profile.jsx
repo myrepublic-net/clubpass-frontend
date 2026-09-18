@@ -107,7 +107,7 @@ export default function Profile() {
           type="button"
           className="prf-back"
           onClick={() => navigate(-1)}
-          aria-label="Back"
+          aria-label="Back" 
         >
           <ArrowLeft size={20} />
         </button>
