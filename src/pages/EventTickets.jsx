@@ -908,7 +908,7 @@ export default function EventTickets() {
               </div>
               <div>
                 <dt>Delivery</dt>
-                <dd>{guestEmail ? `Email to ${guestEmail}` : "Email within 24 hours"}</dd>
+                <dd>"Email within 1 business day"</dd>
               </div>
             </dl>
 
