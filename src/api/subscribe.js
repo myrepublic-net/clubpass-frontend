@@ -123,3 +123,11 @@ export function createTicketOrder({ ticketId, quantities, method, userName, emai
 export function captureTicketOrder({ orderId }) {
   return call("capture-ticket-order", { orderId });
 }
+
+/**
+ * A basket that totals $0: booked without PayPal. Logged-in members only —
+ * the Lambda verifies the session and applies the same limits as a paid order.
+ */
+export function claimFreeTickets({ ticketId, quantities, userName, email, accessToken }) {
+  return call("claim-free-tickets", { ticketId, quantities, userName, email, accessToken });
+}
