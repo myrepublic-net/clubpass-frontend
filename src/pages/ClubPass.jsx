@@ -410,7 +410,7 @@ export default function ClubPass() {
   const paid = isPaid(clubpassUser);
 
   // Routes, their tallies and the member's one vote — all from Strapi.
-  const { routes, votedRoute, vote, error: voteError } = useRouteVoting({
+  const { routes, votedRoute, pendingRoute, vote, error: voteError } = useRouteVoting({
     user: clubpassUser,
     setUser: setClubpassUser,
   });
@@ -487,8 +487,9 @@ export default function ClubPass() {
       return;
     }
 
-    // One vote per account, and only once the member record has loaded.
-    if (!clubpassUser || votedRoute || !route.open) return;
+    // One vote per account, only once the member record has loaded, and not
+    // while another vote is still waiting on the API.
+    if (!clubpassUser || votedRoute || pendingRoute || !route.open) return;
 
     setLastVotedRoute(route.id);
     vote(route);
@@ -1173,6 +1174,7 @@ export default function ClubPass() {
       const theme = ROUTE_THEMES[key] ?? ROUTE_THEMES.easties;
       const isOpen = openRoute === key;
       const isMine = votedRoute === route.id;
+      const isVoting = pendingRoute === route.id;
       // Waiting on the member lookup counts as "can't vote yet", not "voted".
       const locked = Boolean(votedRoute) || !route.open || (userName && !clubpassUser);
 
@@ -1229,7 +1231,7 @@ export default function ClubPass() {
                   ))}
                 </ul>
 
-                {route.mapLinkText && (
+                {route.mapLinkText && route.mapLink && (
                   <a
                     href={route.mapLink ?? "#"}
                     className="route-link"
@@ -1275,15 +1277,27 @@ export default function ClubPass() {
 
                 <a
                   href="#"
-                  className={`vote-button${locked && userName ? " is-disabled" : ""}`}
-                  aria-disabled={Boolean(locked && userName)}
+                  className={`vote-button${isVoting ? " is-loading" : ""}${(locked || pendingRoute) && userName && !isVoting ? " is-disabled" : ""}`}
+                  aria-disabled={Boolean((locked || pendingRoute) && userName)}
+                  aria-busy={isVoting}
                   onClick={voteRoute(route)}
                 >
-                  {isMine ? "Your vote is counted" : votedRoute ? "Already voted" : route.votingButtonText}
+                  {isVoting ? (
+                    <>
+                      <span className="vote-spinner" aria-hidden="true" />
+                      Voting…
+                    </>
+                  ) : isMine ? (
+                    "Your vote is counted"
+                  ) : votedRoute ? (
+                    "Already voted"
+                  ) : (
+                    route.votingButtonText
+                  )}
                 </a>
 
-                {voteError && route.id === lastVotedRoute && (
-                  <div className="vote-error">{voteError}</div>
+                {voteError && !isVoting && route.id === lastVotedRoute && (
+                  <div className="vote-error" role="alert">{voteError}</div>
                 )}
 
                 <div className="vote-description">{multiline(route.moreInfo)}</div>
