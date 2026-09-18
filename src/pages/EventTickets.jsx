@@ -858,7 +858,7 @@ export default function EventTickets() {
             <span className="evt-confirm-tick"><img src="/images/confirm.png"/></span>
             <h1>Order Confirmed</h1>
             <p>
-              Your booking is confirmed. Your ticket will be sent to your email within 24 hours.
+              Your booking is confirmed. Your ticket will be sent to your email within 1 business day.
             </p>
           </div>
 
