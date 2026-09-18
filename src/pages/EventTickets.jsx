@@ -58,6 +58,9 @@ const PAYMENT_METHODS = [
   { id: "applepay", label: "Apple Pay", icon: Smartphone },
 ];
 
+/** Rounds a dollar amount to whole cents. */
+const toCents = (amount) => Math.round((Number(amount) || 0) * 100) / 100;
+
 /** "$45", or "$45.00" with `fixed` — a $0 ticket shows as $0 like any other. */
 function money(amount, { fixed = false } = {}) {
   const value = Number(amount) || 0;
@@ -167,11 +170,13 @@ export default function EventTickets() {
     .filter((line) => line.qty > 0);  
 
   const ticketCount = lines.reduce((sum, line) => sum + line.qty, 0);
-  const total = lines.reduce((sum, line) => sum + line.tier.price * line.qty, 0);
+  // Rounded to cents: adding decimal prices in floating point otherwise gives
+  // totals like 0.6000000000000001 for 6 × $0.10.
+  const total = toCents(lines.reduce((sum, line) => sum + line.tier.price * line.qty, 0));
 
   // What the same tickets would have cost undiscounted — only shown when the
   // buyer is actually paying less than that.
-  const standardTotal = event?.fullPrice ? ticketCount * event.fullPrice : 0;
+  const standardTotal = event?.fullPrice ? toCents(ticketCount * event.fullPrice) : 0;
 
   // A guest earns nothing until they have an account, so the figure they're
   // shown is what a free account would have earned — that's what the "create
@@ -839,7 +844,8 @@ export default function EventTickets() {
     // flattening anything with more than one tier into "Mixed tickets".
     const ticketType = lines.map((line) => `${line.qty}× ${line.tier.label}`).join(", ");
     // A guest earns nothing — that's what the create-an-account card is for.
-    const earned = userName ? coins : 0;
+    // What the Lambda actually credited; the estimate only if it didn't say.
+    const earned = userName ? (booking?.rCoins ?? coins) : 0;
 
     return (
       <div className="evt-page">
@@ -1112,7 +1118,7 @@ export default function EventTickets() {
       <footer className="evt-footer">
         <div className="evt-total">
           <span>Total</span>
-          <b>{money(total)}</b>
+          <b>{money(total, { fixed: true })}</b>
         </div>
 
         <button
