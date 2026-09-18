@@ -111,7 +111,7 @@ export default function Profile() {
         >
           <ArrowLeft size={20} />
         </button>
-        <h1>My Membership</h1>
+        <h1>My Account</h1>
         <UserMenu userName={userName} />
       </header>
 
