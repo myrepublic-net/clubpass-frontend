@@ -11,8 +11,8 @@ import { ClubpassUserContext } from "../components/clubpassUserContext.js";
 import "../css/profile.css";
 import "../css/manage-subscription.css";
 
-const PLAN_NAME = "ClubPass Premium";
-const PLAN_PRICE = import.meta.env.VITE_CLUBPASS_PRICE ?? "19.90";
+const PLAN_NAME = "ClubPass Member";
+const PLAN_PRICE = import.meta.env.VITE_CLUBPASS_PRICE ?? "17.90";
 
 const BENEFITS_LOST = [
   "30% discount on standard admission",

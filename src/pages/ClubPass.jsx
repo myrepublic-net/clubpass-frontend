@@ -206,11 +206,17 @@ const NAV_LINKS = [
 ];
 
 const PICKUPS = [
-  "Marina Bay Sands (Marquee / Avenue)",
-  "CE LA VI",
-  "Clarke Quay Central",
-  "Boat Quay / Headquarters",
-  "Zouk / Capital",
+  "Orchard Road",
+  "Clarke Quay",
+  "Tanjong Pagar",
+  "Cecil Street",
+  "Marina Bay Sands"
+
+  // "Marina Bay Sands (Marquee / Avenue)",
+  // "CE LA VI",
+  // "Clarke Quay Central",
+  // "Boat Quay / Headquarters",
+  // "Zouk / Capital",
 ];
 
 const DROPOFFS = [
@@ -1035,7 +1041,7 @@ export default function ClubPass() {
           <div className="cp-container">
             <div className="cp-split-head">
               <div className="cp-work-text">
-                <p className="cp-eyebrow">CLUBPASS REWARDS<span className="rewards-coming">COMING SOON</span></p>
+                <p className="cp-eyebrow">CLUBPASS REWARDS<span className="rewards-coming">Available Now</span></p>
                 <h2 className="cp-h2">Going out has its rewards. Literally.</h2>
                 <p className="cp-note">Buy tickets and F&B coupons on Clubpass and earn R coins with every purchase. The first and only membership that rewards you for going out.</p>
               </div>
