@@ -810,7 +810,7 @@ export default function ClubPass() {
             {event.publicTier && (
               <div className="venue-price">
                 <span>{event.publicTier.label}</span>
-                <b>{Number(event.publicTier.price) === 0 ? "Free" : `From $${event.publicTier.price}`}</b>
+                <b>From ${event.publicTier.price}</b>
               </div>
             )}
 
@@ -819,7 +819,7 @@ export default function ClubPass() {
                 <span>
                   Member <Star size={11} fill="currentColor" />
                 </span>
-                <b>{Number(event.memberTier.price) === 0 ? "Free" : `From $${event.memberTier.price}`}</b>
+                <b>From ${event.memberTier.price}</b>
                 {event.memberSaving > 0 && <small>Save {event.memberSaving}%</small>}
               </div>
             )}

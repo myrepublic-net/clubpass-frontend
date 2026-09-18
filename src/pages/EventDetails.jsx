@@ -233,14 +233,8 @@ export default function EventDetails() {
 
       <footer className="evd-footer">
         <div className="evd-price">
-          {Number(event.priceFrom) === 0 ? (
-            <b>Free</b>
-          ) : (
-            <>
-              <span>From</span>
-              <b>${event.priceFrom}</b>
-            </>
-          )}
+          <span>From</span>
+          <b>${event.priceFrom}</b>
         </div>
 
         <Link className="evd-cta" to={`/events/${event.id}/tickets`}>

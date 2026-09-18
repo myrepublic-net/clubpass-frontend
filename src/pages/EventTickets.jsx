@@ -58,10 +58,9 @@ const PAYMENT_METHODS = [
   { id: "applepay", label: "Apple Pay", icon: Smartphone },
 ];
 
-/** "$45" — or "Free" for a ticket that costs nothing. */
+/** "$45", or "$45.00" with `fixed` — a $0 ticket shows as $0 like any other. */
 function money(amount, { fixed = false } = {}) {
   const value = Number(amount) || 0;
-  if (value === 0) return "Free";
   return `$${fixed ? value.toFixed(2) : value}`;
 }
 
