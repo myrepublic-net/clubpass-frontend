@@ -20,6 +20,7 @@ import { useTicket } from "../hooks/useTickets.js";
 import UserMenu from "../components/UserMenu.jsx";
 import useMembershipCheckout, { SIMULATE } from "../hooks/useMembershipCheckout.js";
 import useTicketCheckout from "../hooks/useTicketCheckout.js";
+import { claimFreeTickets } from "../api/subscribe.js";
 import "../css/event-tickets.css";
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -56,6 +57,16 @@ const PAYMENT_METHODS = [
   { id: "googlepay", label: "Google Pay", icon: Wallet },
   { id: "applepay", label: "Apple Pay", icon: Smartphone },
 ];
+
+/** "$45", or "$45.00" with `fixed` — a $0 ticket shows as $0 like any other. */
+function money(amount, { fixed = false } = {}) {
+  const value = Number(amount) || 0;
+  return `$${fixed ? value.toFixed(2) : value}`;
+}
+
+// A guest who picks free tickets has to log in first. The basket rides along
+// in sessionStorage so it's still selected when they come back.
+const basketKey = (eventId) => `clubpass:basket:${eventId}`;
 
 /**
  * The tiers, their prices, their per-buyer limits and their sale windows all
@@ -117,13 +128,25 @@ export default function EventTickets() {
     [event, paid],
   );
 
-  const [quantities, setQuantities] = useState({});
+  const [quantities, setQuantities] = useState(() => {
+    try {
+      const saved = sessionStorage.getItem(basketKey(id));
+      if (saved) {
+        sessionStorage.removeItem(basketKey(id));
+        return JSON.parse(saved) ?? {};
+      }
+    } catch {
+      /* private mode — start empty */
+    }
+    return {};
+  });
   // select -> guestEmail (signed out only) -> checkout -> payment ->
   // processing -> confirmed. A signed-in buyer skips guestEmail.
   const [step, setStep] = useState("select");
   const [guestEmail, setGuestEmail] = useState("");
   const [method, setMethod] = useState("card");
   const [booking, setBooking] = useState(null);
+  const [freeClaim, setFreeClaim] = useState({ status: "idle", message: "" });
   const emailValid = EMAIL_PATTERN.test(guestEmail.trim());
 
   // A tier can cap quantity for two different reasons: `maxQty` is a per-
@@ -247,6 +270,41 @@ export default function EventTickets() {
   });
   const { eligible, sdkStatus, flow: payFlow } = checkout;
 
+  /** A $0 basket: booked by the Lambda without PayPal, then straight to confirmation. */
+  const claimFree = async () => {
+    setFreeClaim({ status: "working", message: "" });
+
+    try {
+      const result = await claimFreeTickets({
+        ticketId: event.id,
+        quantities: Object.fromEntries(lines.map((line) => [line.tier.id, line.qty])),
+        userName,
+        email: session?.user?.email,
+        accessToken: session?.token,
+      });
+
+      setBooking(result);
+      setFreeClaim({ status: "idle", message: "" });
+      setStep("confirmed");
+    } catch (error) {
+      console.error("Free ticket booking failed", error);
+      setFreeClaim({
+        status: "error",
+        message: error?.message ?? "We couldn't confirm your booking. Please try again.",
+      });
+    }
+  };
+
+  /** Guests can't claim free tickets — keep the basket and send them to log in. */
+  const loginForFree = () => {
+    try {
+      sessionStorage.setItem(basketKey(event.id), JSON.stringify(quantities));
+    } catch {
+      /* the basket just won't survive the round trip */
+    }
+    navigate("/login", { state: { from: `/events/${event.id}/tickets` } });
+  };
+
   if (eventStatus === "loading") {
     return (
       <div className="evt-page">
@@ -359,6 +417,43 @@ export default function EventTickets() {
             Continue
           </button>
         </div>
+      </div>
+    );
+  }
+
+  if (step === "freeLogin") {
+    return (
+      <div className="evt-page">
+        <header className="evt-header">
+          <button
+            type="button"
+            className="evt-back"
+            onClick={() => setStep("select")}
+            aria-label="Back"
+          >
+            <ArrowLeft size={18} />
+          </button>
+          <h1>Free Tickets</h1>
+          {identity}
+        </header>
+
+        <div className="evt-body evt-signup">
+          <span className="evt-signup-badge" aria-hidden="true">
+            <Ticket size={30} />
+          </span>
+
+          <h2>Log in to claim your free tickets</h2>
+          <p>
+            Free tickets are for Clubpass account holders. Log in or create a free account — your
+            selected tickets will be waiting when you come back.
+          </p>
+        </div>
+
+        <footer className="evt-footer evt-footer--single">
+          <button type="button" className="evt-cta evt-cta--block" onClick={loginForFree}>
+            Log in / Sign up
+          </button>
+        </footer>
       </div>
     );
   }
@@ -602,7 +697,7 @@ export default function EventTickets() {
 
               <div className="evt-summary-price">
                 {standardTotal > total && <s>${standardTotal.toFixed(2)}</s>}
-                <b>${total.toFixed(2)}</b>
+                <b>{money(total, { fixed: true })}</b>
               </div>
             </div>
           </div>
@@ -610,23 +705,39 @@ export default function EventTickets() {
           <div className="evt-totals">
             <div className="evt-totals-row">
               <span>Subtotal</span>
-              <span>${total.toFixed(2)}</span>
+              <span>{money(total, { fixed: true })}</span>
             </div>
             <div className="evt-totals-row evt-totals-row--grand">
               <span>Order Total</span>
-              <b>${total.toFixed(2)}</b>
+              <b>{money(total, { fixed: true })}</b>
             </div>
           </div>
         </div>
 
         <footer className="evt-footer evt-footer--single">
-          <button
-            type="button"
-            className="evt-cta evt-cta--block"
-            onClick={() => setStep("payment")}
-          >
-            Continue
-          </button>
+          {freeClaim.status === "error" && (
+            <p className="evt-pay-error" role="alert">{freeClaim.message}</p>
+          )}
+
+          {total === 0 ? (
+            // Nothing to pay — no payment step, no PayPal.
+            <button
+              type="button"
+              className="evt-cta evt-cta--block"
+              disabled={freeClaim.status === "working"}
+              onClick={claimFree}
+            >
+              {freeClaim.status === "working" ? "Confirming…" : "Confirm free booking"}
+            </button>
+          ) : (
+            <button
+              type="button"
+              className="evt-cta evt-cta--block"
+              onClick={() => setStep("payment")}
+            >
+              Continue
+            </button>
+          )}
         </footer>
       </div>
     );
@@ -919,7 +1030,7 @@ export default function EventTickets() {
                   <div className="evt-card-sub">Single entry ticket</div>
                 </div>
 
-                <div className="evt-card-price">${tier.price}</div>
+                <div className="evt-card-price">{money(tier.price)}</div>
 
                 <div className="evt-stepper">
                   <button
@@ -1001,14 +1112,17 @@ export default function EventTickets() {
       <footer className="evt-footer">
         <div className="evt-total">
           <span>Total</span>
-          <b>${total}</b>
+          <b>{money(total)}</b>
         </div>
 
         <button
           type="button"
           className="evt-cta"
-          disabled={total <= 0}
-          onClick={() => setStep(userName ? "checkout" : "guestEmail")}
+          disabled={ticketCount === 0}
+          onClick={() =>
+            // Free tickets need an account, so a guest with a $0 basket logs in first.
+            setStep(userName ? "checkout" : total === 0 ? "freeLogin" : "guestEmail")
+          }
         >
           Checkout
         </button>
