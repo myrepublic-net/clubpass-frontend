@@ -3326,3 +3326,26 @@ height: 580px;
   line-height: 1.4;
   color: #DC2626;
 }
+
+/* A vote waiting on the API: spinner in the button, and no second tap. */
+.route-wrapper .vote-button.is-loading {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: progress;
+  pointer-events: none;
+}
+
+.route-wrapper .vote-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: vote-spin .7s linear infinite;
+}
+
+@keyframes vote-spin {
+  to { transform: rotate(360deg); }
+}

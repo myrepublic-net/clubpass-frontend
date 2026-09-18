@@ -37,41 +37,39 @@ export default function useRouteVoting({ user, setUser } = {}) {
   /** The route this member already spent their vote on, if any. */
   const votedRoute = votedRouteOf(user);
 
+  // The route whose vote is in flight — the page shows a loader on it and
+  // locks the other buttons until the API answers.
+  const [pendingRoute, setPendingRoute] = useState(null);
+
   const vote = useCallback(
     async (route) => {
-      if (votedRoute) return;
+      if (votedRoute || pendingRoute) return;
 
-      // Optimistic: the count moves as the member taps, and rolls back below if
-      // Strapi refuses. A vote that looks ignored for a second reads as broken.
-      setRoutes((current) =>
-        current.map((item) =>
-          item.id === route.id
-            ? { ...item, voted: item.voted + 1, remaining: Math.max(item.remaining - 1, 0) }
-            : item,
-        ),
-      );
-
-      setUser?.({ ...user, voted_route: { documentId: route.id, route_name: route.name } });
       setError("");
+      setPendingRoute(route.id);
 
       try {
-        await castVote({ route, user });
-      } catch (voteError) {
-        console.error("Vote failed", voteError);
+        // Nothing changes on screen until the vote is actually recorded: the
+        // count and the "voted" state come from the API's answer.
+        const updated = await castVote({ route, user });
 
         setRoutes((current) =>
           current.map((item) =>
             item.id === route.id
-              ? { ...item, voted: route.voted, remaining: route.remaining }
+              ? { ...item, voted: updated.voted, remaining: updated.remaining }
               : item,
           ),
         );
-        setUser?.(user);
-        setError(voteError.message);
+        setUser?.({ ...user, voted_route: { documentId: route.id, route_name: route.name } });
+      } catch (voteError) {
+        console.error("Vote failed", voteError);
+        setError(voteError?.message || "Your vote didn't go through. Please try again.");
+      } finally {
+        setPendingRoute(null);
       }
     },
-    [user, setUser, votedRoute],
+    [user, setUser, votedRoute, pendingRoute],
   );
 
-  return { routes, status, votedRoute, vote, error };
+  return { routes, status, votedRoute, pendingRoute, vote, error };
 }

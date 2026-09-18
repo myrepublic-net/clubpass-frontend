@@ -37,7 +37,8 @@ async function request(path, options = {}) {
 // are deliberately never populated — that list is for the Strapi admin only.
 const QUERY =
   "populate[drop_points][populate]=*" +
-  "&populate[voting_box_image]=true";
+  "&populate[voting_box_image]=true" +
+  "&sort=id:asc";
 
 /** Largest generated size of an upload, falling back to the original. */
 function mediaUrl(item) {
