@@ -1325,3 +1325,23 @@ a.unlock-cta {
   font-size: 14px;
 }
 }
+
+/* "Join Clubpass" is a button for signed-in buyers (it opens the membership
+   popup) — same look as the link version guests get. */
+button.unlock-cta {
+  display: block;
+  width: 100%;
+  padding: 14px 28px;
+  border: 0;
+  border-radius: 999px;
+  background: #1FDBDA;
+  color: #04302F;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: .02em;
+  text-transform: uppercase;
+  text-align: center;
+  margin-top: 20px;
+  cursor: pointer;
+}
