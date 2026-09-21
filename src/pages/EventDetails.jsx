@@ -6,6 +6,8 @@ import { readMemberSession } from "../api/auth.js";
 import Markdown from "../components/Markdown.jsx";
 import UserMenu from "../components/UserMenu.jsx";
 import { useTicket } from "../hooks/useTickets.js";
+import useIsDesktop from "../hooks/useIsDesktop.js";
+import EventTickets from "./EventTickets.jsx";
 import "../css/event-details.css";
 
 /**
@@ -16,6 +18,12 @@ import "../css/event-details.css";
  * or signed out (a Login / Signup prompt).
  */
 export default function EventDetails() {
+  // Desktop shows details and ticket selection together on one page — the
+  // same page /events/:id/tickets renders. Mobile keeps this screen.
+  return useIsDesktop() ? <EventTickets /> : <EventDetailsMobile />;
+}
+
+function EventDetailsMobile() {
   const { id } = useParams();
   const location = useLocation();
   const { ticket: event, status } = useTicket(id);
