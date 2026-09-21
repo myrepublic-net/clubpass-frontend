@@ -5,8 +5,10 @@ import {
   ArrowRight,
   Calendar,
   CheckCircle2,
+  ChevronRight,
   CreditCard,
   Info,
+  MapPin,
   Minus,
   Plus,
   Smartphone,
@@ -23,7 +25,11 @@ import { ClubpassUserContext } from "../components/clubpassUserContext.js";
 import useMembershipCheckout, { SIMULATE } from "../hooks/useMembershipCheckout.js";
 import useTicketCheckout from "../hooks/useTicketCheckout.js";
 import { claimFreeTickets } from "../api/subscribe.js";
+import Markdown from "../components/Markdown.jsx";
+import DesktopGallery from "../components/tickets/DesktopGallery.jsx";
+import useIsDesktop from "../hooks/useIsDesktop.js";
 import "../css/event-tickets.css";
+import "../css/event-desktop.css";
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -59,6 +65,12 @@ const PAYMENT_METHODS = [
   { id: "googlepay", label: "Google Pay", icon: Wallet },
   { id: "applepay", label: "Apple Pay", icon: Smartphone },
 ];
+
+/**
+ * On desktop, the guest email, order summary and payment method are one page
+ * rather than three screens — any of those steps renders that page.
+ */
+const DESKTOP_CHECKOUT_STEPS = ["guestEmail", "checkout", "payment"];
 
 /** Rounds a dollar amount to whole cents. */
 const toCents = (amount) => Math.round((Number(amount) || 0) * 100) / 100;
@@ -261,10 +273,17 @@ export default function EventTickets() {
     return date.toLocaleDateString("en-SG", { day: "numeric", month: "short", year: "numeric" });
   }, []);
 
+  // Desktop or mobile layout. Held in state rather than read live so it can be
+  // frozen mid-payment: swapping layouts would remount PayPal's card fields
+  // and abort the submit in flight.
+  const liveDesktop = useIsDesktop();
+  const [isDesktop, setIsDesktop] = useState(liveDesktop);
+
   // Real charge: the Lambda prices the basket from Strapi, PayPal takes the
   // payment, and the paid order plus the stock deduction land in Strapi.
   const checkout = useTicketCheckout({
-    active: step === "payment",
+    // Desktop shows the payment methods on its combined checkout page.
+    active: step === "payment" || (isDesktop && DESKTOP_CHECKOUT_STEPS.includes(step)),
     method,
     ticketId: event?.id,
     quantities: Object.fromEntries(lines.map((line) => [line.tier.id, line.qty])),
@@ -278,6 +297,12 @@ export default function EventTickets() {
     },
   });
   const { eligible, sdkStatus, flow: payFlow } = checkout;
+
+  // Follow the window, except while a payment or free booking is being confirmed.
+  const confirming = payFlow.status === "processing" || freeClaim.status === "working";
+  useEffect(() => {
+    if (!confirming) setIsDesktop(liveDesktop);
+  }, [liveDesktop, confirming]);
 
   /** A $0 basket: booked by the Lambda without PayPal, then straight to confirmation. */
   const claimFree = async () => {
@@ -358,7 +383,7 @@ export default function EventTickets() {
     <UserMenu userName={userName} />
   ) : (
     <Link className="evt-login-btn" to="/login" state={{ from: returnToMembership }}>
-      Login / Signup
+      Login / 
     </Link>
   );
 
@@ -373,6 +398,390 @@ export default function EventTickets() {
       </div>
     </div>
   );
+
+  /** The ticket-type cards — the same markup on mobile and desktop. */
+  const tierCards = tiers.map((tier) => {
+    const qty = quantities[tier.id] ?? 0;
+    const locked = tier.status === "locked";
+    const ended = tier.status === "ended";
+    const upcoming = tier.status === "upcoming";
+    const active = tier.status === "active";
+
+    return (
+      <div key={tier.id} className={`evt-card evt-card--${tier.status}`}>
+        <div className="evt-card-top">
+          <div className="evt-card-info">
+            <div className="evt-card-label">{tier.label}</div>
+            <div className="evt-card-sub">Single entry ticket</div>
+          </div>
+
+          <div className="evt-card-price">{money(tier.price)}</div>
+
+          <div className="evt-stepper">
+            <button
+              type="button"
+              onClick={() => adjust(tier, -1)}
+              disabled={!active || qty <= 0}
+              aria-label={`Decrease ${tier.label} quantity`}
+            >
+              <Minus size={14} />
+            </button>
+            <span>{qty}</span>
+            <button
+              type="button"
+              onClick={() => adjust(tier, 1)}
+              disabled={!active || qty >= capFor(tier)}
+              aria-label={`Increase ${tier.label} quantity`}
+            >
+              <Plus size={14} />
+            </button>
+          </div>
+        </div>
+
+        {tier.note && <p className="evt-card-note">{tier.note}</p>}
+
+        {/* Signed in, the pitch happens right here. Signed out there's
+            no account to put a membership on yet, so it starts with
+            registration and picks the membership back up afterwards. */}
+        {locked && (
+          <button
+            type="button"
+            className="evt-unlock-btn"
+            onClick={() => setStep(userName ? "membership" : "signupPrompt")}
+          >
+            Unlock Member Price
+          </button>
+        )}
+
+        {(ended || upcoming || active) && (tier.salePeriod || ended) && (
+          <div className="evt-card-bottom">
+            {ended && <span className="evt-tag evt-tag--sold">Sales closed</span>}
+            {active && tier.stockLeft != null && tier.stockLeft <= LOW_STOCK_AT && (
+              <span className="evt-tag evt-tag--stock">Only {tier.stockLeft} left</span>
+            )}
+            {tier.salePeriod && (
+              <div className="evt-sale-period">
+                <span>Sale period</span>
+                <b>{tier.salePeriod}</b>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+    );
+  });
+
+  /** The R Coins line under the ticket cards. */
+  const coinsBox = (
+    <div className="evt-coins">
+      {paid ? (
+        <>
+          <b>+{coins} R Coins pending</b>
+          <span>Credited upon checkout at your active 3% member rate.</span>
+        </>
+      ) : userName ? (
+        <>
+          <b>+{coins} R Coins awaiting from this purchase</b>
+          <span>Credited upon checkout.</span>
+        </>
+      ) : (
+        <>
+          <b>+{coins} R Coins awaiting</b>
+          <span>Create free account to start earning R coins.</span>
+          <Link to="/signup" state={{ from: returnToMembership }}>
+            Sign up for free
+          </Link>
+        </>
+      )}
+    </div>
+  );
+
+  /** The payment method buttons — Card, Google Pay, Apple Pay. */
+  const paymentMethods = (disabled) => {
+    // Until PayPal answers we don't know what this browser can use, so nothing
+    // is greyed out yet — a method only goes disabled once it says no.
+    const canUse = (id) => sdkStatus !== "ready" || Boolean(eligible?.[id]);
+
+    return PAYMENT_METHODS.map(({ id, label, icon: Icon }) => {
+      const selected = method === id;
+      const available = canUse(id);
+
+      return (
+        <button
+          key={id}
+          type="button"
+          className={`evt-method${selected ? " is-selected" : ""}`}
+          disabled={!available || disabled}
+          onClick={() => setMethod(id)}
+        >
+          {selected && (
+            <span className="evt-method-icon">
+              <Icon size={16} />
+            </span>
+          )}
+          <span className="evt-method-label">{label}</span>
+          {!available && <span className="evt-method-hint">Not available here</span>}
+          <span className={`evt-radio${selected ? " is-on" : ""}`} />
+        </button>
+      );
+    });
+  };
+
+  const processingOverlay = (
+    <div className="evt-processing evt-processing--overlay">
+      <span className="evt-spinner" role="status" aria-label="Processing payment" />
+      <h2>Processing Payment…</h2>
+      <p>
+        Please don't close this screen or tap the back button. We are securely validating
+        your booking.
+      </p>
+    </div>
+  );
+
+  /* ==========================================================================
+     Desktop (≥ 1024px): event details + ticket selection on one page, and the
+     guest email + order summary + payment method on one checkout page. Every
+     other step (membership, sign-up prompts, confirmation) keeps its screen.
+     ========================================================================== */
+
+  if (isDesktop && (step === "select" || DESKTOP_CHECKOUT_STEPS.includes(step))) {
+    const desktopHeader = (
+      <header className="evx-header">
+        <div className="evx-header-inner">
+          <Link className="evx-logo" to="/" aria-label="Clubpass home">
+            <img src="/images/cp-logo.png" alt="Clubpass" />
+          </Link>
+          <nav className="evx-nav">
+            <Link to="/#venues">Events</Link>
+            {userName ? (
+              <UserMenu userName={userName} />
+            ) : (
+              // The home page's own login button (clubpass.css), so the two headers match.
+              <Link
+                className="cp-btn cp-btn-purple cp-btn-sm"
+                to="/login"
+                state={{ from: returnToMembership }}
+              >
+                Login / Sign up
+              </Link>
+            )}
+          </nav>
+        </div>
+      </header>
+    );
+
+    if (step === "select") {
+      return (
+        <div className="evt-page evx-page">
+          {desktopHeader}
+          <DesktopGallery media={event.media} title={event.title} />
+
+          <main className="evx-main">
+            <h1 className="evx-title">{event.title}</h1>
+            <p className="evx-when">
+              <Calendar size={20} />
+              {event.date} {event.time}
+            </p>
+
+            <div className="evx-grid">
+              <div className="evx-left">
+                {event.description && (
+                  <Markdown className="evx-description">{event.description}</Markdown>
+                )}
+
+                <h2 className="evx-h2">Location</h2>
+                <a
+                  className="evx-venue"
+                  href={event.mapsUrl ?? undefined}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <span className="evx-venue-icon">
+                    <MapPin size={22} />
+                  </span>
+                  <span className="evx-venue-info">
+                    <b>{event.venue}</b>
+                    <span>{event.address}</span>
+                    {event.mapsUrl && <span>Open in Maps</span>}
+                  </span>
+                  <ChevronRight size={20} className="evx-venue-chevron" />
+                </a>
+              </div>
+
+              <aside className="evx-right">
+                {justSubscribed && (
+                  <div className="evt-member-banner">
+                    <CheckCircle2 size={18} />
+                    <span>You're getting member prices</span>
+                  </div>
+                )}
+
+                {tierCards}
+                {coinsBox}
+
+                <div className="evx-total">
+                  <span>Total</span>
+                  <b>{money(total, { fixed: true })}</b>
+                </div>
+
+                <button
+                  type="button"
+                  className="evt-cta evt-cta--block"
+                  disabled={ticketCount === 0}
+                  // Guests give their email on the checkout page itself; free
+                  // tickets still need an account first.
+                  onClick={() => setStep(!userName && total === 0 ? "freeLogin" : "checkout")}
+                >
+                  Checkout
+                </button>
+              </aside>
+            </div>
+          </main>
+        </div>
+      );
+    }
+
+    // guestEmail / checkout / payment → one checkout page.
+    const processing = payFlow.status === "processing";
+    const needsEmail = !userName;
+    const isFree = total === 0;
+
+    return (
+      <div className="evt-page evx-page">
+        {desktopHeader}
+
+        <main className="evx-main evx-checkout">
+          <div className="evx-checkout-head">
+            <button
+              type="button"
+              className="evt-back"
+              onClick={() => setStep("select")}
+              disabled={processing}
+              aria-label="Back"
+            >
+              <ArrowLeft size={18} />
+            </button>
+            <h1>Checkout</h1>
+          </div>
+
+          <div className="evx-grid">
+            <section className="evx-left">
+              <h2 className="evx-h2">Order Summary</h2>
+
+              <div className="evx-order-event">
+                {event.images[0] && <img src={event.images[0]} alt="" />}
+                <div>
+                  <b>{event.title}</b>
+                  <span>
+                    {event.venue} &bull; {event.date}
+                  </span>
+                  <span>{event.time}</span>
+                </div>
+              </div>
+
+              <p className="evx-kicker evx-kicker--muted">Ticket Summary</p>
+              {lines.map((line) => (
+                <div key={line.tier.id} className="evx-line">
+                  <b>
+                    {line.qty}x {line.tier.label}
+                  </b>
+                  <b className="evx-line-price">{money(line.tier.price * line.qty, { fixed: true })}</b>
+                </div>
+              ))}
+
+              <div className="evx-subtotal">
+                <span>Subtotal</span>
+                <span>
+                  {standardTotal > total && <s>${standardTotal.toFixed(2)}</s>} {money(total, { fixed: true })}
+                </span>
+              </div>
+              <div className="evx-grand">
+                <span>Order Total</span>
+                <b>{money(total, { fixed: true })}</b>
+              </div>
+
+              {needsEmail && (
+                <div className="evx-email">
+                  <label className="evt-field-label" htmlFor="guest-email">
+                    Your email
+                  </label>
+                  <input
+                    id="guest-email"
+                    className="evt-input"
+                    type="email"
+                    inputMode="email"
+                    placeholder="Enter your email"
+                    value={guestEmail}
+                    disabled={processing}
+                    onChange={(changeEvent) => setGuestEmail(changeEvent.target.value)}
+                  />
+                  <div className="evt-info-box">
+                    <Info size={16} />
+                    <span>
+                      We'll send your ticket to this email address. No password or registration
+                      required.
+                    </span>
+                  </div>
+                </div>
+              )}
+            </section>
+
+            <aside className="evx-right">
+              {isFree ? (
+                <>
+                  {freeClaim.status === "error" && (
+                    <p className="evt-pay-error" role="alert">{freeClaim.message}</p>
+                  )}
+                  <button
+                    type="button"
+                    className="evt-cta evt-cta--block"
+                    disabled={freeClaim.status === "working"}
+                    onClick={claimFree}
+                  >
+                    {freeClaim.status === "working" ? "Confirming…" : "Confirm free booking"}
+                  </button>
+                </>
+              ) : (
+                <>
+                  <p className="evx-kicker">Select Payment Method</p>
+
+                  {paymentMethods(processing)}
+
+                  {/* PayPal's hosted card fields. Kept mounted — the processing
+                      overlay covers them rather than tearing the iframes down. */}
+                  <div className={`evt-card-fields${method === "card" && !SIMULATE ? "" : " is-hidden"}`}>
+                    <div ref={checkout.cardHostRef} />
+                  </div>
+
+                  {sdkStatus === "loading" && <p className="evt-pay-note">Loading secure checkout…</p>}
+                  {sdkStatus === "error" && <p className="evt-pay-error">{checkout.sdkError}</p>}
+                  {payFlow.status === "error" && <p className="evt-pay-error">{payFlow.message}</p>}
+                  {needsEmail && guestEmail.trim() && !emailValid && (
+                    <p className="evt-pay-error">Please enter a valid email address.</p>
+                  )}
+
+                  <button
+                    type="button"
+                    className="evt-cta evt-cta--block"
+                    disabled={
+                      processing ||
+                      (!SIMULATE && sdkStatus !== "ready") ||
+                      (needsEmail && !emailValid)
+                    }
+                    onClick={checkout.pay}
+                  >
+                    Pay Now ({money(total, { fixed: true })})
+                  </button>
+                </>
+              )}
+            </aside>
+          </div>
+        </main>
+
+        {processing && processingOverlay}
+      </div>
+    );
+  }
 
   if (step === "guestEmail") {
     return (
@@ -753,9 +1162,6 @@ export default function EventTickets() {
   }
 
   if (step === "payment") {
-    // Until PayPal answers we don't know what this browser can use, so nothing
-    // is greyed out yet — a method only goes disabled once it says no.
-    const canUse = (id) => sdkStatus !== "ready" || Boolean(eligible?.[id]);
     const processing = payFlow.status === "processing";
 
     return (
@@ -781,29 +1187,7 @@ export default function EventTickets() {
 
           <h2 className="evt-section-title">Select Payment Option</h2>
 
-          {PAYMENT_METHODS.map(({ id, label, icon: Icon }) => {
-            const selected = method === id;
-            const available = canUse(id);
-
-            return (
-              <button
-                key={id}
-                type="button"
-                className={`evt-method${selected ? " is-selected" : ""}`}
-                disabled={!available || processing}
-                onClick={() => setMethod(id)}
-              >
-                {selected && (
-                  <span className="evt-method-icon">
-                    <Icon size={16} />
-                  </span>
-                )}
-                <span className="evt-method-label">{label}</span>
-                {!available && <span className="evt-method-hint">Not available here</span>}
-                <span className={`evt-radio${selected ? " is-on" : ""}`} />
-              </button>
-            );
-          })}
+          {paymentMethods(processing)}
 
           {/* PayPal's hosted card fields. Never unmounted mid-payment — the
               processing screen covers them instead, because tearing the
@@ -828,16 +1212,7 @@ export default function EventTickets() {
           </button>
         </footer>
 
-        {processing && (
-          <div className="evt-processing evt-processing--overlay">
-            <span className="evt-spinner" role="status" aria-label="Processing payment" />
-            <h2>Processing Payment…</h2>
-            <p>
-              Please don't close this screen or tap the back button. We are securely validating
-              your booking.
-            </p>
-          </div>
-        )}
+        {processing && processingOverlay}
       </div>
     );
   }
@@ -1056,98 +1431,9 @@ export default function EventTickets() {
           </div>
         )}
 
-        {tiers.map((tier) => {
-          const qty = quantities[tier.id] ?? 0;
-          const locked = tier.status === "locked";
-          const ended = tier.status === "ended";
-          const upcoming = tier.status === "upcoming";
-          const active = tier.status === "active";
+        {tierCards}
 
-          return (
-            <div key={tier.id} className={`evt-card evt-card--${tier.status}`}>
-              <div className="evt-card-top">
-                <div className="evt-card-info">
-                  <div className="evt-card-label">{tier.label}</div>
-                  <div className="evt-card-sub">Single entry ticket</div>
-                </div>
-
-                <div className="evt-card-price">{money(tier.price)}</div>
-
-                <div className="evt-stepper">
-                  <button
-                    type="button"
-                    onClick={() => adjust(tier, -1)}
-                    disabled={!active || qty <= 0}
-                    aria-label={`Decrease ${tier.label} quantity`}
-                  >
-                    <Minus size={14} />
-                  </button>
-                  <span>{qty}</span>
-                  <button
-                    type="button"
-                    onClick={() => adjust(tier, 1)}
-                    disabled={!active || qty >= capFor(tier)}
-                    aria-label={`Increase ${tier.label} quantity`}
-                  >
-                    <Plus size={14} />
-                  </button>
-                </div>
-              </div>
-
-              {tier.note && <p className="evt-card-note">{tier.note}</p>}
-
-              {/* Signed in, the pitch happens right here. Signed out there's
-                  no account to put a membership on yet, so it starts with
-                  registration and picks the membership back up afterwards. */}
-              {locked && (
-                <button
-                  type="button"
-                  className="evt-unlock-btn"
-                  onClick={() => setStep(userName ? "membership" : "signupPrompt")}
-                >
-                  Unlock Member Price
-                </button>
-              )}
-
-              {(ended || upcoming || active) && (tier.salePeriod || ended) && (
-                <div className="evt-card-bottom">
-                  {ended && <span className="evt-tag evt-tag--sold">Sales closed</span>}
-                  {active && tier.stockLeft != null && tier.stockLeft <= LOW_STOCK_AT && (
-                    <span className="evt-tag evt-tag--stock">Only {tier.stockLeft} left</span>
-                  )}
-                  {tier.salePeriod && (
-                    <div className="evt-sale-period">
-                      <span>Sale period</span>
-                      <b>{tier.salePeriod}</b>
-                    </div>
-                  )}
-                </div>
-              )}
-            </div>
-          );
-        })}
-
-        <div className="evt-coins">
-          {paid ? (
-            <>
-              <b>+{coins} R Coins pending</b>
-              <span>Credited upon checkout at your active 3% member rate.</span>
-            </>
-          ) : userName ? (
-            <>
-              <b>+{coins} R Coins awaiting from this purchase</b>
-              <span>Credited upon checkout.</span>
-            </>
-          ) : (
-            <>
-              <b>+{coins} R Coins awaiting</b>
-              <span>Create free account to start earning R coins.</span>
-              <Link to="/signup" state={{ from: returnToMembership }}>
-                Sign up for free
-              </Link>
-            </>
-          )}
-        </div>
+        {coinsBox}
       </div>
 
       <footer className="evt-footer">
