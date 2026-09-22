@@ -274,6 +274,42 @@ export default function useTicketCheckout({
     }
   }, [sdk, openOrder, capture, fail]);
 
+  /* ---- PayPal wallet --------------------------------------------------- */
+
+  const payWithPayPal = useCallback(async () => {
+    try {
+      const create = sdk.createPayPalOneTimePaymentSession;
+      if (typeof create !== "function") {
+        throw new Error(
+          "This PayPal SDK build has no one-time PayPal session. " +
+            `It has: ${sessionMethods(sdk).join(", ")}`,
+        );
+      }
+
+      const session = create.call(sdk, {
+        // The buyer approved in PayPal's window — take the money server-side.
+        onApprove: async (data) => {
+          try {
+            await capture(data?.orderId);
+          } catch (error) {
+            fail(error);
+          }
+        },
+        // Closing PayPal's window is a change of mind, not a failure.
+        onCancel: () => setFlow({ status: "idle" }),
+        onError: (error) => fail(error),
+      });
+
+      // The same Strapi-priced order the other methods use; PayPal opens on it.
+      await session.start(
+        { presentationMode: "auto" },
+        openOrder("paypal").then(({ orderId }) => ({ orderId })),
+      );
+    } catch (error) {
+      fail(error);
+    }
+  }, [sdk, openOrder, capture, fail]);
+
   /** Runs the selected method. Dev builds without a Lambda approve locally. */
   const pay = useCallback(async () => {
     if (SIMULATE) {
@@ -301,7 +337,8 @@ export default function useTicketCheckout({
     if (method === "card") return payWithCard();
     if (method === "googlepay") return payWithGooglePay();
     if (method === "applepay") return payWithApplePay();
-  }, [method, payWithCard, payWithGooglePay, payWithApplePay]);
+    if (method === "paypal") return payWithPayPal();
+  }, [method, payWithCard, payWithGooglePay, payWithApplePay, payWithPayPal]);
 
   return { flow, sdkStatus, sdkError, eligible, cardHostRef, pay };
 }
