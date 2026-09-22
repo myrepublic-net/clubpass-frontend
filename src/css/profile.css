@@ -270,3 +270,13 @@
   font-size: 15px;
 }
 }
+/* The R Coin card is a button (it opens the redeem sheet), so it shouldn't
+   pick up the browser's button look. */
+button.prf-stat--coins {
+  display: block;
+  width: 100%;
+  border: 0;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
