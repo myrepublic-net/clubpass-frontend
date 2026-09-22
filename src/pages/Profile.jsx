@@ -4,6 +4,7 @@ import { ArrowLeft, Check, ChevronRight } from "lucide-react";
 
 import { fetchPointsBalance, readMemberSession } from "../api/auth.js";
 import { isPaid, resolveClubpassUser } from "../api/clubpassUser.js";
+import RCoinsSheet from "../components/RCoinsSheet.jsx";
 import SubscribeModal from "../components/SubscribeModal.jsx";
 import UserMenu from "../components/UserMenu.jsx";
 import { ClubpassUserContext } from "../components/clubpassUserContext.js";
@@ -17,8 +18,6 @@ const PERKS = [
   { lead: "", text: "Free Entry tickets for selected events " },
 ];
 
-/** R Coins are spent in the Reward Land app, so the balance card opens it. */
-const REWARD_LAND_APP = "https://rewardland.onelink.me/EwIe/start";
 
 const dateFormat = new Intl.DateTimeFormat("en-SG", {
   day: "numeric",
@@ -63,6 +62,7 @@ export default function Profile() {
   // anyone off to another screen. It reads its member off context, which this
   // page isn't inside, so that's supplied around the sheet below.
   const [subscribeOpen, setSubscribeOpen] = useState(false);
+  const [coinsSheetOpen, setCoinsSheetOpen] = useState(false);
 
   const subscribeUser = useMemo(
     () => ({ userName: userName ?? "", user, profile: session?.user ?? null, setUser }),
@@ -126,11 +126,11 @@ export default function Profile() {
         </div>
 
         <div className="prf-stats">
-          <a
+          {/* Opens the same "Redeem Your R Coins" sheet as Order Confirmed. */}
+          <button
+            type="button"
             className="prf-stat prf-stat--coins"
-            href={REWARD_LAND_APP}
-            target="_blank"
-            rel="noopener noreferrer"
+            onClick={() => setCoinsSheetOpen(true)}
           >
             <span className="prf-stat-label">R Coin Balance</span>
             <b className="prf-coins">
@@ -145,7 +145,7 @@ export default function Profile() {
               )}
             </b>
             <ChevronRight className="prf-stat-chevron" size={22} />
-          </a>
+          </button>
 
           <div className="prf-stat prf-stat--renewal">
             {/* A cancelled membership doesn't renew — it runs to the end of the paid period. */}
@@ -195,6 +195,8 @@ export default function Profile() {
           <img src="/images/account.png"/>
         </div>
       </div>
+
+      <RCoinsSheet open={coinsSheetOpen} onClose={() => setCoinsSheetOpen(false)} />
 
       <ClubpassUserContext.Provider value={subscribeUser}>
         <SubscribeModal
