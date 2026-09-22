@@ -64,6 +64,8 @@ const PAYMENT_METHODS = [
   { id: "card", label: "Card payment", icon: CreditCard },
   { id: "googlepay", label: "Google Pay", icon: Wallet },
   { id: "applepay", label: "Apple Pay", icon: Smartphone },
+  // Tickets: a one-time PayPal payment. Membership: a PayPal subscription.
+  { id: "paypal", label: "PayPal", icon: Wallet },
 ];
 
 /**
