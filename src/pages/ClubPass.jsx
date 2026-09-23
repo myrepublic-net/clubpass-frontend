@@ -373,8 +373,10 @@ export default function ClubPass() {
   const { hero: heroSlides, beforeTickets, afterTickets, cta, faq, beta, why, howItWorks } =
     useHome(FALLBACK_CONTENT);
 
-  // The venue grid is whatever events Strapi is publishing.
-  const { tickets: events, status: eventsStatus } = useTickets();
+  // The venue grid is whatever events Strapi is publishing — public ones only.
+  // A private event is still reachable by its own link.
+  const { tickets: allEvents, status: eventsStatus } = useTickets();
+  const events = useMemo(() => allEvents.filter((event) => event.isPublic), [allEvents]);
 
   // This page is public (not behind UserGate), so a signed-out visitor still
   // sees the full page — the header just reflects whichever state applies.
