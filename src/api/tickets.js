@@ -153,6 +153,9 @@ function normalise(row) {
     // to coins the same way the ticket flow does.
     memberCoins: memberTier ? Math.round(memberTier.price * 0.03 * 1000) : null,
     title: row.title ?? "",
+    // Private events stay off the home page grid but keep working by link.
+    // Entries saved before this field existed have it empty: treat as public.
+    isPublic: row.isPublic !== false,
     description: row.description ?? "",
     startsAt,
     date: startsAt ? dayFormat.format(startsAt) : "",
