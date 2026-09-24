@@ -95,16 +95,17 @@ const basketKey = (eventId) => `clubpass:basket:${eventId}`;
  */
 function buildTiers(event, { paid }) {
   return event.tiers.map((tier) =>
-    tier.id === "member"
+    tier.memberOnly
       ? {
           ...tier,
           // A window that hasn't opened still can't be bought, member or not.
           status: paid ? tier.status : "locked",
           note: paid
-            ? `Limited to ${tier.maxQty ?? 1} ticket${tier.maxQty === 1 ? "" : "s"} per member for this event.`
+            ? tier.description ||
+              `Limited to ${tier.maxQty ?? 1} ticket${tier.maxQty === 1 ? "" : "s"} per member for this event.`
             : "Sign up for membership to unlock this price.",
         }
-      : tier,
+      : { ...tier, note: tier.description || tier.note },
   );
 }
 
@@ -248,20 +249,14 @@ export default function EventTickets() {
       setJustSubscribed(true);
 
       setQuantities((prev) => {
-        // Standard Price isn't offered to members, so anything sitting in it
-        // would vanish from the basket along with the row. Move it to Early
-        // Bird — it survives the switch and costs them less — rather than
-        // quietly dropping tickets they'd already chosen.
-        const carried = prev.standard ?? 0;
-        const earlyBirdCap = tiers.find((tier) => tier.id === "early-bird")?.stockLeft ?? Infinity;
+        // They came here to buy the member-priced ticket — put it in the
+        // basket. Everything else they'd chosen stays as it is; tier names are
+        // the CMS's to decide now, so nothing is shuffled between them.
+        const memberTier = tiers.find((tier) => tier.memberOnly);
+        if (!memberTier) return prev;
 
-        return {
-          ...prev,
-          // They came here to buy the member-priced ticket — put it in the basket.
-          member: Math.max(prev.member ?? 0, 1),
-          standard: 0,
-          "early-bird": Math.min((prev["early-bird"] ?? 0) + carried, earlyBirdCap),
-        };
+        const cap = memberTier.maxQty ?? memberTier.stockLeft ?? Infinity;
+        return { ...prev, [memberTier.id]: Math.min(Math.max(prev[memberTier.id] ?? 0, 1), cap) };
       });
 
       setStep("select");

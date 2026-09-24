@@ -15,8 +15,12 @@ const BASE_URL =
 // Read-only token: the tickets endpoint 403s without one.
 const TOKEN = import.meta.env.VITE_STRAPI_TOKEN_GET;
 
-/** The four tiers, in the order they're offered, and where each one's columns live. */
-const TIER_COLUMNS = [
+/**
+ * Events used to carry four fixed tiers as flat columns. They now carry a
+ * `tiers` list instead, so these are only the fallback for events that haven't
+ * been migrated. Mirrors clubpass-subscribe/lib/tickets.mjs.
+ */
+const LEGACY_TIER_COLUMNS = [
   { id: "member", label: "Member Price", price: "member_price", userLimit: "user_limit", globalLimit: "global_limit", from: "from_date", to: "to_date" },
   { id: "early-bird", label: "Early Bird", price: "earlybird_price", userLimit: "user_limit_earlybird", globalLimit: "global_limit_earlybird", from: "from_date_earlybird", to: "to_date_earlybird" },
   { id: "standard", label: "Standard Price", price: "standard_price", userLimit: "user_limit_standard", globalLimit: "global_limit_standard", from: "from_date_standard", to: "to_date_standard" },
@@ -93,12 +97,60 @@ function dateBadge(date) {
 }
 
 /**
+ * An event's tiers, whichever way it stores them. A migrated tier's id is
+ * "t<entry id>", which survives renaming and reordering; a legacy tier keeps
+ * its old name, so past orders still read correctly.
+ */
+function tiersOf(row) {
+  if (row.tiers?.length) {
+    return row.tiers
+      .filter((tier) => tier.price != null)
+      .map((tier) => ({
+        id: `t${tier.id}`,
+        label: (tier.title ?? "").trim() || "Ticket",
+        description: tier.description ?? "",
+        memberOnly: tier.member_only === true,
+        price: tier.price,
+        maxQty: tier.user_limit ?? null,
+        stockLeft: tier.global_limit ?? null,
+        from: tier.from_date ?? null,
+        to: tier.to_date ?? null,
+        salePeriod: salePeriod(tier.from_date, tier.to_date),
+        status: windowStatus(tier.from_date, tier.to_date),
+      }));
+  }
+
+  return LEGACY_TIER_COLUMNS.map((column) => {
+    const price = row[column.price];
+    // A tier with no price isn't sold for this event.
+    if (price == null) return null;
+
+    const from = row[column.from];
+    const to = row[column.to];
+
+    return {
+      id: column.id,
+      label: column.label,
+      description: "",
+      memberOnly: column.id === "member",
+      price,
+      maxQty: row[column.userLimit] ?? null,
+      stockLeft: row[column.globalLimit] ?? null,
+      from,
+      to,
+      salePeriod: salePeriod(from, to),
+      status: windowStatus(from, to),
+    };
+  }).filter(Boolean);
+}
+
+/**
  * The non-member price the card quotes: whatever a buyer would actually pay
  * today, so the cheapest tier currently on sale — falling back to the
  * cheapest of them when nothing is open yet.
  */
 function publicTierOf(tiers) {
-  const open = tiers.filter((tier) => tier.id !== "member");
+  const open = tiers.filter((tier) => !tier.memberOnly);
   if (!open.length) return null;
 
   const onSale = open.filter((tier) => tier.status === "active");
@@ -110,32 +162,17 @@ function publicTierOf(tiers) {
 function normalise(row) {
   const startsAt = row.date ? new Date(row.date) : null;
 
-  const tiers = TIER_COLUMNS.map((column) => {
-    const price = row[column.price];
-    // A tier with no price isn't sold for this event.
-    if (price == null) return null;
-
-    const from = row[column.from];
-    const to = row[column.to];
-
-    return {
-      id: column.id,
-      label: column.label,
-      price,
-      maxQty: row[column.userLimit] ?? null,
-      stockLeft: row[column.globalLimit] ?? null,
-      from,
-      to,
-      salePeriod: salePeriod(from, to),
-      status: windowStatus(from, to),
-    };
-  }).filter(Boolean);
+  const tiers = tiersOf(row);
 
   const media = (row.banners ?? []).map(banner).filter(Boolean);
   const prices = tiers.map((tier) => tier.price);
 
   // What the card leads with: the member price against the best public one.
-  const memberTier = tiers.find((tier) => tier.id === "member") ?? null;
+  // With several member-only tiers, the cheapest is the one worth quoting.
+  const memberTiers = tiers.filter((tier) => tier.memberOnly);
+  const memberTier = memberTiers.length
+    ? memberTiers.reduce((cheapest, tier) => (tier.price < cheapest.price ? tier : cheapest))
+    : null;
   const publicTier = publicTierOf(tiers);
 
   const memberSaving =
@@ -170,8 +207,11 @@ function normalise(row) {
     images: media.filter((item) => item.type === "image").map((item) => item.url),
     tiers,
     priceFrom: prices.length ? Math.min(...prices) : null,
-    // What a ticket costs without any discount, for the "you saved" line.
-    fullPrice: row.standard_price ?? row.door_price ?? (prices.length ? Math.max(...prices) : null),
+    // What a ticket costs without any discount, for the "you saved" line: the
+    // dearest tier anyone can buy without a membership.
+    fullPrice:
+      tiers.filter((tier) => !tier.memberOnly).reduce((dearest, tier) => Math.max(dearest, tier.price), 0) ||
+      (prices.length ? Math.max(...prices) : null),
   };
 }
 
