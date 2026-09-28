@@ -93,6 +93,9 @@
   margin-bottom: 12px;
   text-transform: uppercase;
 }
+.cpn-membership-copy .cpn-kicker {
+    color: #fff;
+}
 .cpn-membership h2 {
     color: #fff;
 }

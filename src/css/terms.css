@@ -1,0 +1,440 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&display=swap');
+
+/* ==========================================================================
+   Clubpass Terms & Conditions — a long read, so: a narrow measure, generous
+   line height, and a contents list that jumps to each section.
+   ========================================================================== */
+
+.tc-page {
+  --tc-teal: #1FC9CF;
+  --tc-navy: #0C165E;
+  --tc-ink: #10214F;
+  --tc-muted: #5B6789;
+  --tc-line: #E3E9F5;
+  --tc-soft: #F4F7FC;
+
+  font-family: "Outfit", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  color: var(--tc-ink);
+  background: #fff;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  /* Short pages (Contact) still push the footer to the bottom of the screen. */
+  display: flex;
+  flex-direction: column;
+}
+
+.tc-page > main {
+  flex: 1;
+  width: 100%;
+}
+
+.tc-page *,
+.tc-page *::before,
+.tc-page *::after {
+  box-sizing: border-box;
+}
+
+/* --- header: shared by the Terms and Privacy pages --- */
+
+.tc-header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 14px 24px;
+  background: linear-gradient(135deg, #061539 0%, #10307E 55%, #1B49AE 100%);
+  color: #fff;
+}
+
+.tc-brand {
+  display: inline-flex;
+  align-items: center;
+}
+
+.tc-brand img {
+  display: block;
+  height: 34px;
+  width: auto;
+}
+
+.tc-login {
+  padding: 8px 16px;
+  border: 1px solid rgba(255, 255, 255, .5);
+  border-radius: 999px;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+  text-decoration: none;
+}
+
+/* --- body --- */
+
+.tc-body {
+  max-width: 780px;
+  margin: 0 auto;
+  padding: 36px 20px 80px;
+  font-size: 15px;
+  line-height: 1.7;
+}
+
+.tc-body p {
+  margin: 0 0 12px;
+}
+
+.tc-body a {
+  color: #0070DB;
+}
+
+.tc-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0 0 22px;
+  padding: 8px 14px 8px 10px;
+  border: 1px solid var(--tc-line);
+  border-radius: 999px;
+  background: #fff;
+  color: var(--tc-navy);
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.tc-back:hover {
+  border-color: var(--tc-teal);
+  background: var(--tc-soft);
+}
+
+.tc-intro {
+  margin-bottom: 18px;
+}
+
+.tc-lede {
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--tc-line);
+}
+
+.tc-kicker {
+  margin: 0 0 6px !important;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--tc-teal);
+}
+
+.tc-intro h1 {
+  margin: 0 0 6px;
+  font-size: 30px;
+  font-weight: 800;
+  line-height: 1.2;
+  color: var(--tc-navy);
+}
+
+.tc-updated {
+  margin-bottom: 0 !important;
+  font-size: 13px;
+  color: var(--tc-muted);
+}
+
+/* --- contents --- */
+
+.tc-toc {
+  margin: 24px 0 8px;
+  padding: 18px 22px;
+  border-radius: 14px;
+  background: var(--tc-soft);
+}
+
+.tc-toc-head {
+  margin: 0 0 8px !important;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--tc-muted);
+}
+
+.tc-toc ol {
+  margin: 0;
+  padding-left: 22px;
+  columns: 2;
+  column-gap: 28px;
+}
+
+.tc-toc li {
+  break-inside: avoid;
+  font-size: 14px;
+  line-height: 1.9;
+}
+
+.tc-toc a {
+  color: var(--tc-navy);
+  text-decoration: none;
+}
+
+.tc-toc a:hover {
+  color: #0070DB;
+  text-decoration: underline;
+}
+
+/* --- sections --- */
+
+.tc-section {
+  padding-top: 28px;
+  /* Clears the sticky header when jumped to from the contents. */
+  scroll-margin-top: 72px;
+}
+
+.tc-section h2 {
+  margin: 0 0 14px;
+  font-size: 21px;
+  font-weight: 800;
+  line-height: 1.3;
+  color: var(--tc-navy);
+}
+
+.tc-sub {
+  margin-top: 18px;
+}
+
+.tc-sub h3 {
+  margin: 0 0 8px;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--tc-navy);
+}
+
+.tc-clause {
+  display: flex;
+  gap: 12px;
+}
+
+.tc-clause-num {
+  flex-shrink: 0;
+  min-width: 28px;
+  font-weight: 700;
+  color: var(--tc-navy);
+}
+
+.tc-list {
+  margin: 0 0 14px;
+  padding-left: 22px;
+}
+
+.tc-list li {
+  margin-bottom: 4px;
+}
+
+.tc-penalties {
+  margin: 4px 0 16px;
+  border: 1px solid var(--tc-line);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.tc-penalties > div {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: 16px;
+  padding: 12px 16px;
+}
+
+.tc-penalties > div + div {
+  border-top: 1px solid var(--tc-line);
+}
+
+.tc-penalties dt {
+  font-weight: 700;
+  color: var(--tc-navy);
+}
+
+.tc-penalties dd {
+  margin: 0;
+}
+
+.tc-contact {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 16px 18px;
+  border-radius: 12px;
+  background: var(--tc-soft);
+  font-style: normal;
+}
+
+@media (max-width: 600px) {
+  .tc-header {
+    padding: 12px 16px;
+  }
+
+  .tc-brand img {
+    height: 28px;
+  }
+
+  .tc-body {
+    padding-top: 26px;
+    font-size: 14.5px;
+  }
+
+  .tc-intro h1 {
+    font-size: 24px;
+  }
+
+  .tc-toc ol {
+    columns: 1;
+  }
+
+  .tc-penalties > div {
+    grid-template-columns: 1fr;
+    gap: 2px;
+  }
+}
+
+/* --- Contact Us --- */
+
+.tc-contact-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 18px 20px;
+  border: 1px solid var(--tc-line);
+  border-radius: 14px;
+  background: var(--tc-soft);
+  color: var(--tc-ink) !important;
+  text-decoration: none;
+  transition: border-color .15s ease, box-shadow .15s ease;
+}
+
+.tc-contact-card:hover {
+  border-color: var(--tc-teal);
+  box-shadow: 0 4px 16px rgba(12, 22, 94, .08);
+}
+
+.tc-contact-card b {
+  display: block;
+  font-size: 16px;
+  color: var(--tc-navy);
+  word-break: break-word;
+}
+
+.tc-contact-card small {
+  display: block;
+  margin-top: 2px;
+  font-size: 14px;
+  color: var(--tc-muted);
+}
+
+.tc-contact-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 46px;
+  height: 46px;
+  flex-shrink: 0;
+  border-radius: 12px;
+  background: var(--tc-teal);
+  color: #062B45;
+}
+
+/* Labelled sub-items under a clause, e.g. "(i) verify your identity;" */
+.tc-points {
+  margin: 0 0 12px 40px;
+}
+
+.tc-points .tc-clause {
+  margin-bottom: 6px;
+}
+
+.tc-points .tc-clause-num {
+  min-width: 40px;
+  font-weight: 600;
+}
+
+@media (max-width: 600px) {
+  .tc-points {
+    margin-left: 16px;
+  }
+}
+
+/* --- FAQs --- */
+
+.faq-groups {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding-bottom: 8px;
+}
+
+.faq-chip {
+  padding: 7px 14px;
+  border: 1px solid var(--tc-line);
+  border-radius: 999px;
+  background: var(--tc-soft);
+  color: var(--tc-navy) !important;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.faq-chip:hover {
+  border-color: var(--tc-teal);
+}
+
+.faq-list {
+  border: 1px solid var(--tc-line);
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+.faq-item + .faq-item {
+  border-top: 1px solid var(--tc-line);
+}
+
+.faq-question {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  width: 100%;
+  padding: 16px 18px;
+  border: 0;
+  background: #fff;
+  color: var(--tc-navy);
+  font-family: inherit;
+  font-size: 15.5px;
+  font-weight: 700;
+  line-height: 1.4;
+  text-align: left;
+  cursor: pointer;
+}
+
+.faq-question:hover,
+.faq-item.is-open .faq-question {
+  background: var(--tc-soft);
+}
+
+.faq-chevron {
+  flex-shrink: 0;
+  color: var(--tc-teal);
+  transition: transform .2s ease;
+}
+
+.faq-item.is-open .faq-chevron {
+  transform: rotate(180deg);
+}
+
+.faq-answer {
+  padding: 2px 18px 8px;
+  background: var(--tc-soft);
+}
+
+.faq-answer p {
+  margin: 0 0 12px;
+}

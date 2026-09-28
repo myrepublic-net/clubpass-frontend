@@ -29,6 +29,8 @@ const SIMULATE = !API_URL;
 const COUNTRY_CODE_DIGITS = "65";
 
 let registrationToken = null;
+// Who `registrationToken` was issued for.
+let registeredAs = null;
 
 /**
  * The member's own sign-in — the only way into /clubpass-app now that rr_sso
@@ -63,6 +65,26 @@ export function signOutMember() {
   }
 }
 
+/**
+ * Ends the Reward Land session with the web-issued refresh token, per the
+ * channel API's session-handling note, then clears the local one regardless
+ * of whether that call succeeds — a logout that failed server-side shouldn't
+ * leave the member stuck looking signed in on this device.
+ */
+export async function logout() {
+  const session = readMemberSession();
+
+  try {
+    if (!SIMULATE && session?.refreshToken) {
+      await request("logout", { refreshToken: session.refreshToken });
+    }
+  } catch (error) {
+    console.error("ClubPass logout failed", error);
+  } finally {
+    signOutMember();
+  }
+}
+
 async function request(action, payload, extraHeaders = {}) {
   const res = await fetch(`${API_URL}/${action}`, {
     method: "POST",
@@ -81,6 +103,60 @@ async function request(action, payload, extraHeaders = {}) {
   }
 
   return body.data ?? {};
+}
+
+/**
+ * The read-only half of the channel API. `profile` and `points-balance` are
+ * GETs authorised by the member's own access token — the Lambda 405s a POST
+ * to them, so they can't go through `request()` above.
+ */
+async function requestGet(action, accessToken) {
+  const res = await fetch(`${API_URL}/${action}`, {
+    method: "GET",
+    headers: { Authorization: `Bearer ${accessToken}` },
+  });
+
+  const body = await res.json().catch(() => null);
+
+  if (!res.ok || body?.code !== "SUCCESS") {
+    const error = new Error(body?.errorMessage ?? `Request failed (${res.status})`);
+    error.code = body?.code ?? "INTERNAL_ERROR";
+    throw error;
+  }
+
+  return body.data ?? {};
+}
+
+/**
+ * The member's R Coin balance.
+ *
+ * GET {API_URL}/points-balance with the member's own access token; the reply
+ * is `{ points, valueUSD, conversionRate, pendingPoints, pendingValueUSD }`
+ * and `points` is the spendable balance.
+ *
+ * Null when there's no session or no API behind it, so the profile can show a
+ * dash rather than a made-up number.
+ */
+export async function fetchPointsBalance() {
+  const session = readMemberSession();
+  // Login stores { token, refreshToken, ssoToken, expiresAt, user } — `token`
+  // is the access JWT the bearer header wants.
+  const accessToken = session?.token;
+
+  if (SIMULATE) return null;
+
+  // No token means no request goes out at all, which from the network tab
+  // looks the same as a broken call — so say which keys the session did have.
+  if (!accessToken) {
+    console.warn(
+      "[auth] Skipping points-balance: the stored session has no `token`. " +
+        `It holds: ${Object.keys(session ?? {}).join(", ") || "(no session)"}`,
+    );
+    return null;
+  }
+
+  const { points } = await requestGet("points-balance", accessToken);
+  return typeof points === "number" ? points : null;
 }
 
 function tokenHeaders() {
@@ -134,12 +210,28 @@ function simulateVerifyOtp(identifier, otp) {
 export async function requestEmailOtp({ username, email }) {
   if (SIMULATE) return simulateSendOtp(email);
 
-  if (!registrationToken) {
+  // The token is bound to the username and email it was registered with. If
+  // either has changed since (a typo fixed, a different address), start a new
+  // registration — reusing the old token fails with
+  // REGISTRATION_TOKEN_OR_EMAIL_MISMATCH.
+  if (!registrationToken || registeredAs?.username !== username || registeredAs?.email !== email) {
     const data = await request("register", { username, email });
     registrationToken = data.registrationToken;
+    registeredAs = { username, email };
   }
 
-  return request("request-otp", { email }, tokenHeaders());
+  try {
+    return await request("request-otp", { email }, tokenHeaders());
+  } catch (error) {
+    // A stale or rejected token: drop it so the next attempt registers afresh.
+    if (error.code === "REGISTRATION_TOKEN_OR_EMAIL_MISMATCH") {
+      registrationToken = null;
+      registeredAs = null;
+      // Reward Land answers this when the email is already registered.
+      error.message = "Email address already exists.";
+    }
+    throw error;
+  }
 }
 
 export async function verifyEmailOtp({ email }, otp) {
@@ -195,6 +287,7 @@ export async function signup({ email, phoneNumber, password, referralCode, promo
 
   // The journey is done — a second signup in the same tab should start clean.
   registrationToken = null;
+  registeredAs = null;
   return data;
 }
 

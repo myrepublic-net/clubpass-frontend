@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { useSearchParams } from "react-router";
+import { Link, useLocation, useSearchParams } from "react-router";
 
 import { readMemberSession } from "../api/auth.js";
 import { resolveClubpassUser } from "../api/clubpassUser.js";
@@ -32,6 +32,11 @@ function Loader() {
 
 /** No stored session — the member hasn't logged in on this device/browser. */
 function SignInPrompt() {
+  const location = useLocation();
+  // So logging in lands them back on the gated page they were trying to
+  // reach (e.g. /clubpass-app), not just the home page.
+  const from = `${location.pathname}${location.search}`;
+
   return (
     <div className="cpg-gate">
       <div className="cpg-gate-overlay"></div>
@@ -39,9 +44,9 @@ function SignInPrompt() {
         <img className="cp-logo" src="/images/cp-rw-logo.png" />
         <h1>Log in to Clubpass</h1>
         <p>Sign in to your Clubpass account to see your pass, trips, and rewards.</p>
-        <a className="cpg-cta" href="/login">
+        <Link className="cpg-cta" to="/login" state={{ from }}>
           Log In
-        </a>
+        </Link>
         <p className="cpg-fine">
           New here? <a href="/signup">Create an account</a>
         </p>

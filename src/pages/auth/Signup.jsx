@@ -1,6 +1,6 @@
 import { Eye, EyeOff } from "lucide-react";
 import { useEffect, useState } from "react";
-import { Link } from "react-router";
+import { Link, useLocation } from "react-router";
 
 import { requestEmailOtp, requestPhoneOtp, signup, verifyEmailOtp, verifyPhoneOtp } from "../../api/auth.js";
 import AuthField from "../../components/auth/AuthField.jsx";
@@ -41,6 +41,15 @@ function OtpPanel({ flow, onComplete }) {
 }
 
 export default function Signup() {
+  const location = useLocation();
+
+  // Where signing up should land them. Nothing passes state on the way in from
+  // the home page, so that journey ends back on it; a signup
+  // started somewhere specific (a ticket checkout, say) carries that origin
+  // through and returns to it. Signing up doesn't create a session, so the
+  // destination is handed to the login step rather than navigated to here.
+  const afterSignup = location.state?.from ?? "/";
+
   const [step, setStep] = useState("account"); // account -> phone -> final -> success
   const [legalModal, setLegalModal] = useState(null); // null | "terms" | "privacy"
 
@@ -101,7 +110,9 @@ export default function Signup() {
 
   const loginFooter = (
     <p className="auth-switch">
-      Have an account? <Link to="/login">LOG IN NOW</Link>
+      {/* Someone who turns out to already have an account is still on the same
+          journey, so log in finishes where signing up would have. */}
+      Have an account? <Link to="/login" state={{ from: afterSignup }}>LOG IN NOW</Link>
     </p>
   );
 
@@ -121,7 +132,7 @@ export default function Signup() {
        
         
         {/* <p className="auth-success-text">Welcome aboard, {username}. You can log in now.</p> */}
-        <Link to="/login" className="auth-cta auth-cta-link">
+        <Link to="/login" state={{ from: afterSignup }} className="auth-cta auth-cta-link">
           Continue to log in
         </Link>
       </AuthLayout>
@@ -163,6 +174,12 @@ export default function Signup() {
             }
           />
 
+          {/* A failed request never opens the OTP boxes, which is where errors
+              normally show — so surface it here instead. */}
+          {!emailOtp.sent && emailOtp.error && (
+            <p className="auth-field-error" role="alert">{emailOtp.error}</p>
+          )}
+
           {emailOtp.sent && (
             <div>
               <label className="auth-otp-label">Enter OTP</label>
@@ -203,6 +220,12 @@ export default function Signup() {
               </button>
             }
           />
+
+          {/* A failed request never opens the OTP boxes, which is where errors
+              normally show — so surface it here instead. */}
+          {!phoneOtp.sent && phoneOtp.error && (
+            <p className="auth-field-error" role="alert">{phoneOtp.error}</p>
+          )}
 
           {phoneOtp.sent && (
             <div>

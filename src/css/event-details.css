@@ -1,0 +1,428 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&display=swap');
+
+/* ==========================================================================
+   Event Details — reached from a venue card's "View event details" row on
+   ClubPass.jsx. Public page: the header reflects signed-in vs signed-out
+   instead of gating the page like /clubpass-app and /dashboard do.
+   ========================================================================== */
+
+.evd-page {
+  --evd-teal: #1FDBDA;
+  --evd-dark: #10131F;
+  --evd-ink: #14061F;
+  --evd-muted: #0C165E;
+  --evd-line: #EAE5F8;
+
+  font-family: "Outfit", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  color: var(--evd-ink);
+  background: #fff;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  max-width: 600px;
+    margin: auto;
+    border-inline: 1px solid #eae5f8 !important;
+}
+
+.evd-page *,
+.evd-page *::before,
+.evd-page *::after {
+  box-sizing: border-box;
+}
+
+/* --- header --- */
+
+.evd-header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 20px;
+      background: linear-gradient(180deg, #0C165E 0%, #0070DB 100%);
+  color: #fff;
+}
+
+.evd-header h1 {
+  flex: 1;
+  margin: 0;
+  font-size: 22px;
+  font-weight: 800;
+}
+
+.evd-back {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    background: #1FDBDA;
+    color: #0C165E;
+    flex-shrink: 0;
+}
+
+.evd-login-btn {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 16px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, .5);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* --- gallery --- */
+
+.evd-gallery {
+    position: relative;
+    width: 100%;
+    background: #000;
+    overflow: hidden;
+    max-width: 600px;
+    margin: auto;
+    /* height: 250px; */
+}
+
+/* The images sit in one wide row that scrolls, so a swipe moves the gallery
+   natively and snaps to whole photos. The scrollbar is hidden — the counter
+   and dots are the affordance. */
+.evd-track {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.evd-track::-webkit-scrollbar {
+  display: none;
+}
+
+.evd-hero-img {
+  flex: 0 0 100%;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  scroll-snap-align: start;
+  aspect-ratio: 1 / 1;
+}
+
+.evd-counter {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, .55);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.evd-play {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, .45);
+  border: 1px solid rgba(255, 255, 255, .5);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Gallery arrows — the desktop counterpart to swiping. Matched to the play
+   button above so the three controls read as one set. */
+.evd-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  padding: 0;
+  border: 1px solid rgba(255, 255, 255, .5);
+  border-radius: 50%;
+  background: rgba(0, 0, 0, .45);
+  color: #fff;
+  cursor: pointer;
+  transition: background .15s ease, opacity .15s ease;
+}
+
+.evd-arrow:hover:not(:disabled) {
+  background: rgba(0, 0, 0, .7);
+}
+
+/* Kept in place rather than hidden at the ends, so the controls don't shift. */
+.evd-arrow:disabled {
+  opacity: .3;
+  cursor: default;
+}
+
+.evd-arrow--prev {
+  left: 12px;
+}
+
+.evd-arrow--next {
+  right: 12px;
+}
+
+.evd-dots {
+    position: absolute;
+    bottom: 20px;
+    left: inherit;
+    right: 20px;
+    background: #00000066;
+    padding: 5px 10px;
+    display: flex;
+    border-radius: 50px;
+    gap: 5px;
+}
+
+.evd-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, .5);
+  padding: 0;
+  border: none;
+}
+
+.evd-dot.is-active {
+  background: #fff;
+  /* width: 16px; */
+  border-radius: 999px;
+}
+
+/* --- body --- */  
+
+.evd-body {
+  padding: 20px 20px 100px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.evd-title {
+    margin: 0 0 10px;
+    font-size: 24px;
+    font-weight: 800;
+    line-height: 1.25;
+    color: #0C165E;
+}
+
+.evd-datetime {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0 0 18px;
+    color: #0C165E;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.evd-venue-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  margin-bottom: 40px;
+  border: 1.5px solid #1FDBDA;
+  border-radius: 16px;
+  color: var(--evd-ink);
+}
+
+.evd-venue-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 54px;
+  height: 54px;
+  border-radius: 12px;
+  background: rgba(31, 219, 218, .12);
+  color: var(--evd-teal);
+  flex-shrink: 0;
+}
+
+.evd-venue-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.evd-venue-name {
+  font-size: 15px;
+  font-weight: 800;
+  color: #0C165E;
+}
+
+.evd-venue-address {
+  font-size: 13px;
+  color: #0C165E;
+}
+
+.evd-venue-link {
+    font-size: 13px;
+    font-weight: 400;
+    color: #0C165E;
+}
+
+.evd-venue-chevron {
+  color: #1FDBDA;
+  flex-shrink: 0;
+}
+
+/* Rich text from Strapi, so it's several blocks — line-clamp only works on a
+   single one, so the collapsed state is a height with a fade instead. */
+.evd-description {
+  position: relative;
+  margin: 0;
+  max-height: 64px;
+  overflow: hidden;
+  font-size: 13px;
+  line-height: 1.6;
+  color: #0C165E;
+}
+
+.evd-description::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 28px;
+  background: linear-gradient(rgba(255, 255, 255, 0), #fff);
+}
+
+.evd-description.is-expanded {
+  max-height: none;
+}
+
+.evd-description.is-expanded::after {
+  display: none;
+}
+
+.evd-description > :first-child {
+  margin-top: 0;
+}
+
+.evd-description p,
+.evd-description ul,
+.evd-description ol {
+  margin: 0 0 10px;
+}
+
+.evd-description ul,
+.evd-description ol {
+  padding-left: 20px;
+}
+
+.evd-description h3,
+.evd-description h4,
+.evd-description h5,
+.evd-description h6 {
+  margin: 16px 0 8px;
+  font-size: 15px;
+  font-weight: 800;
+  line-height: 1.35;
+  color: #0C165E;
+}
+
+.evd-description strong {
+  font-weight: 700;
+}
+
+.evd-description a {
+  color: #0070DB;
+  text-decoration: underline;
+}
+
+.evd-see-more {
+  margin-top: 6px;
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--evd-teal);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.evd-not-found {
+  font-size: 14px;
+  color: var(--evd-muted);
+}
+
+/* --- footer --- */
+
+.evd-footer {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px 20px;
+  background: #fff;
+  border-top: 1px solid var(--evd-line);
+}
+
+.evd-price {
+    display: flex;
+    line-height: 1.1;
+    align-items: center;
+    gap: 5px;
+}
+
+.evd-price span {
+  font-size: 14px;
+  color: var(--evd-muted);
+  font-weight: 700;
+}
+
+.evd-price b {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.evd-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px 28px;
+  border-radius: 999px;
+  background: var(--evd-teal);
+  color: #04302F;
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: .02em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+@media (min-width: 480px) {
+  .evd-header,
+  .evd-footer {
+    max-width: 598px;
+    margin: 0 auto;
+    left: 0;
+    right: 0;
+  }
+}

@@ -1,0 +1,459 @@
+/* ==========================================================================
+   Event pages, desktop layout (≥ 1024px) — rendered only by EventTickets.jsx
+   when useIsDesktop() is true. Every rule is scoped to .evx-*, so the mobile
+   screens, which never render these classes, are untouched. The ticket cards,
+   R Coins box, payment methods and card fields keep their event-tickets.css
+   styles; this file only lays them out.
+   ========================================================================== */
+
+.evx-page {
+  --evx-navy: #0C165E;
+  --evx-teal: #1FDBDA;
+  --evx-muted: #6B7090;
+  --evx-line: #E3E6F0;
+
+  display: flex;
+  flex-direction: column;
+  color: var(--evx-navy);
+}
+
+/* --- header --- */
+
+.evx-header {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  background: linear-gradient(180deg, #03061a 0%, #0a1a6b 60%, #0e46c9 100%);
+}
+
+.evx-header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 1200px;
+  height: 96px;
+  margin: 0 auto;
+  padding: 0 48px;
+}
+
+.evx-logo img {
+  display: block;
+  width: 260px;
+  height: auto;
+}
+
+.evx-nav {
+  display: flex;
+  align-items: center;
+  gap: 48px;
+}
+
+.evx-nav > a {
+  color: #fff;
+  font-size: 18px;
+  text-decoration: none;
+}
+
+.evx-nav > a:not(.cp-btn):hover {
+  color: var(--evx-teal);
+}
+
+/* The account avatar: a teal ring, as in the design. */
+.evx-nav .usr-avatar {
+  width: 48px;
+  height: 48px;
+  border: 2px solid var(--evx-teal);
+  background: rgba(12, 22, 94, .6);
+  font-size: 20px;
+}
+
+/* --- gallery --- */
+
+.evx-gallery {
+  position: relative;
+  height: 540px;
+  overflow: hidden;
+  background: #05060f;
+}
+
+.evx-gallery-backdrop {
+  position: absolute;
+  inset: -40px;
+  background-size: cover;
+  background-position: center;
+  filter: blur(28px) brightness(.55);
+  transform: scale(1.05);
+}
+
+.evx-gallery-stage {
+  position: relative;
+  width: 540px;
+  height: 100%;
+  margin: 0 auto;
+}
+
+.evx-gallery-track {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+}
+
+.evx-gallery-track::-webkit-scrollbar {
+  display: none;
+}
+
+.evx-gallery-slide {
+  flex: 0 0 100%;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  scroll-snap-align: start;
+  display: block;
+}
+
+.evx-gallery-counter {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  z-index: 2;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, .55);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.evx-gallery-play,
+.evx-gallery-arrow {
+  position: absolute;
+  top: 50%;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255, 255, 255, .5);
+  border-radius: 50%;
+  background: rgba(0, 0, 0, .45);
+  color: #fff;
+  cursor: pointer;
+}
+
+.evx-gallery-play {
+  left: 50%;
+  width: 56px;
+  height: 56px;
+  transform: translate(-50%, -50%);
+}
+
+.evx-gallery-arrow {
+  width: 40px;
+  height: 40px;
+  transform: translateY(-50%);
+}
+
+.evx-gallery-arrow:disabled {
+  opacity: .3;
+  cursor: default;
+}
+
+.evx-gallery-arrow--prev {
+  left: 14px;
+}
+
+.evx-gallery-arrow--next {
+  right: 14px;
+}
+
+.evx-gallery-dots {
+  position: absolute;
+  right: 14px;
+  bottom: 18px;
+  z-index: 2;
+  display: flex;
+  gap: 6px;
+  padding: 5px 10px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, .45);
+}
+
+.evx-gallery-dot {
+  width: 8px;
+  height: 8px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, .5);
+  cursor: pointer;
+}
+
+.evx-gallery-dot.is-active {
+  background: #fff;
+}
+
+/* --- page body --- */
+
+.evx-main {
+  width: 100%;
+  max-width: 1008px;
+  margin: 0 auto;
+  padding: 44px 24px 80px;
+}
+
+.evx-title {
+  margin: 0 0 14px;
+  font-size: 46px;
+  font-weight: 800;
+  line-height: 1.15;
+  color: var(--evx-navy);
+}
+
+.evx-when {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 44px;
+  font-size: 21px;
+  font-weight: 700;
+}
+
+.evx-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 460px;
+  gap: 40px;
+  align-items: start;
+}
+
+.evx-left {
+  min-width: 0;
+}
+
+.evx-description {
+  font-size: 19px;
+  line-height: 1.6;
+  color: var(--evx-navy);
+}
+
+.evx-description p {
+  margin: 0 0 28px;
+}
+
+.evx-description h3,
+.evx-description h4 {
+  margin: 0 0 12px;
+  font-weight: 800;
+}
+
+.evx-h2 {
+  margin: 28px 0 14px;
+  padding-top: 40px;
+  border-top: 2px solid var(--evx-line);
+  font-size: 21px;
+  font-weight: 700;
+  color: var(--evx-navy);
+}
+
+.evx-venue {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px;
+  border: 2px solid var(--evx-teal);
+  border-radius: 12px;
+  color: var(--evx-navy);
+  text-decoration: none;
+}
+
+.evx-venue-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  flex-shrink: 0;
+  border-radius: 10px;
+  background: rgba(31, 219, 218, .12);
+  color: var(--evx-teal);
+}
+
+.evx-venue-info {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  font-size: 15px;
+}
+
+.evx-venue-info b {
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.evx-venue-chevron {
+  flex-shrink: 0;
+  color: var(--evx-teal);
+}
+
+/* Right column: the existing ticket cards, stacked and sticky while the
+   description scrolls past. */
+.evx-right {
+  position: sticky;
+  top: 116px;
+}
+
+.evx-right .evt-coins {
+  margin: 4px 0 28px;
+}
+
+.evx-total {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  font-size: 20px;
+}
+
+.evx-total b {
+  font-size: 22px;
+  font-weight: 800;
+}
+
+/* --- checkout --- */
+
+.evx-checkout {
+  padding-top: 28px;
+}
+
+.evx-checkout-head {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 36px;
+}
+
+.evx-checkout-head h1 {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 800;
+}
+
+.evx-checkout .evx-grid {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 84px;
+  padding: 0 20px;
+}
+
+.evx-checkout .evx-h2 {
+  margin: 0 0 24px;
+  padding-top: 0;
+  border-top: 0;
+}
+
+.evx-order-event {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 34px;
+}
+
+.evx-order-event img {
+  width: 68px;
+  height: 68px;
+  flex-shrink: 0;
+  border-radius: 12px;
+  object-fit: cover;
+}
+
+.evx-order-event div {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  font-size: 15px;
+}
+
+.evx-order-event b {
+  font-size: 20px;
+  font-weight: 800;
+}
+
+.evx-kicker {
+  margin: 0 0 18px;
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  color: var(--evx-teal);
+}
+
+.evx-kicker--muted {
+  margin-bottom: 8px;
+  color: #B0B3C2;
+}
+
+.evx-line {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 8px;
+  font-size: 15px;
+}
+
+.evx-line-price {
+  font-size: 20px;
+  color: var(--evx-teal);
+}
+
+.evx-subtotal {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 22px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid var(--evx-line);
+  font-size: 15px;
+}
+
+.evx-subtotal s {
+  margin-right: 6px;
+  color: var(--evx-muted);
+}
+
+.evx-grand {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-top: 12px;
+  font-size: 22px;
+  font-weight: 800;
+}
+
+.evx-grand b {
+  font-size: 30px;
+  color: var(--evx-teal);
+}
+
+.evx-email {
+  margin-top: 32px;
+}
+
+.evx-email .evt-info-box {
+  margin-top: 12px;
+}
+
+.evx-checkout .evx-right {
+  position: static;
+}
+
+.evx-checkout .evt-method {
+  margin-bottom: 12px;
+}
+
+.evx-checkout .evt-cta {
+  margin-top: 14px;
+}

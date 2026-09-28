@@ -51,16 +51,16 @@ export function createSubscription({ userName, email }) {
 }
 
 /** Reads the approved subscription back so we save a confirmed one, not a pending one. */
-export function activateSubscription({ subscriptionId, userName }) {
-  return call("activate-subscription", { subscriptionId, userName });
+export function activateSubscription({ subscriptionId, userName, email }) {
+  return call("activate-subscription", { subscriptionId, userName, email });
 }
 
 /**
  * Stops the renewal. The member keeps the nights already paid for — the Lambda
  * returns the date access runs out.
  */
-export function cancelSubscription({ subscriptionId, userName }) {
-  return call("cancel-subscription", { subscriptionId, userName });
+export function cancelSubscription({ userName, accessToken }) {
+  return call("cancel-subscription", { userName, accessToken });
 }
 
 /**
@@ -89,6 +89,54 @@ export function createOrder({ method, userName, email }) {
 }
 
 /** Captures the approved order and stores the vault token against the member. */
-export function captureOrder({ orderId, method, userName }) {
-  return call("capture-order", { orderId, method, userName });
+export function captureOrder({ orderId, method, userName, email }) {
+  return call("capture-order", { orderId, method, userName, email });
+}
+
+/** Finds or creates the member's Strapi record and syncs its email. Returns `{ user }`. */
+export function ensureMember({ userName, email, accessToken }) {
+  return call("ensure-member", { userName, email, accessToken });
+}
+
+/** Spends the member's one route vote. Returns `{ voted }`, the route's new tally. */
+export function castRouteVote({ userName, routeId, accessToken }) {
+  return call("cast-vote", { userName, routeId, accessToken });
+}
+
+/**
+ * Tickets, step 1. The Lambda prices the basket from Strapi — `expectedTotal`
+ * only lets it refuse if that no longer matches what the buyer was shown.
+ */
+export function createTicketOrder({ ticketId, quantities, method, userName, email, accessToken, expectedTotal }) {
+  return call("create-ticket-order", {
+    ticketId,
+    quantities,
+    method,
+    userName,
+    email,
+    accessToken,
+    expectedTotal,
+  });
+}
+
+/** Tickets, step 2: capture, mark the order paid and deduct the stock. */
+export function captureTicketOrder({ orderId }) {
+  return call("capture-ticket-order", { orderId });
+}
+
+/**
+ * A basket that totals $0: booked without PayPal. Logged-in members only —
+ * the Lambda verifies the session and applies the same limits as a paid order.
+ */
+export function claimFreeTickets({ ticketId, quantities, userName, email, accessToken }) {
+  return call("claim-free-tickets", { ticketId, quantities, userName, email, accessToken });
+}
+
+/**
+ * Undoes a cancel while the paid period is still running — billing resumes on
+ * the original schedule, nothing charged now. Replies `{ resumed, user }` or
+ * `{ needsPayment: true }` when it has to go through checkout instead.
+ */
+export function reactivateMembership({ userName, accessToken }) {
+  return call("reactivate-membership", { userName, accessToken });
 }

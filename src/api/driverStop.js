@@ -10,7 +10,7 @@
 
 const BASE_URL =
   import.meta.env.VITE_STRAPI_URL ?? "https://exciting-flower-bc33aab938.strapiapp.com";
-const TOKEN = import.meta.env.VITE_STRAPI_TOKEN;
+const TOKEN = import.meta.env.VITE_STRAPI_TOKEN_GET;
 
 export const ROUTES = ["East", "West", "North", "South"];
 
