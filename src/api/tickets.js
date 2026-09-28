@@ -97,6 +97,34 @@ function dateBadge(date) {
 }
 
 /**
+ * A tier's booking fee as `{ label, type, value }`, or null when it has none.
+ * Mirrors clubpass-subscribe/lib/tickets.mjs, which is what actually charges it.
+ */
+function feeOf(tier) {
+  const value = Number(tier?.fee_value);
+  if (tier?.fee_enabled !== true || !(value > 0)) return null;
+
+  return {
+    label: (tier.fee_label ?? "").trim() || "Booking Fee",
+    type: tier.fee_type === "percentage" ? "percentage" : "flat",
+    value,
+  };
+}
+
+/** The fee on one ticket of this tier, in dollars — worked the same way as the Lambda. */
+export function unitFeeOf(tier) {
+  const fee = tier?.fee;
+  if (!fee) return 0;
+
+  const cents =
+    fee.type === "percentage"
+      ? Math.round(Math.round(Number(tier.price) * 100) * (fee.value / 100))
+      : Math.round(fee.value * 100);
+
+  return cents / 100;
+}
+
+/**
  * An event's tiers, whichever way it stores them. A migrated tier's id is
  * "t<entry id>", which survives renaming and reordering; a legacy tier keeps
  * its old name, so past orders still read correctly.
@@ -111,6 +139,7 @@ function tiersOf(row) {
         description: tier.description ?? "",
         memberOnly: tier.member_only === true,
         price: tier.price,
+        fee: feeOf(tier),
         maxQty: tier.user_limit ?? null,
         stockLeft: tier.global_limit ?? null,
         from: tier.from_date ?? null,
@@ -134,6 +163,8 @@ function tiersOf(row) {
       description: "",
       memberOnly: column.id === "member",
       price,
+      // Booking fees are only configurable on migrated tiers.
+      fee: null,
       maxQty: row[column.userLimit] ?? null,
       stockLeft: row[column.globalLimit] ?? null,
       from,

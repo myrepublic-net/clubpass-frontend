@@ -19,6 +19,7 @@ import {
 import { readMemberSession } from "../api/auth.js";
 import { isPaid, resolveClubpassUser } from "../api/clubpassUser.js";
 import { useTicket } from "../hooks/useTickets.js";
+import { unitFeeOf } from "../api/tickets.js";
 import SubscribeModal from "../components/SubscribeModal.jsx";
 import UserMenu from "../components/UserMenu.jsx";
 import { ClubpassUserContext } from "../components/clubpassUserContext.js";
@@ -189,7 +190,22 @@ export default function EventTickets() {
   const ticketCount = lines.reduce((sum, line) => sum + line.qty, 0);
   // Rounded to cents: adding decimal prices in floating point otherwise gives
   // totals like 0.6000000000000001 for 6 × $0.10.
-  const total = toCents(lines.reduce((sum, line) => sum + line.tier.price * line.qty, 0));
+  const subtotal = toCents(lines.reduce((sum, line) => sum + line.tier.price * line.qty, 0));
+
+  // Booking fees set per tier in the CMS, one line per label ("Booking Fee",
+  // "Service Fee"…). The Lambda works them out the same way and charges them.
+  const feeLines = Object.values(
+    lines.reduce((acc, line) => {
+      const amount = unitFeeOf(line.tier) * line.qty;
+      if (!amount) return acc;
+      const { label } = line.tier.fee;
+      acc[label] = { label, amount: toCents((acc[label]?.amount ?? 0) + amount) };
+      return acc;
+    }, {}),
+  );
+  const fees = toCents(feeLines.reduce((sum, fee) => sum + fee.amount, 0));
+  // What is actually charged: tickets plus fees.
+  const total = toCents(subtotal + fees);
 
   // What the same tickets would have cost undiscounted — only shown when the
   // buyer is actually paying less than that.
@@ -199,7 +215,8 @@ export default function EventTickets() {
   // shown is what a free account would have earned — that's what the "create
   // free account" line next to it is offering them.
   const coinRate = paid ? MEMBER_COIN_RATE : FREE_COIN_RATE;
-  const coins = Math.round(total * coinRate * COINS_PER_DOLLAR);
+  // Earned on the tickets only, not the booking fee — the same as the Lambda.
+  const coins = Math.round(subtotal * coinRate * COINS_PER_DOLLAR);
 
   // Subscribing happens in the middle of picking tickets, so the membership
   // checkout runs here and hands back the updated record — `paid` flips off
@@ -689,9 +706,15 @@ export default function EventTickets() {
               <div className="evx-subtotal">
                 <span>Subtotal</span>
                 <span>
-                  {standardTotal > total && <s>${standardTotal.toFixed(2)}</s>} {money(total, { fixed: true })}
+                  {standardTotal > subtotal && <s>${standardTotal.toFixed(2)}</s>} {money(subtotal, { fixed: true })}
                 </span>
               </div>
+              {feeLines.map((fee) => (
+                <div key={fee.label} className="evx-subtotal">
+                  <span>{fee.label}</span>
+                  <span>{money(fee.amount, { fixed: true })}</span>
+                </div>
+              ))}
               <div className="evx-grand">
                 <span>Order Total</span>
                 <b>{money(total, { fixed: true })}</b>
@@ -1111,8 +1134,8 @@ export default function EventTickets() {
               </div>
 
               <div className="evt-summary-price">
-                {standardTotal > total && <s>${standardTotal.toFixed(2)}</s>}
-                <b>{money(total, { fixed: true })}</b>
+                {standardTotal > subtotal && <s>${standardTotal.toFixed(2)}</s>}
+                <b>{money(subtotal, { fixed: true })}</b>
               </div>
             </div>
           </div>
@@ -1120,8 +1143,14 @@ export default function EventTickets() {
           <div className="evt-totals">
             <div className="evt-totals-row">
               <span>Subtotal</span>
-              <span>{money(total, { fixed: true })}</span>
+              <span>{money(subtotal, { fixed: true })}</span>
             </div>
+            {feeLines.map((fee) => (
+              <div key={fee.label} className="evt-totals-row">
+                <span>{fee.label}</span>
+                <span>{money(fee.amount, { fixed: true })}</span>
+              </div>
+            ))}
             <div className="evt-totals-row evt-totals-row--grand">
               <span>Order Total</span>
               <b>{money(total, { fixed: true })}</b>
