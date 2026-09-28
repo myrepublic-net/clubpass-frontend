@@ -8,7 +8,8 @@ import "../css/subscribe-modal.css";
 const METHOD_LABELS = {
   paypal: "PayPal",
   card: "Debit or credit card",
-  googlepay: "Google Pay",
+  // Google Pay is off for memberships: PayPal won't vault it on this account,
+  // so it can't auto-renew.
   applepay: "Apple Pay",
 };
 
