@@ -628,10 +628,16 @@ export default function EventTickets() {
                 {coinsBox}
 
                 {fees > 0 && (
-                  <div className="evx-subtotal">
-                    <span>Platform Fees</span>
-                    <span>{money(fees, { fixed: true })}</span>
-                  </div>
+                  <>
+                    <div className="evx-subtotal">
+                      <span>Subtotal</span>
+                      <span>{money(subtotal, { fixed: true })}</span>
+                    </div>
+                    <div className="evx-subtotal">
+                      <span>Platform Fees</span>
+                      <span>{money(fees, { fixed: true })}</span>
+                    </div>
+                  </>
                 )}
                 <div className="evx-total">
                   <span>Total</span>
@@ -1464,10 +1470,16 @@ export default function EventTickets() {
 
       <footer className="evt-footer">
         {fees > 0 && (
-          <div className="evt-total">
-            <span>Platform Fees</span>
-            <span>{money(fees, { fixed: true })}</span>
-          </div>
+          <>
+            <div className="evt-total">
+              <span>Subtotal</span>
+              <span>{money(subtotal, { fixed: true })}</span>
+            </div>
+            <div className="evt-total">
+              <span>Platform Fees</span>
+              <span>{money(fees, { fixed: true })}</span>
+            </div>
+          </>
         )}
         <div className="evt-total">
           <span>Total</span>
