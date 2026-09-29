@@ -417,7 +417,7 @@ export default function EventTickets() {
         <div className="evt-card-top">
           <div className="evt-card-info">
             <div className="evt-card-label">{tier.label}</div>
-            <div className="evt-card-sub">Single entry ticket</div>
+            <div className="evt-card-sub">{tier.note && <p className="evt-card-note">{tier.note}</p>}</div>
             {unitFeeOf(tier) > 0 && (
               <div className="evt-card-sub">+ {money(unitFeeOf(tier), { fixed: true })} platform fee</div>
             )}
@@ -446,7 +446,7 @@ export default function EventTickets() {
           </div>
         </div>
 
-        {tier.note && <p className="evt-card-note">{tier.note}</p>}
+        
 
         {/* Signed in, the pitch happens right here. Signed out there's
             no account to put a membership on yet, so it starts with
