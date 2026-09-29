@@ -2,11 +2,13 @@
  * Event tickets from Strapi — the venue grid, the event pages and every price
  * in the ticket flow come from here.
  *
- * One content type carries the event, its venue, its banners and all four
- * price tiers as flat columns (member / earlybird / standard / door), each
- * with its own price, per-buyer limit, global limit and sale window. This
- * module turns that into the shape the pages actually want: an event with a
- * list of tiers, only the ones that have a price set.
+ * One content type carries the event, its venue, its banners and its `tiers`
+ * list, each tier with its own price, fee, per-buyer limit, global limit and
+ * sale window. This module turns that into the shape the pages actually want:
+ * an event with a list of tiers, only the ones that have a price set.
+ *
+ * The old flat price columns (member / earlybird / standard / door) are static
+ * leftovers and are never read: an event with no `tiers` shows no tickets.
  */
 
 const BASE_URL =
@@ -14,18 +16,6 @@ const BASE_URL =
 
 // Read-only token: the tickets endpoint 403s without one.
 const TOKEN = import.meta.env.VITE_STRAPI_TOKEN_GET;
-
-/**
- * Events used to carry four fixed tiers as flat columns. They now carry a
- * `tiers` list instead, so these are only the fallback for events that haven't
- * been migrated. Mirrors clubpass-subscribe/lib/tickets.mjs.
- */
-const LEGACY_TIER_COLUMNS = [
-  { id: "member", label: "Member Price", price: "member_price", userLimit: "user_limit", globalLimit: "global_limit", from: "from_date", to: "to_date" },
-  { id: "early-bird", label: "Early Bird", price: "earlybird_price", userLimit: "user_limit_earlybird", globalLimit: "global_limit_earlybird", from: "from_date_earlybird", to: "to_date_earlybird" },
-  { id: "standard", label: "Standard Price", price: "standard_price", userLimit: "user_limit_standard", globalLimit: "global_limit_standard", from: "from_date_standard", to: "to_date_standard" },
-  { id: "door", label: "Door Price", price: "door_price", userLimit: "user_limit_door", globalLimit: "global_limit_door", from: "from_date_door", to: "to_date_door" },
-];
 
 const dayFormat = new Intl.DateTimeFormat("en-SG", {
   weekday: "long",
@@ -125,54 +115,26 @@ export function unitFeeOf(tier) {
 }
 
 /**
- * An event's tiers, whichever way it stores them. A migrated tier's id is
- * "t<entry id>", which survives renaming and reordering; a legacy tier keeps
- * its old name, so past orders still read correctly.
+ * An event's tiers from its `tiers` list. A tier's id is "t<entry id>", which
+ * survives renaming and reordering.
  */
 function tiersOf(row) {
-  if (row.tiers?.length) {
-    return row.tiers
-      .filter((tier) => tier.price != null)
-      .map((tier) => ({
-        id: `t${tier.id}`,
-        label: (tier.title ?? "").trim() || "Ticket",
-        description: tier.description ?? "",
-        memberOnly: tier.member_only === true,
-        price: tier.price,
-        fee: feeOf(tier),
-        maxQty: tier.user_limit ?? null,
-        stockLeft: tier.global_limit ?? null,
-        from: tier.from_date ?? null,
-        to: tier.to_date ?? null,
-        salePeriod: salePeriod(tier.from_date, tier.to_date),
-        status: windowStatus(tier.from_date, tier.to_date),
-      }));
-  }
-
-  return LEGACY_TIER_COLUMNS.map((column) => {
-    const price = row[column.price];
-    // A tier with no price isn't sold for this event.
-    if (price == null) return null;
-
-    const from = row[column.from];
-    const to = row[column.to];
-
-    return {
-      id: column.id,
-      label: column.label,
-      description: "",
-      memberOnly: column.id === "member",
-      price,
-      // Booking fees are only configurable on migrated tiers.
-      fee: null,
-      maxQty: row[column.userLimit] ?? null,
-      stockLeft: row[column.globalLimit] ?? null,
-      from,
-      to,
-      salePeriod: salePeriod(from, to),
-      status: windowStatus(from, to),
-    };
-  }).filter(Boolean);
+  return (row.tiers ?? [])
+    .filter((tier) => tier.price != null)
+    .map((tier) => ({
+      id: `t${tier.id}`,
+      label: (tier.title ?? "").trim() || "Ticket",
+      description: tier.description ?? "",
+      memberOnly: tier.member_only === true,
+      price: tier.price,
+      fee: feeOf(tier),
+      maxQty: tier.user_limit ?? null,
+      stockLeft: tier.global_limit ?? null,
+      from: tier.from_date ?? null,
+      to: tier.to_date ?? null,
+      salePeriod: salePeriod(tier.from_date, tier.to_date),
+      status: windowStatus(tier.from_date, tier.to_date),
+    }));
 }
 
 /**
