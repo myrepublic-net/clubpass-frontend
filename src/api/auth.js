@@ -200,6 +200,21 @@ function simulateVerifyOtp(identifier, otp) {
   });
 }
 
+/**
+ * Reward Land answers a wrong or expired OTP with a SUCCESS envelope and the
+ * verdict inside `data` ({ success: false, isValid: false, message }), so the
+ * envelope check alone would let a bad code through. Throw it like any other error.
+ */
+function assertOtpValid(data) {
+  if (data?.success === false || data?.isValid === false) {
+    const error = new Error(data.message || "That code didn't match. Please try again.");
+    error.code = "INVALID_OTP";
+    error.remainingAttempts = data.remainingAttempts;
+    throw error;
+  }
+  return data;
+}
+
 /* ---- email OTP ------------------------------------------------------------ */
 
 /**
@@ -236,7 +251,7 @@ export async function requestEmailOtp({ username, email }) {
 
 export async function verifyEmailOtp({ email }, otp) {
   if (SIMULATE) return simulateVerifyOtp(email, otp);
-  return request("verify-otp", { email, otp }, tokenHeaders());
+  return assertOtpValid(await request("verify-otp", { email, otp }, tokenHeaders()));
 }
 
 /* ---- phone OTP ------------------------------------------------------------ */
@@ -254,10 +269,12 @@ export async function requestPhoneOtp(phoneNumberWithCode) {
 export async function verifyPhoneOtp(phoneNumberWithCode, otp) {
   if (SIMULATE) return simulateVerifyOtp(phoneNumberWithCode, otp);
 
-  return request(
-    "verify-phone-otp",
-    { phoneCountryCode: COUNTRY_CODE_DIGITS, phoneNumber: stripCountryCode(phoneNumberWithCode), otp },
-    tokenHeaders(),
+  return assertOtpValid(
+    await request(
+      "verify-phone-otp",
+      { phoneCountryCode: COUNTRY_CODE_DIGITS, phoneNumber: stripCountryCode(phoneNumberWithCode), otp },
+      tokenHeaders(),
+    ),
   );
 }
 
