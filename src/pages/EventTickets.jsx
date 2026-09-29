@@ -192,18 +192,9 @@ export default function EventTickets() {
   // totals like 0.6000000000000001 for 6 × $0.10.
   const subtotal = toCents(lines.reduce((sum, line) => sum + line.tier.price * line.qty, 0));
 
-  // Booking fees set per tier in the CMS, one line per label ("Booking Fee",
-  // "Service Fee"…). The Lambda works them out the same way and charges them.
-  const feeLines = Object.values(
-    lines.reduce((acc, line) => {
-      const amount = unitFeeOf(line.tier) * line.qty;
-      if (!amount) return acc;
-      const { label } = line.tier.fee;
-      acc[label] = { label, amount: toCents((acc[label]?.amount ?? 0) + amount) };
-      return acc;
-    }, {}),
-  );
-  const fees = toCents(feeLines.reduce((sum, fee) => sum + fee.amount, 0));
+  // Booking fees set per tier in the CMS, shown here as one "Platform Fees"
+  // line. The Lambda works them out the same way and charges them.
+  const fees = toCents(lines.reduce((sum, line) => sum + unitFeeOf(line.tier) * line.qty, 0));
   // What is actually charged: tickets plus fees.
   const total = toCents(subtotal + fees);
 
@@ -427,6 +418,9 @@ export default function EventTickets() {
           <div className="evt-card-info">
             <div className="evt-card-label">{tier.label}</div>
             <div className="evt-card-sub">Single entry ticket</div>
+            {unitFeeOf(tier) > 0 && (
+              <div className="evt-card-sub">+ {money(unitFeeOf(tier), { fixed: true })} platform fee</div>
+            )}
           </div>
 
           <div className="evt-card-price">{money(tier.price)}</div>
@@ -634,7 +628,7 @@ export default function EventTickets() {
                 {coinsBox}
 
                 <div className="evx-total">
-                  <span>Total</span>
+                  <span>Total{fees > 0 && ` (incl. ${money(fees, { fixed: true })} platform fees)`}</span>
                   <b>{money(total, { fixed: true })}</b>
                 </div>
 
@@ -709,12 +703,12 @@ export default function EventTickets() {
                   {standardTotal > subtotal && <s>${standardTotal.toFixed(2)}</s>} {money(subtotal, { fixed: true })}
                 </span>
               </div>
-              {feeLines.map((fee) => (
-                <div key={fee.label} className="evx-subtotal">
-                  <span>{fee.label}</span>
-                  <span>{money(fee.amount, { fixed: true })}</span>
+              {fees > 0 && (
+                <div className="evx-subtotal">
+                  <span>Platform Fees</span>
+                  <span>{money(fees, { fixed: true })}</span>
                 </div>
-              ))}
+              )}
               <div className="evx-grand">
                 <span>Order Total</span>
                 <b>{money(total, { fixed: true })}</b>
@@ -1145,12 +1139,12 @@ export default function EventTickets() {
               <span>Subtotal</span>
               <span>{money(subtotal, { fixed: true })}</span>
             </div>
-            {feeLines.map((fee) => (
-              <div key={fee.label} className="evt-totals-row">
-                <span>{fee.label}</span>
-                <span>{money(fee.amount, { fixed: true })}</span>
+            {fees > 0 && (
+              <div className="evt-totals-row">
+                <span>Platform Fees</span>
+                <span>{money(fees, { fixed: true })}</span>
               </div>
-            ))}
+            )}
             <div className="evt-totals-row evt-totals-row--grand">
               <span>Order Total</span>
               <b>{money(total, { fixed: true })}</b>
@@ -1464,7 +1458,7 @@ export default function EventTickets() {
 
       <footer className="evt-footer">
         <div className="evt-total">
-          <span>Total</span>
+          <span>Total{fees > 0 && ` (incl. ${money(fees, { fixed: true })} platform fees)`}</span>
           <b>{money(total, { fixed: true })}</b>
         </div>
 
