@@ -627,8 +627,14 @@ export default function EventTickets() {
                 {tierCards}
                 {coinsBox}
 
+                {fees > 0 && (
+                  <div className="evx-subtotal">
+                    <span>Platform Fees</span>
+                    <span>{money(fees, { fixed: true })}</span>
+                  </div>
+                )}
                 <div className="evx-total">
-                  <span>Total{fees > 0 && ` (incl. ${money(fees, { fixed: true })} platform fees)`}</span>
+                  <span>Total</span>
                   <b>{money(total, { fixed: true })}</b>
                 </div>
 
@@ -1457,8 +1463,14 @@ export default function EventTickets() {
       </div>
 
       <footer className="evt-footer">
+        {fees > 0 && (
+          <div className="evt-total">
+            <span>Platform Fees</span>
+            <span>{money(fees, { fixed: true })}</span>
+          </div>
+        )}
         <div className="evt-total">
-          <span>Total{fees > 0 && ` (incl. ${money(fees, { fixed: true })} platform fees)`}</span>
+          <span>Total</span>
           <b>{money(total, { fixed: true })}</b>
         </div>
 
