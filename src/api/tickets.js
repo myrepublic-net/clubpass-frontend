@@ -187,7 +187,7 @@ export function fetchTickets() {
   if (!pending) {
     fetchedAt = Date.now();
     pending = (async () => {
-      const res = await fetch(`${BASE_URL}/api/tickets?populate=*`, {
+      const res = await fetch(`${BASE_URL}/api/tickets?populate=*&sort=date:asc&pagination[pageSize]=100`, {
         headers: {
           "Content-Type": "application/json",
           ...(TOKEN && { Authorization: `Bearer ${TOKEN}` }),
