@@ -510,9 +510,18 @@ export default function ClubPass() {
 
       <header className="cp-header">
         <div className="cp-container cp-header-inner">
-          <a className="cp-brand" href="#top">
+          {/* Back to the bare domain, no #top in the URL. Already on "/" the
+              router doesn't scroll by itself, so it's done here. */}
+          <Link
+            className="cp-brand"
+            to="/"
+            onClick={() => {
+              setMenuOpen(false);
+              window.scrollTo({ top: 0, behavior: "smooth" });
+            }}
+          >
             <img src="/images/cp-logo.png" />
-          </a>
+          </Link>
 
           <nav className={`cp-nav${menuOpen ? " is-open" : ""}`}>
             {NAV_LINKS.map((link) => (
@@ -860,12 +869,11 @@ export default function ClubPass() {
 
   {/* ================= Membership ================= */}
 
-      <section
-        className="cpn-section cpn-membership"
-        id="membership"
-      >
+      <section className="cpn-section cpn-membership">
         <img className="tt-top" src="/images/tt-top.png"/>
-        <div className="tt-membership">
+        {/* The anchor sits below the decorative wave, so #membership lands on
+            the content instead of on 300px of image. */}
+        <div className="tt-membership" id="membership">
         <div className="cpn-container cpn-membership-grid">
           <div className="cpn-membership-copy">
             <p className="cpn-kicker cpn-kicker--orange">{beta.kicker}</p>
