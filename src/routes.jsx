@@ -10,6 +10,7 @@ import ScanConfirm from "./pages/ScanConfirm.jsx";
 import DriverScan from "./pages/DriverScan.jsx";
 import Login from "./pages/auth/Login.jsx";
 import Signup from "./pages/auth/Signup.jsx";
+import ForgotPassword from "./pages/auth/ForgotPassword.jsx";
 import UserGate from "./components/UserGate.jsx";
 import NotFound from "./pages/NotFound.jsx";
 import Profile from "./pages/Profile.jsx";
@@ -24,6 +25,7 @@ const router = createBrowserRouter([
   // { path: "/test", element: <ClubpassNew /> },
   { path: "/login", element: <Login /> },
   { path: "/signup", element: <Signup /> },
+  { path: "/forgot-password", element: <ForgotPassword /> },
   // Where a scanned boarding QR lands. Deliberately outside UserGate — the
   // driver opening it is not the member, and carries no ?userName= of their own.
   { path: "/scan", element: <ScanConfirm /> },
