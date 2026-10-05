@@ -2,11 +2,13 @@
  * Event tickets from Strapi — the venue grid, the event pages and every price
  * in the ticket flow come from here.
  *
- * One content type carries the event, its venue, its banners and all four
- * price tiers as flat columns (member / earlybird / standard / door), each
- * with its own price, per-buyer limit, global limit and sale window. This
- * module turns that into the shape the pages actually want: an event with a
- * list of tiers, only the ones that have a price set.
+ * One content type carries the event, its venue, its banners and its `tiers`
+ * list, each tier with its own price, fee, per-buyer limit, global limit and
+ * sale window. This module turns that into the shape the pages actually want:
+ * an event with a list of tiers, only the ones that have a price set.
+ *
+ * The old flat price columns (member / earlybird / standard / door) are static
+ * leftovers and are never read: an event with no `tiers` shows no tickets.
  */
 
 const BASE_URL =
@@ -14,14 +16,6 @@ const BASE_URL =
 
 // Read-only token: the tickets endpoint 403s without one.
 const TOKEN = import.meta.env.VITE_STRAPI_TOKEN_GET;
-
-/** The four tiers, in the order they're offered, and where each one's columns live. */
-const TIER_COLUMNS = [
-  { id: "member", label: "Member Price", price: "member_price", userLimit: "user_limit", globalLimit: "global_limit", from: "from_date", to: "to_date" },
-  { id: "early-bird", label: "Early Bird", price: "earlybird_price", userLimit: "user_limit_earlybird", globalLimit: "global_limit_earlybird", from: "from_date_earlybird", to: "to_date_earlybird" },
-  { id: "standard", label: "Standard Price", price: "standard_price", userLimit: "user_limit_standard", globalLimit: "global_limit_standard", from: "from_date_standard", to: "to_date_standard" },
-  { id: "door", label: "Door Price", price: "door_price", userLimit: "user_limit_door", globalLimit: "global_limit_door", from: "from_date_door", to: "to_date_door" },
-];
 
 const dayFormat = new Intl.DateTimeFormat("en-SG", {
   weekday: "long",
@@ -93,12 +87,63 @@ function dateBadge(date) {
 }
 
 /**
+ * A tier's booking fee as `{ label, type, value }`, or null when it has none.
+ * Mirrors clubpass-subscribe/lib/tickets.mjs, which is what actually charges it.
+ */
+function feeOf(tier) {
+  const value = Number(tier?.fee_value);
+  if (tier?.fee_enabled !== true || !(value > 0)) return null;
+
+  return {
+    label: (tier.fee_label ?? "").trim() || "Booking Fee",
+    type: tier.fee_type === "percentage" ? "percentage" : "flat",
+    value,
+  };
+}
+
+/** The fee on one ticket of this tier, in dollars — worked the same way as the Lambda. */
+export function unitFeeOf(tier) {
+  const fee = tier?.fee;
+  if (!fee) return 0;
+
+  const cents =
+    fee.type === "percentage"
+      ? Math.round(Math.round(Number(tier.price) * 100) * (fee.value / 100))
+      : Math.round(fee.value * 100);
+
+  return cents / 100;
+}
+
+/**
+ * An event's tiers from its `tiers` list. A tier's id is "t<entry id>", which
+ * survives renaming and reordering.
+ */
+function tiersOf(row) {
+  return (row.tiers ?? [])
+    .filter((tier) => tier.price != null)
+    .map((tier) => ({
+      id: `t${tier.id}`,
+      label: (tier.title ?? "").trim() || "Ticket",
+      description: tier.description ?? "",
+      memberOnly: tier.member_only === true,
+      price: tier.price,
+      fee: feeOf(tier),
+      maxQty: tier.user_limit ?? null,
+      stockLeft: tier.global_limit ?? null,
+      from: tier.from_date ?? null,
+      to: tier.to_date ?? null,
+      salePeriod: salePeriod(tier.from_date, tier.to_date),
+      status: windowStatus(tier.from_date, tier.to_date),
+    }));
+}
+
+/**
  * The non-member price the card quotes: whatever a buyer would actually pay
  * today, so the cheapest tier currently on sale — falling back to the
  * cheapest of them when nothing is open yet.
  */
 function publicTierOf(tiers) {
-  const open = tiers.filter((tier) => tier.id !== "member");
+  const open = tiers.filter((tier) => !tier.memberOnly);
   if (!open.length) return null;
 
   const onSale = open.filter((tier) => tier.status === "active");
@@ -110,32 +155,17 @@ function publicTierOf(tiers) {
 function normalise(row) {
   const startsAt = row.date ? new Date(row.date) : null;
 
-  const tiers = TIER_COLUMNS.map((column) => {
-    const price = row[column.price];
-    // A tier with no price isn't sold for this event.
-    if (price == null) return null;
-
-    const from = row[column.from];
-    const to = row[column.to];
-
-    return {
-      id: column.id,
-      label: column.label,
-      price,
-      maxQty: row[column.userLimit] ?? null,
-      stockLeft: row[column.globalLimit] ?? null,
-      from,
-      to,
-      salePeriod: salePeriod(from, to),
-      status: windowStatus(from, to),
-    };
-  }).filter(Boolean);
+  const tiers = tiersOf(row);
 
   const media = (row.banners ?? []).map(banner).filter(Boolean);
   const prices = tiers.map((tier) => tier.price);
 
   // What the card leads with: the member price against the best public one.
-  const memberTier = tiers.find((tier) => tier.id === "member") ?? null;
+  // With several member-only tiers, the cheapest is the one worth quoting.
+  const memberTiers = tiers.filter((tier) => tier.memberOnly);
+  const memberTier = memberTiers.length
+    ? memberTiers.reduce((cheapest, tier) => (tier.price < cheapest.price ? tier : cheapest))
+    : null;
   const publicTier = publicTierOf(tiers);
 
   const memberSaving =
@@ -170,8 +200,11 @@ function normalise(row) {
     images: media.filter((item) => item.type === "image").map((item) => item.url),
     tiers,
     priceFrom: prices.length ? Math.min(...prices) : null,
-    // What a ticket costs without any discount, for the "you saved" line.
-    fullPrice: row.standard_price ?? row.door_price ?? (prices.length ? Math.max(...prices) : null),
+    // What a ticket costs without any discount, for the "you saved" line: the
+    // dearest tier anyone can buy without a membership.
+    fullPrice:
+      tiers.filter((tier) => !tier.memberOnly).reduce((dearest, tier) => Math.max(dearest, tier.price), 0) ||
+      (prices.length ? Math.max(...prices) : null),
   };
 }
 
@@ -187,6 +220,11 @@ export function fetchTickets() {
   if (!pending) {
     fetchedAt = Date.now();
     pending = (async () => {
+<<<<<<< HEAD
+      // Soonest event first, and every published event rather than Strapi's
+      // default page of 25 (its maxLimit is 100).
+=======
+>>>>>>> a31a5c19c75440953e2cab877fc1acf6f0cf3a80
       const res = await fetch(`${BASE_URL}/api/tickets?populate=*&sort=date:asc&pagination[pageSize]=100`, {
         headers: {
           "Content-Type": "application/json",
