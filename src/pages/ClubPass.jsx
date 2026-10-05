@@ -356,14 +356,33 @@ export default function ClubPass() {
   // Arriving with a hash from another route (e.g. back out of an event, which
   // returns to /#venues) doesn't scroll on its own — the section isn't in the
   // document yet when the browser would have done it. A frame later it is.
+  //
+  // On a fresh visit the Strapi content, venue images and banners above the
+  // section are still loading, and each one that lands pushes it further
+  // down — so the page keeps re-aiming while its height changes, until the
+  // visitor scrolls themselves or it has had a few seconds to settle.
   useEffect(() => {
     if (!hash) return;
 
-    const frame = requestAnimationFrame(() => {
-      document.querySelector(hash)?.scrollIntoView();
-    });
+    const aim = () => document.querySelector(hash)?.scrollIntoView();
+    const frame = requestAnimationFrame(aim);
 
-    return () => cancelAnimationFrame(frame);
+    const observer = new ResizeObserver(aim);
+    observer.observe(document.body);
+
+    const userEvents = ["wheel", "touchstart", "keydown", "mousedown"];
+    const stop = () => {
+      observer.disconnect();
+      userEvents.forEach((type) => window.removeEventListener(type, stop));
+    };
+    userEvents.forEach((type) => window.addEventListener(type, stop, { passive: true }));
+    const timeout = setTimeout(stop, 4000);
+
+    return () => {
+      cancelAnimationFrame(frame);
+      clearTimeout(timeout);
+      stop();
+    };
   }, [hash]);
   const [menuOpen, setMenuOpen] = useState(false);
   const [openFaq, setOpenFaq] = useState(0);
