@@ -220,11 +220,6 @@ export function fetchTickets() {
   if (!pending) {
     fetchedAt = Date.now();
     pending = (async () => {
-<<<<<<< HEAD
-      // Soonest event first, and every published event rather than Strapi's
-      // default page of 25 (its maxLimit is 100).
-=======
->>>>>>> a31a5c19c75440953e2cab877fc1acf6f0cf3a80
       const res = await fetch(`${BASE_URL}/api/tickets?populate=*&sort=date:asc&pagination[pageSize]=100`, {
         headers: {
           "Content-Type": "application/json",
