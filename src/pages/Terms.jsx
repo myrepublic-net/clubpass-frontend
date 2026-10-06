@@ -1,4 +1,5 @@
 import LegalPage, { LegalBlocks } from "../components/LegalPage.jsx";
+import useLegalPage from "../hooks/useLegalPage.js";
 
 /** Shown under the title. Replace with the real date when the terms are published. */
 const LAST_UPDATED = "[06-Oct-2026]";
@@ -225,73 +226,75 @@ const SECTIONS = [
       { p: "Any dispute arising from or relating to these Terms or the use of Clubpass shall be subject to the jurisdiction of the courts of Singapore." },
     ],
   },
+  {
+    id: "contact",
+    title: "12. Contact Us",
+    blocks: [
+      { p: "For questions, feedback or disputes relating to Clubpass or Clubpass Home Express, please contact:" },
+      {
+        address: [
+          "Clubpass / Reward Land",
+          <>
+            Email: <a href="mailto:clubpass@rewardland.sg">clubpass@rewardland.sg</a>
+          </>,
+          <>
+            Website:{" "}
+            <a href="https://clubpass.rewardland.sg/" target="_blank" rel="noopener noreferrer">
+              https://clubpass.rewardland.sg/
+            </a>
+          </>,
+        ],
+      },
+    ],
+  },
 ];
+
+/** The copy above renders until Strapi answers, and stays if it can't be reached. */
+const FALLBACK = {
+  lede: [
+    "These Terms & Conditions (“Terms”) govern your access to and use of Clubpass, including Clubpass membership benefits, events, offers, products, services, and the Clubpass Home Express transportation service.",
+    "Clubpass is operated by MyRepublic Limited (“Reward Land”, “Clubpass”, “we”, “us” or “our”).",
+    "By purchasing or subscribing to a Clubpass membership, booking or using a Clubpass service, or otherwise participating in Clubpass benefits, you agree to these Terms.",
+  ],
+  sections: SECTIONS,
+  lastUpdated: LAST_UPDATED,
+};
 
 /** Clubpass Terms & Conditions. Public — no sign-in needed to read them. */
 export default function Terms() {
+  const page = useLegalPage("term-and-condition", FALLBACK);
+
   return (
     <LegalPage
       title="Clubpass Terms & Conditions"
       pageTitle="Clubpass Terms & Conditions | RewardLand"
-      lastUpdated={LAST_UPDATED}
+      lastUpdated={page.lastUpdated}
     >
+      {page.lede.length > 0 && (
         <div className="tc-lede">
-          <p>
-            These Terms &amp; Conditions (“Terms”) govern your access to and use of Clubpass,
-            including Clubpass membership benefits, events, offers, products, services, and the
-            Clubpass Home Express transportation service.
-          </p>
-          <p>
-            Clubpass is operated by MyRepublic Limited (“Reward Land”, “Clubpass”, “we”, “us” or
-            “our”).
-          </p>
-          <p>
-            By purchasing or subscribing to a Clubpass membership, booking or using a Clubpass
-            service, or otherwise participating in Clubpass benefits, you agree to these Terms.
-          </p>
+          {page.lede.map((text, index) => (
+            <p key={index}>{text}</p>
+          ))}
         </div>
+      )}
 
-        <nav className="tc-toc" aria-label="Contents">
-          <p className="tc-toc-head">Contents</p>
-          <ol>
-            {SECTIONS.map((section) => (
-              <li key={section.id}>
-                <a href={`#${section.id}`}>{section.title.replace(/^\d+\.\s*/, "")}</a>
-              </li>
-            ))}
-            <li>
-              <a href="#contact">Contact Us</a>
+      <nav className="tc-toc" aria-label="Contents">
+        <p className="tc-toc-head">Contents</p>
+        <ol>
+          {page.sections.map((section) => (
+            <li key={section.id}>
+              <a href={`#${section.id}`}>{section.title.replace(/^\d+\.\s*/, "")}</a>
             </li>
-          </ol>
-        </nav>
+          ))}
+        </ol>
+      </nav>
 
-        {SECTIONS.map((section) => (
-          <section key={section.id} id={section.id} className="tc-section">
-            <h2>{section.title}</h2>
-            <LegalBlocks blocks={section.blocks} />
-          </section>
-        ))}
-
-        <section id="contact" className="tc-section">
-          <h2>12. Contact Us</h2>
-          <p>
-            For questions, feedback or disputes relating to Clubpass or Clubpass Home Express,
-            please contact:
-          </p>
-
-          <address className="tc-contact">
-            <b>Clubpass / Reward Land</b>
-            <span>
-              Email: <a href="mailto:clubpass@rewardland.sg">clubpass@rewardland.sg</a>
-            </span>
-            <span>
-              Website:{" "}
-              <a href="https://clubpass.rewardland.sg/" target="_blank" rel="noopener noreferrer">
-                https://clubpass.rewardland.sg/
-              </a>
-            </span>
-          </address>
+      {page.sections.map((section) => (
+        <section key={section.id} id={section.id} className="tc-section">
+          <h2>{section.title}</h2>
+          <LegalBlocks blocks={section.blocks} />
         </section>
+      ))}
     </LegalPage>
   );
 }
