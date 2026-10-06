@@ -356,14 +356,33 @@ export default function ClubPass() {
   // Arriving with a hash from another route (e.g. back out of an event, which
   // returns to /#venues) doesn't scroll on its own — the section isn't in the
   // document yet when the browser would have done it. A frame later it is.
+  //
+  // On a fresh visit the Strapi content, venue images and banners above the
+  // section are still loading, and each one that lands pushes it further
+  // down — so the page keeps re-aiming while its height changes, until the
+  // visitor scrolls themselves or it has had a few seconds to settle.
   useEffect(() => {
     if (!hash) return;
 
-    const frame = requestAnimationFrame(() => {
-      document.querySelector(hash)?.scrollIntoView();
-    });
+    const aim = () => document.querySelector(hash)?.scrollIntoView();
+    const frame = requestAnimationFrame(aim);
 
-    return () => cancelAnimationFrame(frame);
+    const observer = new ResizeObserver(aim);
+    observer.observe(document.body);
+
+    const userEvents = ["wheel", "touchstart", "keydown", "mousedown"];
+    const stop = () => {
+      observer.disconnect();
+      userEvents.forEach((type) => window.removeEventListener(type, stop));
+    };
+    userEvents.forEach((type) => window.addEventListener(type, stop, { passive: true }));
+    const timeout = setTimeout(stop, 4000);
+
+    return () => {
+      cancelAnimationFrame(frame);
+      clearTimeout(timeout);
+      stop();
+    };
   }, [hash]);
   const [menuOpen, setMenuOpen] = useState(false);
   const [openFaq, setOpenFaq] = useState(0);
@@ -510,9 +529,18 @@ export default function ClubPass() {
 
       <header className="cp-header">
         <div className="cp-container cp-header-inner">
-          <a className="cp-brand" href="#top">
+          {/* Back to the bare domain, no #top in the URL. Already on "/" the
+              router doesn't scroll by itself, so it's done here. */}
+          <Link
+            className="cp-brand"
+            to="/"
+            onClick={() => {
+              setMenuOpen(false);
+              window.scrollTo({ top: 0, behavior: "smooth" });
+            }}
+          >
             <img src="/images/cp-logo.png" />
-          </a>
+          </Link>
 
           <nav className={`cp-nav${menuOpen ? " is-open" : ""}`}>
             {NAV_LINKS.map((link) => (
@@ -860,12 +888,11 @@ export default function ClubPass() {
 
   {/* ================= Membership ================= */}
 
-      <section
-        className="cpn-section cpn-membership"
-        id="membership"
-      >
+      <section className="cpn-section cpn-membership">
         <img className="tt-top" src="/images/tt-top.png"/>
-        <div className="tt-membership">
+        {/* The anchor sits below the decorative wave, so #membership lands on
+            the content instead of on 300px of image. */}
+        <div className="tt-membership" id="membership">
         <div className="cpn-container cpn-membership-grid">
           <div className="cpn-membership-copy">
             <p className="cpn-kicker cpn-kicker--orange">{beta.kicker}</p>

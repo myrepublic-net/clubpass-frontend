@@ -253,7 +253,8 @@ a.cp-btn.cp-btn-ghost {
    top of the viewport leaves the first slice of it hidden underneath. Stop
    each anchor short by the header's height (62px + 10px padding either side)
    plus a little breathing room. */
-.clubpass-page section[id] {
+.clubpass-page section[id],
+.clubpass-page #membership {
   scroll-margin-top: 92px;
 }
 

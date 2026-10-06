@@ -19,6 +19,7 @@ import {
 import { readMemberSession } from "../api/auth.js";
 import { isPaid, resolveClubpassUser } from "../api/clubpassUser.js";
 import { useTicket } from "../hooks/useTickets.js";
+import { unitFeeOf } from "../api/tickets.js";
 import SubscribeModal from "../components/SubscribeModal.jsx";
 import UserMenu from "../components/UserMenu.jsx";
 import { ClubpassUserContext } from "../components/clubpassUserContext.js";
@@ -95,16 +96,17 @@ const basketKey = (eventId) => `clubpass:basket:${eventId}`;
  */
 function buildTiers(event, { paid }) {
   return event.tiers.map((tier) =>
-    tier.id === "member"
+    tier.memberOnly
       ? {
           ...tier,
           // A window that hasn't opened still can't be bought, member or not.
           status: paid ? tier.status : "locked",
           note: paid
-            ? `Limited to ${tier.maxQty ?? 1} ticket${tier.maxQty === 1 ? "" : "s"} per member for this event.`
+            ? tier.description ||
+              `Limited to ${tier.maxQty ?? 1} ticket${tier.maxQty === 1 ? "" : "s"} per member for this event.`
             : "Sign up for membership to unlock this price.",
         }
-      : tier,
+      : { ...tier, note: tier.description || tier.note },
   );
 }
 
@@ -188,7 +190,13 @@ export default function EventTickets() {
   const ticketCount = lines.reduce((sum, line) => sum + line.qty, 0);
   // Rounded to cents: adding decimal prices in floating point otherwise gives
   // totals like 0.6000000000000001 for 6 × $0.10.
-  const total = toCents(lines.reduce((sum, line) => sum + line.tier.price * line.qty, 0));
+  const subtotal = toCents(lines.reduce((sum, line) => sum + line.tier.price * line.qty, 0));
+
+  // Booking fees set per tier in the CMS, shown here as one "Platform Fees"
+  // line. The Lambda works them out the same way and charges them.
+  const fees = toCents(lines.reduce((sum, line) => sum + unitFeeOf(line.tier) * line.qty, 0));
+  // What is actually charged: tickets plus fees.
+  const total = toCents(subtotal + fees);
 
   // What the same tickets would have cost undiscounted — only shown when the
   // buyer is actually paying less than that.
@@ -198,7 +206,8 @@ export default function EventTickets() {
   // shown is what a free account would have earned — that's what the "create
   // free account" line next to it is offering them.
   const coinRate = paid ? MEMBER_COIN_RATE : FREE_COIN_RATE;
-  const coins = Math.round(total * coinRate * COINS_PER_DOLLAR);
+  // Earned on the tickets only, not the booking fee — the same as the Lambda.
+  const coins = Math.round(subtotal * coinRate * COINS_PER_DOLLAR);
 
   // Subscribing happens in the middle of picking tickets, so the membership
   // checkout runs here and hands back the updated record — `paid` flips off
@@ -248,20 +257,14 @@ export default function EventTickets() {
       setJustSubscribed(true);
 
       setQuantities((prev) => {
-        // Standard Price isn't offered to members, so anything sitting in it
-        // would vanish from the basket along with the row. Move it to Early
-        // Bird — it survives the switch and costs them less — rather than
-        // quietly dropping tickets they'd already chosen.
-        const carried = prev.standard ?? 0;
-        const earlyBirdCap = tiers.find((tier) => tier.id === "early-bird")?.stockLeft ?? Infinity;
+        // They came here to buy the member-priced ticket — put it in the
+        // basket. Everything else they'd chosen stays as it is; tier names are
+        // the CMS's to decide now, so nothing is shuffled between them.
+        const memberTier = tiers.find((tier) => tier.memberOnly);
+        if (!memberTier) return prev;
 
-        return {
-          ...prev,
-          // They came here to buy the member-priced ticket — put it in the basket.
-          member: Math.max(prev.member ?? 0, 1),
-          standard: 0,
-          "early-bird": Math.min((prev["early-bird"] ?? 0) + carried, earlyBirdCap),
-        };
+        const cap = memberTier.maxQty ?? memberTier.stockLeft ?? Infinity;
+        return { ...prev, [memberTier.id]: Math.min(Math.max(prev[memberTier.id] ?? 0, 1), cap) };
       });
 
       setStep("select");
@@ -414,7 +417,10 @@ export default function EventTickets() {
         <div className="evt-card-top">
           <div className="evt-card-info">
             <div className="evt-card-label">{tier.label}</div>
-            <div className="evt-card-sub">Single entry ticket</div>
+            <div className="evt-card-sub">{tier.note && <p className="evt-card-note">{tier.note}</p>}</div>
+            {unitFeeOf(tier) > 0 && (
+              <div className="evt-card-sub">+ {money(unitFeeOf(tier), { fixed: true })} platform fee</div>
+            )}
           </div>
 
           <div className="evt-card-price">{money(tier.price)}</div>
@@ -440,7 +446,7 @@ export default function EventTickets() {
           </div>
         </div>
 
-        {tier.note && <p className="evt-card-note">{tier.note}</p>}
+        
 
         {/* Signed in, the pitch happens right here. Signed out there's
             no account to put a membership on yet, so it starts with
@@ -621,6 +627,18 @@ export default function EventTickets() {
                 {tierCards}
                 {coinsBox}
 
+                {fees > 0 && (
+                  <>
+                    <div className="evx-subtotal">
+                      <span>Subtotal</span>
+                      <span>{money(subtotal, { fixed: true })}</span>
+                    </div>
+                    <div className="evx-subtotal">
+                      <span>Platform Fees</span>
+                      <span>{money(fees, { fixed: true })}</span>
+                    </div>
+                  </>
+                )}
                 <div className="evx-total">
                   <span>Total</span>
                   <b>{money(total, { fixed: true })}</b>
@@ -694,9 +712,15 @@ export default function EventTickets() {
               <div className="evx-subtotal">
                 <span>Subtotal</span>
                 <span>
-                  {standardTotal > total && <s>${standardTotal.toFixed(2)}</s>} {money(total, { fixed: true })}
+                  {standardTotal > subtotal && <s>${standardTotal.toFixed(2)}</s>} {money(subtotal, { fixed: true })}
                 </span>
               </div>
+              {fees > 0 && (
+                <div className="evx-subtotal">
+                  <span>Platform Fees</span>
+                  <span>{money(fees, { fixed: true })}</span>
+                </div>
+              )}
               <div className="evx-grand">
                 <span>Order Total</span>
                 <b>{money(total, { fixed: true })}</b>
@@ -1116,8 +1140,8 @@ export default function EventTickets() {
               </div>
 
               <div className="evt-summary-price">
-                {standardTotal > total && <s>${standardTotal.toFixed(2)}</s>}
-                <b>{money(total, { fixed: true })}</b>
+                {standardTotal > subtotal && <s>${standardTotal.toFixed(2)}</s>}
+                <b>{money(subtotal, { fixed: true })}</b>
               </div>
             </div>
           </div>
@@ -1125,8 +1149,14 @@ export default function EventTickets() {
           <div className="evt-totals">
             <div className="evt-totals-row">
               <span>Subtotal</span>
-              <span>{money(total, { fixed: true })}</span>
+              <span>{money(subtotal, { fixed: true })}</span>
             </div>
+            {fees > 0 && (
+              <div className="evt-totals-row">
+                <span>Platform Fees</span>
+                <span>{money(fees, { fixed: true })}</span>
+              </div>
+            )}
             <div className="evt-totals-row evt-totals-row--grand">
               <span>Order Total</span>
               <b>{money(total, { fixed: true })}</b>
@@ -1439,6 +1469,18 @@ export default function EventTickets() {
       </div>
 
       <footer className="evt-footer">
+        {fees > 0 && (
+          <>
+            <div className="evt-total">
+              <span>Subtotal</span>
+              <span>{money(subtotal, { fixed: true })}</span>
+            </div>
+            <div className="evt-total">
+              <span>Platform Fees</span>
+              <span>{money(fees, { fixed: true })}</span>
+            </div>
+          </>
+        )}
         <div className="evt-total">
           <span>Total</span>
           <b>{money(total, { fixed: true })}</b>
