@@ -1,7 +1,7 @@
 import LegalPage, { LegalBlocks } from "../components/LegalPage.jsx";
 
 /** Shown under the title. Replace with the real date when the terms are published. */
-const LAST_UPDATED = "[17-Sep-2026]";
+const LAST_UPDATED = "[06-Oct-2026]";
 
 /*
  * The terms as data, rendered by LegalBlocks (see components/LegalPage.jsx).
@@ -140,9 +140,27 @@ const SECTIONS = [
     title: "4. Clubpass Events, Tickets and Partner Benefits",
     blocks: [
       { clause: "4.1", text: "Clubpass may provide members with access to events, tickets, promotions, venue privileges, products, discounts or other partner benefits." },
-      { clause: "4.2", text: "Individual offers may be subject to additional terms, availability, capacity limits, booking requirements and validity periods." },
-      { clause: "4.3", text: "Benefits provided by third-party merchants, venues, event organisers or service providers may also be subject to their respective terms and conditions." },
-      { clause: "4.4", text: "Unless otherwise stated, Clubpass benefits cannot be exchanged for cash." },
+      { clause: "4.2", text: "All tickets purchased through Clubpass are non-refundable and non-exchangeable, except where otherwise required by applicable law or expressly stated by Clubpass for a particular event." },
+      { clause: "4.3", text: "Once a ticket purchase has been successfully completed, members and customers will not be entitled to a refund, exchange, credit or replacement due to a change of mind or personal circumstances, including but not limited to an inability to attend the event." },
+      { clause: "4.4", text: "Customers are responsible for checking all event details, including the event date, time, venue, age restrictions, entry requirements and any other applicable conditions before completing their purchase." },
+      { clause: "4.5", text: "A Clubpass ticket does not guarantee entry where the ticket holder fails to comply with the applicable venue or event entry requirements. Ticket holders are responsible for complying with any age restrictions, identification requirements, dress codes, admission times and other conditions imposed by the venue or event organiser." },
+      { clause: "4.6", text: "Clubpass, the event organiser and/or venue reserve the right to refuse admission or require a person to leave where permitted under the applicable event or venue conditions." },
+      { clause: "4.7", text: "Where an event is cancelled, postponed or materially changed, any refund, credit, replacement or other remedy will be subject to the applicable event organiser's policies and applicable law. Clubpass will communicate the available options to affected ticket holders where appropriate. No refund will be provided where entry is refused as a result of the ticket holder failing to meet communicated entry requirements or breaching applicable venue or event rules." },
+      { clause: "4.8", text: "From time to time, Clubpass may offer complimentary or free entry tickets through giveaways, promotions, campaigns or other initiatives. Where a recipient is unable to attend after accepting a complimentary ticket, they should notify Clubpass as early as reasonably possible so that the ticket may, where possible, be reallocated to another person." },
+      { clause: "4.9", text: "A \"No-Show\" occurs where a non-member:" },
+      {
+        list: [
+          "accepts or claims a complimentary/free entry ticket issued through Clubpass;",
+          "does not attend the relevant event; and",
+          "does not notify Clubpass of their inability to attend before the applicable cut-off time communicated for that event, or, where no cut-off time is stated, before the event begins.",
+        ],
+      },
+      { clause: "4.10", text: "A non-member who is recorded as a No-Show may be ineligible to receive or claim further complimentary or free entry tickets through Clubpass for six (6) calendar months from the date of the missed event." },
+      { clause: "4.11", text: "During this six-month period, the individual may still be able to purchase tickets through Clubpass, subject to availability and the applicable event conditions. The restriction applies specifically to complimentary or free entry ticket allocations unless otherwise communicated." },
+      { clause: "4.12", text: "Clubpass may waive or remove the restriction where the individual provides a reasonable explanation for the No-Show, including exceptional circumstances outside their reasonable control." },
+      { clause: "4.13", text: "Clubpass reserves the right to take additional measures against repeated abuse of complimentary ticket allocations, including restricting participation in future giveaways or promotional campaigns, subject to applicable law." },
+      { clause: "4.14", text: "Unless expressly permitted for a particular event, tickets may not be exchanged, resold or transferred for commercial gain. Complimentary tickets obtained through Clubpass giveaways or promotions must not be sold or otherwise exchanged for monetary value." },
+      { clause: "4.15", text: "Clubpass reserves the right to cancel complimentary tickets that are found to have been sold, fraudulently obtained or otherwise misused." },
     ],
   },
   {
