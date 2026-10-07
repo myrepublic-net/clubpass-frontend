@@ -1,4 +1,5 @@
 import LegalPage, { LegalBlocks } from "../components/LegalPage.jsx";
+import useLegalPage from "../hooks/useLegalPage.js";
 
 /** Shown under the title. Update whenever the policy changes. */
 const LAST_UPDATED = "17-Sep-2026";
@@ -139,29 +140,34 @@ const SECTIONS = [
   },
 ];
 
+const LEDE =
+  "Clubpass by Reward Land is a brand that is owned and operated by MyRepublic Limited (MyRepublic). At Clubpass by Reward Land, we are committed to maintain the security and confidentiality of the personal information held by us. This Privacy Policy (“Policy”) describes how we look after the personal information we obtain or you provide us with when you use our Website (clubpass.rewardland.sg), online services, mobile applications (“collectively, the “Sites”), and when you sign-up and use our products and services.";
+
+/** The copy above renders until Strapi answers, and stays if it can't be reached. */
+const FALLBACK = { lede: [LEDE], sections: SECTIONS, lastUpdated: LAST_UPDATED };
+
 /** Clubpass Privacy Policy. Public — no sign-in needed to read it. */
 export default function PrivacyPolicy() {
+  const policy = useLegalPage("privacy-policy", FALLBACK);
+
   return (
     <LegalPage
       title="Privacy Policy"
       pageTitle="Clubpass Privacy Policy | RewardLand"
-      lastUpdated={LAST_UPDATED}
+      lastUpdated={policy.lastUpdated}
     >
-      <div className="tc-lede">
-        <p>
-          Clubpass by Reward Land is a brand that is owned and operated by MyRepublic Limited
-          (MyRepublic). At Clubpass by Reward Land, we are committed to maintain the security and
-          confidentiality of the personal information held by us. This Privacy Policy (“Policy”)
-          describes how we look after the personal information we obtain or you provide us with
-          when you use our Website (clubpass.rewardland.sg), online services, mobile applications
-          (“collectively, the “Sites”), and when you sign-up and use our products and services.
-        </p>
-      </div>
+      {policy.lede.length > 0 && (
+        <div className="tc-lede">
+          {policy.lede.map((text, index) => (
+            <p key={index}>{text}</p>
+          ))}
+        </div>
+      )}
 
       <nav className="tc-toc" aria-label="Contents">
         <p className="tc-toc-head">Contents</p>
         <ol>
-          {SECTIONS.map((section) => (
+          {policy.sections.map((section) => (
             <li key={section.id}>
               <a href={`#${section.id}`}>{section.title.replace(/^\d+\.\s*/, "")}</a>
             </li>
@@ -169,7 +175,7 @@ export default function PrivacyPolicy() {
         </ol>
       </nav>
 
-      {SECTIONS.map((section) => (
+      {policy.sections.map((section) => (
         <section key={section.id} id={section.id} className="tc-section">
           <h2>{section.title}</h2>
           <LegalBlocks blocks={section.blocks} />

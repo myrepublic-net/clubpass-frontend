@@ -66,7 +66,7 @@ export default function LegalPage({ title, pageTitle, lastUpdated, children }) {
  * Renders legal copy written as data: `p` a paragraph, `list` a bulleted list,
  * `clause` a numbered clause ("1.1 …"), `points` indented labelled items
  * ("(i) …"), `sub` a numbered sub-heading with its own blocks, `penalties` a
- * two-column table.
+ * two-column table, `address` a contact card (first line bold).
  */
 export function LegalBlocks({ blocks }) {
   return blocks.map((block, index) => {
@@ -104,10 +104,22 @@ export function LegalBlocks({ blocks }) {
     if (block.list) {
       return (
         <ul key={index} className="tc-list">
-          {block.list.map((item) => (
-            <li key={item}>{item}</li>
+          {block.list.map((item, itemIndex) => (
+            <li key={itemIndex}>{item}</li>
           ))}
         </ul>
+      );
+    }
+
+    if (block.address) {
+      const [name, ...lines] = block.address;
+      return (
+        <address key={index} className="tc-contact">
+          <b>{name}</b>
+          {lines.map((line, lineIndex) => (
+            <span key={lineIndex}>{line}</span>
+          ))}
+        </address>
       );
     }
 
