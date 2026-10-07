@@ -19,7 +19,7 @@ import {
 import { readMemberSession } from "../api/auth.js";
 import { isPaid, resolveClubpassUser } from "../api/clubpassUser.js";
 import { useTicket } from "../hooks/useTickets.js";
-import { unitFeeOf } from "../api/tickets.js";
+import { isTierVisible, nextTierChange, tierStatus, unitFeeOf } from "../api/tickets.js";
 import SubscribeModal from "../components/SubscribeModal.jsx";
 import UserMenu from "../components/UserMenu.jsx";
 import { ClubpassUserContext } from "../components/clubpassUserContext.js";
@@ -93,21 +93,27 @@ const basketKey = (eventId) => `clubpass:basket:${eventId}`;
  * come from Strapi (see api/tickets.js) — this only layers on the one rule
  * the CMS doesn't express: Member Price is listed for everyone but stays
  * locked behind the upsell until the viewer actually pays for a membership.
+ *
+ * Visibility (show_at / hide_at) and the sale window are worked out against
+ * `now` here rather than at fetch time, so they flip on the minute they're set to.
  */
-function buildTiers(event, { paid }) {
-  return event.tiers.map((tier) =>
-    tier.memberOnly
-      ? {
-          ...tier,
-          // A window that hasn't opened still can't be bought, member or not.
-          status: paid ? tier.status : "locked",
-          note: paid
-            ? tier.description ||
-              `Limited to ${tier.maxQty ?? 1} ticket${tier.maxQty === 1 ? "" : "s"} per member for this event.`
-            : "Sign up for membership to unlock this price.",
-        }
-      : { ...tier, note: tier.description || tier.note },
-  );
+function buildTiers(event, { paid, now }) {
+  return event.tiers
+    .filter((tier) => isTierVisible(tier, now))
+    .map((tier) => ({ ...tier, status: tierStatus(tier, now) }))
+    .map((tier) =>
+      tier.memberOnly
+        ? {
+            ...tier,
+            // A window that hasn't opened still can't be bought, member or not.
+            status: paid ? tier.status : "locked",
+            note: paid
+              ? tier.description ||
+                `Limited to ${tier.maxQty ?? 1} ticket${tier.maxQty === 1 ? "" : "s"} per member for this event.`
+              : "Sign up for membership to unlock this price.",
+          }
+        : { ...tier, note: tier.description || tier.note },
+    );
 }
 
 /**
@@ -144,9 +150,23 @@ export default function EventTickets() {
   }, [session]);
 
   const paid = isPaid(clubpassUser);
+
+  // Ticks over whenever a tier is due to appear, hide, open or close, so a
+  // page left open updates without a reload.
+  const [now, setNow] = useState(() => new Date());
+  useEffect(() => {
+    if (!event) return;
+    const next = nextTierChange(event.tiers, now);
+    if (!next) return;
+    // setTimeout overflows past ~24.8 days; re-check then instead.
+    const delay = Math.min(next.getTime() - Date.now() + 500, 2 ** 31 - 1);
+    const timer = setTimeout(() => setNow(new Date()), Math.max(delay, 0));
+    return () => clearTimeout(timer);
+  }, [event, now]);
+
   const tiers = useMemo(
-    () => (event ? buildTiers(event, { paid }) : []),
-    [event, paid],
+    () => (event ? buildTiers(event, { paid, now }) : []),
+    [event, paid, now],
   );
 
   const [quantities, setQuantities] = useState(() => {
