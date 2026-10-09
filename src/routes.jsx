@@ -14,6 +14,7 @@ import ForgotPassword from "./pages/auth/ForgotPassword.jsx";
 import UserGate from "./components/UserGate.jsx";
 import NotFound from "./pages/NotFound.jsx";
 import Profile from "./pages/Profile.jsx";
+import MyTickets from "./pages/MyTickets.jsx";
 import ManageSubscription from "./pages/ManageSubscription.jsx";
 import Terms from "./pages/Terms.jsx";
 import PrivacyPolicy from "./pages/PrivacyPolicy.jsx";
@@ -64,6 +65,9 @@ const router = createBrowserRouter([
   // The account menu's Profile entry. Public route, but it sends a signed-out
   // visitor to login rather than rendering an empty membership.
   { path: "/profile", element: <Profile /> },
+  // The account menu's My Tickets entry. Same as Profile: a signed-out visitor
+  // is sent to login.
+  { path: "/my-tickets", element: <MyTickets /> },
   // Managing an existing membership: plan, cancel, reactivate.
   { path: "/membership", element: <ManageSubscription /> },
   // Clubpass Terms & Conditions, Privacy Policy and Contact Us — public, same layout.

@@ -140,3 +140,12 @@ export function claimFreeTickets({ ticketId, quantities, userName, email, access
 export function reactivateMembership({ userName, accessToken }) {
   return call("reactivate-membership", { userName, accessToken });
 }
+
+/**
+ * My Tickets: the member's paid orders, each with its event id, line items and
+ * issued ticket numbers. Needs the live session — the Lambda verifies it.
+ */
+export async function fetchMyTickets({ userName, accessToken }) {
+  const { orders } = await call("my-tickets", { userName, accessToken });
+  return orders ?? [];
+}

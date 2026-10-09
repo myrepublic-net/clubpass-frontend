@@ -1,0 +1,269 @@
+/* ==========================================================================
+   My Tickets — reached from the account menu. White page, navy event cards.
+   On desktop it sits under the event pages' header (event-desktop.css); on
+   mobile it has its own blue header band.
+   ========================================================================== */
+
+.mtk-page {
+  --mtk-navy: #0C165E;
+  --mtk-teal: #1FDBDA;
+  --mtk-muted: #B4B9DA;
+  --mtk-line: #BDBDBD;
+
+  font-family: "Outfit", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  min-height: 100vh;
+  background: #fff;
+  color: var(--mtk-navy);
+  -webkit-font-smoothing: antialiased;
+}
+
+.mtk-page *,
+.mtk-page *::before,
+.mtk-page *::after {
+  box-sizing: border-box;
+}
+
+/* --- mobile header --- */
+
+.mtk-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 20px;
+  background: linear-gradient(180deg, #03061a 0%, #0a1a6b 60%, #0e46c9 100%);
+  color: #fff;
+}
+
+.mtk-header h1 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 800;
+}
+
+.mtk-header .usr-avatar {
+  border-color: var(--mtk-teal);
+  background: rgba(12, 22, 94, .6);
+}
+
+/* --- body --- */
+
+.mtk-main {
+  max-width: 1008px;
+  margin: 0 auto;
+  padding: 16px 20px 40px;
+}
+
+.mtk-title {
+  margin: 0 0 18px;
+  font-size: 22px;
+  font-weight: 800;
+}
+
+.mtk-toolbar {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+.mtk-tabs {
+  display: flex;
+  gap: 8px;
+}
+
+/* Mobile: both pills filled — teal when picked, navy when not. */
+.mtk-tab {
+  padding: 8px 14px;
+  border: 2px solid var(--mtk-navy);
+  border-radius: 999px;
+  background: var(--mtk-navy);
+  color: #fff;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 800;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.mtk-tab.is-active {
+  border-color: var(--mtk-teal);
+  background: var(--mtk-teal);
+  color: var(--mtk-navy);
+}
+
+.mtk-search {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 46px;
+  padding: 0 18px;
+  border: 2px solid var(--mtk-line);
+  border-radius: 999px;
+  color: #9A9A9A;
+}
+
+.mtk-search:focus-within {
+  border-color: var(--mtk-teal);
+}
+
+.mtk-search input {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  outline: none;
+  background: none;
+  color: var(--mtk-navy);
+  font-family: inherit;
+  font-size: 17px;
+}
+
+.mtk-search input::placeholder {
+  color: #9A9A9A;
+}
+
+.mtk-note {
+  margin: 32px 0;
+  color: #6B7090;
+  font-size: 16px;
+  text-align: center;
+}
+
+.mtk-note.is-error {
+  color: #C62828;
+}
+
+/* --- cards --- */
+
+.mtk-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+}
+
+.mtk-card {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid #8C8FA8;
+  border-radius: 14px;
+  background: var(--mtk-navy);
+  color: #fff;
+  text-decoration: none;
+}
+
+.mtk-card-image {
+  aspect-ratio: 16 / 9;
+  background: linear-gradient(135deg, #1a237e 0%, #4a148c 100%);
+}
+
+.mtk-card-image img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.mtk-card-body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  padding: 16px 16px 14px;
+}
+
+.mtk-card-when {
+  margin: 0 0 6px;
+  color: var(--mtk-teal);
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.mtk-card-title {
+  margin: 0 0 4px;
+  font-size: 20px;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.mtk-card-venue {
+  margin: 0;
+  color: var(--mtk-muted);
+  font-size: 15px;
+}
+
+.mtk-card-foot {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: auto;
+  padding-top: 12px;
+  border-top: 2px solid rgba(255, 255, 255, .3);
+  color: var(--mtk-muted);
+  font-size: 15px;
+}
+
+/* Room above the divider; the foot's auto margin keeps it at the bottom of a
+   card stretched to its row's height. */
+.mtk-card-body > :nth-last-child(2) {
+  margin-bottom: 14px;
+}
+
+.mtk-card-icon {
+  flex-shrink: 0;
+  color: var(--mtk-teal);
+}
+
+.mtk-card-foot span {
+  flex: 1;
+}
+
+.mtk-card-chevron {
+  flex-shrink: 0;
+  color: #fff;
+}
+
+.mtk-card:hover .mtk-card-chevron {
+  color: var(--mtk-teal);
+}
+
+/* --- desktop --- */
+
+@media (min-width: 1024px) {
+  .mtk-main {
+    padding: 24px 24px 64px;
+  }
+
+  .mtk-toolbar {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    margin-bottom: 34px;
+  }
+
+  .mtk-tabs {
+    gap: 14px;
+  }
+
+  /* Desktop: the unpicked pill is outlined rather than filled. */
+  .mtk-tab {
+    padding: 12px 28px;
+    background: #fff;
+    color: var(--mtk-navy);
+    font-size: 17px;
+  }
+
+  .mtk-search {
+    width: 470px;
+    height: 50px;
+  }
+
+  .mtk-grid {
+    grid-template-columns: repeat(3, minmax(0, 306px));
+  }
+
+  .mtk-card-image {
+    aspect-ratio: auto;
+    height: 160px;
+  }
+}
