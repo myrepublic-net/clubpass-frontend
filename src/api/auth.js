@@ -328,3 +328,59 @@ export async function login({ identifier, password }) {
   storeMemberSession(data);
   return data;
 }
+
+/* ---- forgot password -------------------------------------------------------- */
+
+/**
+ * Reward Land's three-step reset (request -> verify -> complete). All three
+ * answer every failure with a SUCCESS envelope and `data.success: false`, the
+ * same body whatever went wrong, so that's turned into a thrown error here.
+ * None of them signs anyone in: after `complete` the member logs in as usual.
+ */
+function assertResetOk(data) {
+  if (data?.success === false) {
+    const error = new Error(data.message || "Invalid or expired reset code.");
+    error.code = "PASSWORD_RESET_FAILED";
+    throw error;
+  }
+  return data;
+}
+
+/**
+ * Sends a reset code to the email. The reply is the same whether or not the
+ * email has an account — the page should say "if an account exists…" either
+ * way. While an earlier code is still valid, no new one is sent.
+ */
+export async function requestPasswordReset(email) {
+  if (SIMULATE) return simulateSendOtp(`reset:${email}`);
+  return request("password-reset-request", { email });
+}
+
+/** Checks the code. Opens a short window (commonly 10 min) to set the new password. */
+export async function verifyPasswordReset(email, otp) {
+  if (SIMULATE) {
+    // Checked but kept: complete needs the same code again.
+    return delay(400).then(() => {
+      if (pendingOtps.get(`reset:${email}`) !== otp) assertResetOk({ success: false });
+      return { success: true };
+    });
+  }
+  return assertResetOk(await request("password-reset-verify", { email, otp }));
+}
+
+/** Sets the new password. Reward Land also ends every existing session for the account. */
+export async function completePasswordReset({ email, otp, password }) {
+  if (SIMULATE) {
+    return delay(600).then(() => {
+      if (pendingOtps.get(`reset:${email}`) !== otp) assertResetOk({ success: false });
+      pendingOtps.delete(`reset:${email}`);
+      console.warn("[auth:simulate] password reset for", email);
+      return { success: true };
+    });
+  }
+
+  const data = assertResetOk(await request("password-reset-complete", { email, otp, password }));
+  // Any session on this device was just revoked server-side.
+  signOutMember();
+  return data;
+}

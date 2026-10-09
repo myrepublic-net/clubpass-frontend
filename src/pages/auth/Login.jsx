@@ -72,6 +72,17 @@ export default function Login() {
           }
         />
 
+        <p className="auth-forgot">
+          {/* The email carries over if one was typed; state keeps the
+              after-login destination for when they come back. */}
+          <Link
+            to="/forgot-password"
+            state={{ ...location.state, email: identifier.includes("@") ? identifier.trim() : undefined }}
+          >
+            Forgot password?
+          </Link>
+        </p>
+
         {error && <p className="auth-field-error">{error}</p>}
 
         <button type="submit" className="auth-cta" disabled={!canSubmit}>

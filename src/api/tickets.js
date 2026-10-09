@@ -33,26 +33,63 @@ const timeFormat = new Intl.DateTimeFormat("en-SG", {
 // "Sept"), and the designs use the three-letter form throughout.
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
-/** "Sep 20 – Sep 27", or nothing when the window is open-ended. */
+const DATE_ONLY = /^\d{4}-\d{2}-\d{2}$/;
+
+/**
+ * A tier's date field as a Date. Strapi sends datetimes now; an entry saved
+ * back when these were plain dates still holds "YYYY-MM-DD", which counts as
+ * the start of that day for `from` and the end of it for `to`.
+ */
+function momentOf(value, { endOfDay = false } = {}) {
+  if (!value) return null;
+  const date = DATE_ONLY.test(value)
+    ? new Date(`${value}T${endOfDay ? "23:59:59" : "00:00:00"}`)
+    : new Date(value);
+  return Number.isNaN(date.getTime()) ? null : date;
+}
+
+/** "Sep 20, 6:00 PM – Sep 27, 11:00 PM", or nothing when the window is open-ended. */
 function salePeriod(from, to) {
   if (!from && !to) return null;
 
-  const label = (value) => {
-    const date = new Date(`${value}T00:00:00`);
-    return `${MONTHS[date.getMonth()]} ${date.getDate()}`;
+  const label = (value, endOfDay) => {
+    const date = momentOf(value, { endOfDay });
+    if (!date) return null;
+    const day = `${MONTHS[date.getMonth()]} ${date.getDate()}`;
+    return DATE_ONLY.test(value) ? day : `${day}, ${timeFormat.format(date).toUpperCase()}`;
   };
 
-  return [from, to].filter(Boolean).map(label).join(" – ");
+  return [label(from, false), label(to, true)].filter(Boolean).join(" – ") || null;
+}
+
+/** Where `now` sits in a tier's sale window: "upcoming", "active" or "ended". */
+export function tierStatus(tier, now = new Date()) {
+  if (tier.from && now < tier.from) return "upcoming";
+  if (tier.to && now > tier.to) return "ended";
+  return "active";
 }
 
 /**
- * Where today sits in a tier's sale window. `to` is a date with no time, so
- * it counts as on sale for the whole of that day.
+ * Whether a tier is listed at all at `now`. Unlike the sale window, which
+ * still shows the card (as upcoming or closed), outside show_at / hide_at the
+ * tier isn't there.
  */
-function windowStatus(from, to, now = new Date()) {
-  if (from && now < new Date(`${from}T00:00:00`)) return "upcoming";
-  if (to && now > new Date(`${to}T23:59:59`)) return "ended";
-  return "active";
+export function isTierVisible(tier, now = new Date()) {
+  if (tier.showAt && now < tier.showAt) return false;
+  if (tier.hideAt && now >= tier.hideAt) return false;
+  return true;
+}
+
+/**
+ * The next moment after `now` at which any of these tiers appears, hides,
+ * opens or closes — so a page left open can re-render right then.
+ */
+export function nextTierChange(tiers, now = new Date()) {
+  const times = tiers
+    .flatMap((tier) => [tier.from, tier.to, tier.showAt, tier.hideAt])
+    .filter((date) => date && date > now)
+    .map((date) => date.getTime());
+  return times.length ? new Date(Math.min(...times)) : null;
 }
 
 /** Largest banner Strapi generated, falling back to the original upload. */
@@ -130,11 +167,13 @@ function tiersOf(row) {
       fee: feeOf(tier),
       maxQty: tier.user_limit ?? null,
       stockLeft: tier.global_limit ?? null,
-      from: tier.from_date ?? null,
-      to: tier.to_date ?? null,
+      from: momentOf(tier.from_date),
+      to: momentOf(tier.to_date, { endOfDay: true }),
+      showAt: momentOf(tier.show_at),
+      hideAt: momentOf(tier.hide_at),
       salePeriod: salePeriod(tier.from_date, tier.to_date),
-      status: windowStatus(tier.from_date, tier.to_date),
-    }));
+    }))
+    .map((tier) => ({ ...tier, status: tierStatus(tier) }));
 }
 
 /**
@@ -156,17 +195,20 @@ function normalise(row) {
   const startsAt = row.date ? new Date(row.date) : null;
 
   const tiers = tiersOf(row);
+  // The prices quoted on cards and summaries only count tiers listed right
+  // now; the ticket page re-checks visibility live from `tiers`.
+  const listed = tiers.filter((tier) => isTierVisible(tier));
 
   const media = (row.banners ?? []).map(banner).filter(Boolean);
-  const prices = tiers.map((tier) => tier.price);
+  const prices = listed.map((tier) => tier.price);
 
   // What the card leads with: the member price against the best public one.
   // With several member-only tiers, the cheapest is the one worth quoting.
-  const memberTiers = tiers.filter((tier) => tier.memberOnly);
+  const memberTiers = listed.filter((tier) => tier.memberOnly);
   const memberTier = memberTiers.length
     ? memberTiers.reduce((cheapest, tier) => (tier.price < cheapest.price ? tier : cheapest))
     : null;
-  const publicTier = publicTierOf(tiers);
+  const publicTier = publicTierOf(listed);
 
   const memberSaving =
     memberTier && publicTier && publicTier.price > memberTier.price
@@ -203,7 +245,7 @@ function normalise(row) {
     // What a ticket costs without any discount, for the "you saved" line: the
     // dearest tier anyone can buy without a membership.
     fullPrice:
-      tiers.filter((tier) => !tier.memberOnly).reduce((dearest, tier) => Math.max(dearest, tier.price), 0) ||
+      listed.filter((tier) => !tier.memberOnly).reduce((dearest, tier) => Math.max(dearest, tier.price), 0) ||
       (prices.length ? Math.max(...prices) : null),
   };
 }

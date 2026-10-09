@@ -9,17 +9,10 @@ import InfoModal from "../../components/auth/InfoModal.jsx";
 import OtpInput from "../../components/auth/OtpInput.jsx";
 import useOtpFlow from "../../hooks/useOtpFlow.js";
 import { PRIVACY_POLICY, TERMS_OF_USE } from "./legalCopy.jsx";
+import { PASSWORD_RULES } from "./passwordRules.js";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const COUNTRY_CODE = "+65";
-
-const PASSWORD_RULES = [
-  { label: "Eight characters minimum", test: (pw) => pw.length >= 8 },
-  { label: "One lowercase character", test: (pw) => /[a-z]/.test(pw) },
-  { label: "One uppercase character", test: (pw) => /[A-Z]/.test(pw) },
-  { label: "One number", test: (pw) => /[0-9]/.test(pw) },
-  { label: "One special character", test: (pw) => /[^A-Za-z0-9]/.test(pw) },
-];
 
 function formatPhone(digits) {
   return digits.length > 4 ? `${digits.slice(0, 4)} ${digits.slice(4, 8)}` : digits;

@@ -1286,15 +1286,15 @@ export default function ClubPass() {
                   </React.Fragment>
                 ))}
 
-                {theme.highlight && route.dropPoints[2] && (
+                {/* {theme.highlight && route.dropPoints[2] && (
                   <>
-                    <div className="map-highlight">
+                    {/* <div className="map-highlight">
                       {route.dropPoints[2].name.replace(/\s+MRT$/i, "")}
-                    </div>
+                    </div> 
                     <div className="map-location location-2"><img src="/images/map-pin.png" alt="" /></div>
                     <div className="map-location location-3"><img src="/images/map-pin.png" alt="" /></div>
                   </>
-                )}
+                )} */}
               </div>
 
               <div className="vote-box">
