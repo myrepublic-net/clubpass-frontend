@@ -267,3 +267,158 @@
     height: 160px;
   }
 }
+
+/* ==========================================================================
+   Ticket Detail — one white QR pass per ticket, stacked, on a dark page.
+   ========================================================================== */
+
+.tkd-page {
+  background: linear-gradient(180deg, #0C165E 0%, #0C165E 45%, #03061a 100%);
+  color: #fff;
+}
+
+.tkd-page .mtk-title {
+  color: #fff;
+}
+
+.tkd-page .mtk-note {
+  color: #B4B9DA;
+}
+
+.tkd-page .mtk-note.is-error {
+  color: #FF8A80;
+}
+
+.tkd-list {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  padding-top: 8px;
+}
+
+.tkd-pass {
+  width: 100%;
+  max-width: 458px;
+  padding: 24px 24px 22px;
+  border-radius: 22px;
+  background: #fff;
+  color: var(--mtk-navy);
+}
+
+.tkd-head {
+  padding-bottom: 18px;
+  border-bottom: 1px dashed #A9ADC4;
+  text-align: center;
+}
+
+.tkd-label {
+  margin: 0 0 4px;
+  color: var(--mtk-teal);
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.tkd-title {
+  margin: 0 0 6px;
+  font-size: 22px;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.tkd-sub {
+  margin: 0;
+  color: #8E93AE;
+  font-size: 15px;
+}
+
+.tkd-qr {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  padding: 16px 0;
+  border-bottom: 1px dashed #A9ADC4;
+}
+
+/* Empty navy tile where the QR will go. */
+.tkd-qr-box {
+  width: 180px;
+  height: 180px;
+  border-radius: 14px;
+  background: var(--mtk-navy);
+}
+
+.tkd-pass.is-void .tkd-qr-box {
+  opacity: .25;
+}
+
+.tkd-status {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: #C62828;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 800;
+  transform: translate(-50%, -50%);
+}
+
+.tkd-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 16px 0 0;
+}
+
+.tkd-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  font-size: 15px;
+}
+
+.tkd-row dt {
+  flex-shrink: 0;
+  color: #8E93AE;
+  font-weight: 400;
+}
+
+.tkd-row dd {
+  margin: 0;
+  font-weight: 700;
+  text-align: right;
+  overflow-wrap: anywhere;
+}
+
+.tkd-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: #D2F7F6;
+  color: var(--mtk-teal);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+/* Ticket Detail's Back link: in the mobile header, and above the passes on desktop. */
+.mtk-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #fff;
+  font-size: 20px;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.mtk-back:hover {
+  color: var(--mtk-teal);
+}
+
+.mtk-main > .mtk-back {
+  margin-bottom: 18px;
+}

@@ -15,6 +15,7 @@ import UserGate from "./components/UserGate.jsx";
 import NotFound from "./pages/NotFound.jsx";
 import Profile from "./pages/Profile.jsx";
 import MyTickets from "./pages/MyTickets.jsx";
+import TicketDetail from "./pages/TicketDetail.jsx";
 import ManageSubscription from "./pages/ManageSubscription.jsx";
 import Terms from "./pages/Terms.jsx";
 import PrivacyPolicy from "./pages/PrivacyPolicy.jsx";
@@ -68,6 +69,8 @@ const router = createBrowserRouter([
   // The account menu's My Tickets entry. Same as Profile: a signed-out visitor
   // is sent to login.
   { path: "/my-tickets", element: <MyTickets /> },
+  // A My Tickets card opened: one QR pass per ticket for that event.
+  { path: "/my-tickets/:key", element: <TicketDetail /> },
   // Managing an existing membership: plan, cancel, reactivate.
   { path: "/membership", element: <ManageSubscription /> },
   // Clubpass Terms & Conditions, Privacy Policy and Contact Us — public, same layout.
