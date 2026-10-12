@@ -172,14 +172,14 @@
 }
 
 .mtk-card-when {
-  margin: 0 0 6px;
+  margin: 0 0 12px;
   color: var(--mtk-teal);
   font-size: 13px;
   font-weight: 800;
 }
 
 .mtk-card-title {
-  margin: 0 0 4px;
+  margin: 0 0 12px;
   font-size: 20px;
   font-weight: 800;
   line-height: 1.2;
