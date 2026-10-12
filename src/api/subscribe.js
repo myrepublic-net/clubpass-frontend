@@ -149,3 +149,9 @@ export async function fetchMyTickets({ userName, accessToken }) {
   const { orders } = await call("my-tickets", { userName, accessToken });
   return orders ?? [];
 }
+
+/**
+ * Which My Tickets card an order belongs to: its event, or the order itself
+ * when the event is gone. Ticket Detail (/my-tickets/:key) picks orders by it.
+ */
+export const cardKeyOf = (order) => order.ticketId ?? order.bookingReference;
