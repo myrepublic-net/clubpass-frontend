@@ -6,6 +6,7 @@ import ClubPassApp from "./pages/ClubPassApp.jsx";
 import Dashboard from "./pages/Dashboard.jsx";
 import EventDetails from "./pages/EventDetails.jsx";
 import EventTickets from "./pages/EventTickets.jsx";
+import EventList from "./pages/EventList.jsx";
 import ScanConfirm from "./pages/ScanConfirm.jsx";
 import DriverScan from "./pages/DriverScan.jsx";
 import Login from "./pages/auth/Login.jsx";
@@ -39,6 +40,8 @@ const router = createBrowserRouter([
   // UserGate; the page reads the session itself to show "Hi, {name}" vs a
   // Login / Signup prompt in its own header.
   { path: "/events/:id", element: <EventDetails /> },
+  // Every public event, with search, quick filters and Load More. Public too.
+  { path: "/event-list", element: <EventList /> },
   // The event's "Get Tickets Now" CTA. Also public — a guest can pick Early
   // Bird tickets, they just don't get the Member Price tier or the real R
   // Coins rate until they sign up / pay.

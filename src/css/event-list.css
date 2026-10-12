@@ -1,0 +1,357 @@
+/* ==========================================================================
+   Event List (/event-list) — every public event. White page, navy event
+   cards. On desktop it sits under the event pages' header (event-desktop.css);
+   on mobile it has its own blue header band.
+   ========================================================================== */
+
+.evl-page {
+  --evl-navy: #0C165E;
+  --evl-teal: #1FDBDA;
+  --evl-muted: #B4B9DA;
+  --evl-line: #BDBDBD;
+
+  font-family: "Outfit", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  min-height: 100vh;
+  background: #fff;
+  color: var(--evl-navy);
+  -webkit-font-smoothing: antialiased;
+}
+
+.evl-page *,
+.evl-page *::before,
+.evl-page *::after {
+  box-sizing: border-box;
+}
+
+/* --- mobile header --- */
+
+.evl-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 20px;
+  background: linear-gradient(180deg, #03061a 0%, #0a1a6b 60%, #0e46c9 100%);
+  color: #fff;
+}
+
+.evl-header h1 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 800;
+}
+
+.evl-header .usr-avatar {
+  border-color: var(--evl-teal);
+  background: rgba(12, 22, 94, .6);
+}
+
+/* --- body --- */
+
+.evl-main {
+  max-width: 1008px;
+  margin: 0 auto;
+  padding: 16px 16px 40px;
+}
+
+.evl-title {
+  margin: 0 0 22px;
+  font-size: 22px;
+  font-weight: 800;
+}
+
+.evl-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 34px;
+}
+
+.evl-browse {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  height: 50px;
+  padding: 0 24px;
+  border: 2px solid var(--evl-navy);
+  border-radius: 999px;
+  background: #fff;
+  color: var(--evl-navy);
+  font-family: inherit;
+  font-size: 18px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.evl-browse.is-open {
+  background: var(--evl-navy);
+  color: #fff;
+}
+
+.evl-search {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 470px;
+  height: 50px;
+  padding: 0 18px;
+  border: 2px solid var(--evl-line);
+  border-radius: 999px;
+  color: #9A9A9A;
+}
+
+.evl-search:focus-within {
+  border-color: var(--evl-teal);
+}
+
+.evl-search input {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  outline: none;
+  background: none;
+  color: var(--evl-navy);
+  font-family: inherit;
+  font-size: 17px;
+}
+
+.evl-search input::placeholder {
+  color: #9A9A9A;
+}
+
+/* Quick filters: one scrolling row of pills, teal when picked. */
+.evl-filters {
+  display: flex;
+  gap: 8px;
+  margin: 0 -16px 18px;
+  padding: 0 16px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.evl-filters::-webkit-scrollbar {
+  display: none;
+}
+
+.evl-filter {
+  flex-shrink: 0;
+  padding: 8px 14px;
+  border: 2px solid var(--evl-navy);
+  border-radius: 999px;
+  background: var(--evl-navy);
+  color: #fff;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 800;
+  text-transform: uppercase;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.evl-filter.is-active {
+  border-color: var(--evl-teal);
+  background: var(--evl-teal);
+  color: var(--evl-navy);
+}
+
+.evl-note {
+  margin: 32px 0;
+  color: #6B7090;
+  font-size: 16px;
+  text-align: center;
+}
+
+.evl-note.is-error {
+  color: #C62828;
+}
+
+/* --- cards --- */
+
+.evl-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 18px;
+}
+
+.evl-card {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid #8C8FA8;
+  border-radius: 14px;
+  background: var(--evl-navy);
+  color: #fff;
+  text-decoration: none;
+  transition: transform .15s ease;
+}
+
+.evl-card:hover {
+  color: #fff;
+  transform: translateY(-2px);
+}
+
+.evl-card-image {
+  aspect-ratio: 16 / 9;
+  background: linear-gradient(135deg, #1a237e 0%, #4a148c 100%);
+}
+
+.evl-card-image img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.evl-card-body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  padding: 16px 16px 18px;
+}
+
+.evl-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.evl-card-date {
+  color: var(--evl-teal);
+  font-size: 13px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.evl-card-coins {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--evl-teal);
+  color: var(--evl-navy);
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.evl-card-coins img {
+  width: 13px;
+  height: 13px;
+}
+
+.evl-card-title {
+  margin: 0 0 4px;
+  overflow: hidden;
+  font-size: 20px;
+  font-weight: 800;
+  line-height: 1.25;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.evl-card-venue {
+  margin: 0;
+  color: var(--evl-muted);
+  font-size: 15px;
+}
+
+.evl-card-prices {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  margin-top: auto;
+  padding-top: 18px;
+}
+
+.evl-price span {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--evl-muted);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .02em;
+  text-transform: uppercase;
+}
+
+.evl-price b {
+  display: block;
+  margin-top: 2px;
+  font-size: 17px;
+  font-weight: 800;
+}
+
+.evl-price--member {
+  padding-left: 12px;
+  border-left: 1px solid rgba(255, 255, 255, .3);
+}
+
+.evl-price--member span,
+.evl-price--member b,
+.evl-price--member small {
+  color: var(--evl-teal);
+}
+
+.evl-price--member small {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* --- load more --- */
+
+.evl-more {
+  display: flex;
+  justify-content: center;
+  margin-top: 40px;
+}
+
+.evl-more-btn {
+  min-width: 178px;
+  height: 50px;
+  padding: 0 28px;
+  border: 2px solid var(--evl-navy);
+  border-radius: 999px;
+  background: #fff;
+  color: var(--evl-navy);
+  font-family: inherit;
+  font-size: 18px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.evl-more-btn:hover {
+  background: var(--evl-navy);
+  color: #fff;
+}
+
+/* --- desktop --- */
+
+@media (min-width: 1024px) {
+  .evl-main {
+    padding: 24px 24px 64px;
+  }
+
+  .evl-filters {
+    flex-wrap: wrap;
+    margin: -14px 0 30px;
+    padding: 0;
+  }
+
+  .evl-grid {
+    grid-template-columns: repeat(3, minmax(0, 306px));
+    gap: 40px 20px;
+  }
+
+  .evl-card-image {
+    aspect-ratio: auto;
+    height: 160px;
+  }
+
+  .evl-card-title {
+    font-size: 19px;
+  }
+}
