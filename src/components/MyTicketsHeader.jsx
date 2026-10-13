@@ -22,7 +22,7 @@ export default function MyTicketsHeader({ title, userName, backTo }) {
           <img src="/images/cp-logo.png" alt="Clubpass" />
         </Link>
         <nav className="evx-nav">
-          <Link to="/#venues">Events</Link>
+          <Link to="/event-list">Events</Link>
           <UserMenu userName={userName} />
         </nav>
       </div>

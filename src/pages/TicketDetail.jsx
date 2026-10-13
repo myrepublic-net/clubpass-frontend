@@ -56,20 +56,22 @@ function toPasses(orders, events, key) {
 }
 
 /**
- * QR groups by their entry ticket's number, which is the pass's Ticket No:
- * the entry's QR and the add-ons that go with it.
+ * Every QR by its ticket number, which is the pass's Ticket No. An entry
+ * ticket also carries the add-ons from its group; an add-on sold on its own
+ * comes in a group without an entry and is a pass of its own.
  */
-function byEntryTicket(groups) {
-  const entries = new Map();
+function byTicketNumber(groups) {
+  const qrs = new Map();
   for (const { tickets } of groups) {
     const entry = tickets.find((ticket) => ticket.category === "entry");
-    if (!entry) continue;
-    entries.set(entry.ticketNumber, {
-      qrImageUrl: entry.qrImageUrl,
-      addOns: tickets.filter((ticket) => ticket !== entry),
-    });
+    for (const ticket of tickets) {
+      qrs.set(ticket.ticketNumber, {
+        qrImageUrl: ticket.qrImageUrl,
+        addOns: ticket === entry ? tickets.filter((other) => other !== entry) : [],
+      });
+    }
   }
-  return entries;
+  return qrs;
 }
 
 /** An add-on of the pass above it: its own QR, line name and ticket number. */
@@ -85,8 +87,10 @@ function AddOn({ addOn }) {
   );
 }
 
-function Pass({ event, pass, userName, membership, qr }) {
+function Pass({ event, pass, userName, membership, qr, ownPasses }) {
   const status = STATUS_LABELS[pass.status];
+  // An add-on that's a pass of its own already shows its QR there.
+  const addOns = (qr?.addOns ?? []).filter((addOn) => !ownPasses.has(addOn.ticketNumber));
 
   const rows = [
     ["Ticket Type", pass.tierLabel || "Ticket"],
@@ -123,11 +127,11 @@ function Pass({ event, pass, userName, membership, qr }) {
         ))}
       </dl>
 
-      {qr?.addOns.length > 0 && (
+      {addOns.length > 0 && (
         <div className="tkd-addons">
           <p className="tkd-addons-label">Included with this ticket</p>
           <ul>
-            {qr.addOns.map((addOn) => (
+            {addOns.map((addOn) => (
               <AddOn key={addOn.ticketNumber} addOn={addOn} />
             ))}
           </ul>
@@ -180,7 +184,7 @@ export default function TicketDetail() {
     let cancelled = false;
     fetchTicketQR({ userName, accessToken: session?.token, bookingReference: key }).then(
       (groups) => {
-        if (!cancelled) setQr(byEntryTicket(groups));
+        if (!cancelled) setQr(byTicketNumber(groups));
       },
       (error) => console.error("Ticket QR lookup failed", error),
     );
@@ -219,6 +223,7 @@ export default function TicketDetail() {
   } else if (!event?.passes.length) {
     content = <p className="mtk-note tkd-note">We couldn&apos;t find these tickets.</p>;
   } else {
+    const ownPasses = new Set(event.passes.map((pass) => pass.ticketNumber));
     content = (
       <div className="tkd-list">
         {event.passes.map((pass) => (
@@ -229,6 +234,7 @@ export default function TicketDetail() {
             userName={userName}
             membership={membership}
             qr={qr.get(pass.ticketNumber)}
+            ownPasses={ownPasses}
           />
         ))}
       </div>
