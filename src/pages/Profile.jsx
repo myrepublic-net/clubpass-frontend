@@ -173,7 +173,7 @@ export default function Profile() {
           ))}
         </ul>
 
-        <Link className="prf-explore" to="/#venues">
+        <Link className="prf-explore" to="/event-list">
           Explore events
         </Link>
 
