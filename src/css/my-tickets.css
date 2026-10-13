@@ -341,12 +341,22 @@
   border-bottom: 1px dashed #A9ADC4;
 }
 
-/* Empty navy tile where the QR will go. */
+/* Navy tile until the QR loads into it. */
 .tkd-qr-box {
   width: 180px;
   height: 180px;
   border-radius: 14px;
   background: var(--mtk-navy);
+  overflow: hidden;
+}
+
+.tkd-qr-box img,
+.tkd-addon-qr img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background: #fff;
 }
 
 .tkd-pass.is-void .tkd-qr-box {
@@ -391,6 +401,66 @@
   margin: 0;
   font-weight: 700;
   text-align: right;
+  overflow-wrap: anywhere;
+}
+
+/* Add-ons sit inside their entry ticket's pass, so it's clear whose they are. */
+.tkd-addons {
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1px dashed #A9ADC4;
+}
+
+.tkd-addons-label {
+  margin: 0 0 10px;
+  color: var(--mtk-teal);
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.tkd-addons ul {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.tkd-addon {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 10px;
+  border-radius: 14px;
+  background: #F3F4FA;
+}
+
+.tkd-addon-qr {
+  flex-shrink: 0;
+  width: 88px;
+  height: 88px;
+  border-radius: 10px;
+  background: var(--mtk-navy);
+  overflow: hidden;
+}
+
+.tkd-addon-body {
+  min-width: 0;
+}
+
+.tkd-addon-name {
+  margin: 0 0 4px;
+  font-size: 16px;
+  font-weight: 800;
+}
+
+.tkd-addon-number {
+  margin: 0;
+  color: #8E93AE;
+  font-size: 14px;
+  font-weight: 700;
   overflow-wrap: anywhere;
 }
 

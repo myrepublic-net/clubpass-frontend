@@ -3,7 +3,7 @@ import { Navigate, useParams } from "react-router";
 
 import { readMemberSession } from "../api/auth.js";
 import { isPaid, resolveClubpassUser } from "../api/clubpassUser.js";
-import { cardKeyOf, fetchMyTickets } from "../api/subscribe.js";
+import { cardKeyOf, fetchMyTickets, fetchTicketQR } from "../api/subscribe.js";
 import { fetchTickets } from "../api/tickets.js";
 import MyTicketsHeader, { BackLink } from "../components/MyTicketsHeader.jsx";
 import useIsDesktop from "../hooks/useIsDesktop.js";
@@ -55,7 +55,37 @@ function toPasses(orders, events, key) {
   };
 }
 
-function Pass({ event, pass, userName, membership }) {
+/**
+ * QR groups by their entry ticket's number, which is the pass's Ticket No:
+ * the entry's QR and the add-ons that go with it.
+ */
+function byEntryTicket(groups) {
+  const entries = new Map();
+  for (const { tickets } of groups) {
+    const entry = tickets.find((ticket) => ticket.category === "entry");
+    if (!entry) continue;
+    entries.set(entry.ticketNumber, {
+      qrImageUrl: entry.qrImageUrl,
+      addOns: tickets.filter((ticket) => ticket !== entry),
+    });
+  }
+  return entries;
+}
+
+/** An add-on of the pass above it: its own QR, line name and ticket number. */
+function AddOn({ addOn }) {
+  return (
+    <li className="tkd-addon">
+      <div className="tkd-addon-qr">{addOn.qrImageUrl && <img src={addOn.qrImageUrl} alt="" />}</div>
+      <div className="tkd-addon-body">
+        <p className="tkd-addon-name">{addOn.lineName || "Add-on"}</p>
+        <p className="tkd-addon-number">{addOn.ticketNumber}</p>
+      </div>
+    </li>
+  );
+}
+
+function Pass({ event, pass, userName, membership, qr }) {
   const status = STATUS_LABELS[pass.status];
 
   const rows = [
@@ -77,8 +107,10 @@ function Pass({ event, pass, userName, membership }) {
       </div>
 
       <div className="tkd-qr">
-        {/* The QR isn't shown yet: an empty tile holds its place. */}
-        <div className="tkd-qr-box" aria-hidden="true" />
+        {/* An empty tile holds its place until the QR arrives. */}
+        <div className="tkd-qr-box">
+          {qr?.qrImageUrl && <img src={qr.qrImageUrl} alt={`QR code for ticket ${pass.ticketNumber}`} />}
+        </div>
         {status && <span className="tkd-status">{status}</span>}
       </div>
 
@@ -90,6 +122,17 @@ function Pass({ event, pass, userName, membership }) {
           </div>
         ))}
       </dl>
+
+      {qr?.addOns.length > 0 && (
+        <div className="tkd-addons">
+          <p className="tkd-addons-label">Included with this ticket</p>
+          <ul>
+            {qr.addOns.map((addOn) => (
+              <AddOn key={addOn.ticketNumber} addOn={addOn} />
+            ))}
+          </ul>
+        </div>
+      )}
     </article>
   );
 }
@@ -103,6 +146,7 @@ export default function TicketDetail() {
 
   const [state, setState] = useState({ status: "loading", event: null, message: "" });
   const [user, setUser] = useState(null);
+  const [qr, setQr] = useState(() => new Map());
 
   useEffect(() => {
     if (!userName) return;
@@ -122,6 +166,23 @@ export default function TicketDetail() {
           setState({ status: "error", event: null, message: error.message || "Couldn't load your tickets." });
         }
       },
+    );
+    return () => {
+      cancelled = true;
+    };
+  }, [userName, session, key]);
+
+  // The QR codes come separately, so the passes show while they load — and
+  // still show, without QRs, if Ticket Dispatch can't be reached.
+  useEffect(() => {
+    if (!userName) return;
+
+    let cancelled = false;
+    fetchTicketQR({ userName, accessToken: session?.token, bookingReference: key }).then(
+      (groups) => {
+        if (!cancelled) setQr(byEntryTicket(groups));
+      },
+      (error) => console.error("Ticket QR lookup failed", error),
     );
     return () => {
       cancelled = true;
@@ -161,7 +222,14 @@ export default function TicketDetail() {
     content = (
       <div className="tkd-list">
         {event.passes.map((pass) => (
-          <Pass key={pass.ticketNumber} event={event} pass={pass} userName={userName} membership={membership} />
+          <Pass
+            key={pass.ticketNumber}
+            event={event}
+            pass={pass}
+            userName={userName}
+            membership={membership}
+            qr={qr.get(pass.ticketNumber)}
+          />
         ))}
       </div>
     );

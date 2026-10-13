@@ -151,6 +151,15 @@ export async function fetchMyTickets({ userName, accessToken }) {
 }
 
 /**
+ * Ticket Detail: one order's QR codes, as groups of an entry ticket and the
+ * add-ons that came with it. Needs the live session, like fetchMyTickets.
+ */
+export async function fetchTicketQR({ userName, accessToken, bookingReference }) {
+  const { groups } = await call("ticket-qr", { userName, accessToken, bookingReference });
+  return groups ?? [];
+}
+
+/**
  * Which My Tickets card an order belongs to: one card per order, even when a
  * member has several for the same event. Ticket Detail (/my-tickets/:key)
  * picks the order by it.
