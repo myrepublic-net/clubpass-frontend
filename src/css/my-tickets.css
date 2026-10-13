@@ -420,27 +420,28 @@
 }
 
 .tkd-addons ul {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  margin: 0;
-  padding: 0;
-  list-style: none;
+    display: grid;
+    flex-direction: column;
+    gap: 10px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    grid-template-columns: 1fr 1fr;
 }
 
 .tkd-addon {
   display: flex;
   align-items: center;
-  gap: 14px;
-  padding: 10px;
+  gap: 10px;
+  padding: 5px 10px;
   border-radius: 14px;
-  background: #F3F4FA;
+      background: linear-gradient(275.47deg, #83BCFF 11.4%, #DBEBFE 51.39%);
 }
 
 .tkd-addon-qr {
   flex-shrink: 0;
-  width: 88px;
-  height: 88px;
+  width: 60px;
+  height: 60px;
   border-radius: 10px;
   background: var(--mtk-navy);
   overflow: hidden;
@@ -458,8 +459,8 @@
 
 .tkd-addon-number {
   margin: 0;
-  color: #8E93AE;
-  font-size: 14px;
+  color: #0c165e;
+  font-size: 12px;
   font-weight: 700;
   overflow-wrap: anywhere;
 }
@@ -491,4 +492,9 @@
 
 .mtk-main > .mtk-back {
   margin-bottom: 18px;
+}
+@media screen and (max-width: 480px) {
+.tkd-addons ul {
+    grid-template-columns: 1fr;
+}
 }
