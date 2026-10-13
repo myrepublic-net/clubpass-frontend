@@ -1412,7 +1412,7 @@ export default function EventTickets() {
             </div>
           )}
 
-          <Link className="evt-back-link" to={`/events/${event.id}`}>
+          <Link className="evt-back-link" to={`/event-list`}>
             Back to event
           </Link>
         </div>
