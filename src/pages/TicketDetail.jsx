@@ -22,8 +22,8 @@ function dayLabel(date) {
 const STATUS_LABELS = { used: "USED", cancelled: "CANCELLED", refunded: "REFUNDED" };
 
 /**
- * One pass per issued ticket, across every order the member has for this
- * event. The event (title, date, venue, tier descriptions) comes from the
+ * One pass per issued ticket in this order (the card it was opened from). The
+ * event (title, date, venue, tier descriptions) comes from the
  * events list when it's still there, else from what the order recorded.
  */
 function toPasses(orders, events, key) {

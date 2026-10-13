@@ -151,7 +151,8 @@ export async function fetchMyTickets({ userName, accessToken }) {
 }
 
 /**
- * Which My Tickets card an order belongs to: its event, or the order itself
- * when the event is gone. Ticket Detail (/my-tickets/:key) picks orders by it.
+ * Which My Tickets card an order belongs to: one card per order, even when a
+ * member has several for the same event. Ticket Detail (/my-tickets/:key)
+ * picks the order by it.
  */
-export const cardKeyOf = (order) => order.ticketId ?? order.bookingReference;
+export const cardKeyOf = (order) => order.bookingReference;

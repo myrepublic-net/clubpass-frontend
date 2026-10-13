@@ -23,7 +23,7 @@ function whenLabel(date) {
 }
 
 /**
- * One card per event: a member's orders for the same event are combined, and
+ * One card per order (two orders for the same event are two cards), and
  * the event itself (image, venue, current date) comes from the events list.
  * An event no longer listed still shows, from what the order recorded.
  */
