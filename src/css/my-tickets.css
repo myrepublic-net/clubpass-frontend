@@ -456,7 +456,9 @@
   font-size: 16px;
   font-weight: 800;
 }
-
+.loader-image {
+ width: 60px;
+}
 .tkd-addon-number {
   margin: 0;
   color: #0c165e;
