@@ -8,7 +8,7 @@ import {
   createSubscription,
   subscribeWithCard,
 } from "../api/subscribe.js";
-import usePaypalSdk, { CURRENCY, IS_SANDBOX, sessionMethods } from "./usePaypalSdk.js";
+import usePaypalSdk, { CURRENCY, sessionMethods } from "./usePaypalSdk.js";
 
 const PRICE = import.meta.env.VITE_CLUBPASS_PRICE ?? "19.90";
 const PRICE_LABEL = "Clubpass · Home Express";
@@ -57,7 +57,7 @@ function pick(session, names, label) {
  * renew itself:
  *
  *   PayPal  → a real billing-plan subscription; PayPal charges monthly.
- *   Card, Google Pay, Apple Pay → a one-month order that vaults the payment
+ *   Card, Apple Pay → a one-month order that vaults the payment
  *     method, and our Lambda charges the saved method monthly from then on.
  *
  * Either way the order or subscription is created by the Lambda — v6 only ever
@@ -307,62 +307,6 @@ export default function useMembershipCheckout({
     }
   }, [subscribeWithSavedCard, fail]);
 
-  /* ---- Google Pay ------------------------------------------------------- */
-
-  const payWithGooglePay = useCallback(async () => {
-    try {
-      const session = sdk.createGooglePayOneTimePaymentSession();
-      console.log("[googlepay] session methods:", sessionMethods(session));
-
-      const getConfig = pick(
-        session,
-        ["getGooglePayConfig", "config", "formatConfigForPaymentRequest"],
-        "Google Pay",
-      );
-      const config = await getConfig();
-
-      const client = new window.google.payments.api.PaymentsClient({
-        environment: IS_SANDBOX ? "TEST" : "PRODUCTION",
-      });
-
-      const paymentData = await client.loadPaymentData({
-        apiVersion: config.apiVersion,
-        apiVersionMinor: config.apiVersionMinor,
-        allowedPaymentMethods: config.allowedPaymentMethods,
-        merchantInfo: config.merchantInfo,
-        transactionInfo: {
-          countryCode: config.countryCode ?? "SG",
-          currencyCode: CURRENCY,
-          totalPriceStatus: "FINAL",
-          totalPrice: PRICE,
-          totalPriceLabel: PRICE_LABEL,
-        },
-      });
-
-      setFlow({ status: "processing" });
-
-      const { orderId } = await createOrder({
-        method: "googlepay",
-        userName: latest.current.userName,
-        email: latest.current.profile?.email,
-      });
-
-      await session.confirmOrder({
-        orderId,
-        paymentMethodData: paymentData.paymentMethodData,
-      });
-
-      await captureAndActivate(orderId, "googlepay");
-    } catch (error) {
-      // Closing the Google sheet is a cancel, not a failure.
-      if (error?.statusCode === "CANCELED") {
-        setFlow({ status: "idle" });
-        return;
-      }
-      fail(error);
-    }
-  }, [sdk, captureAndActivate, fail]);
-
   /* ---- Apple Pay -------------------------------------------------------- */
 
   const payWithApplePay = useCallback(async () => {
@@ -457,10 +401,9 @@ export default function useMembershipCheckout({
       setFlow({ status: "idle" });
 
       if (id === "paypal") payWithPayPal();
-      if (id === "googlepay") payWithGooglePay();
       if (id === "applepay") payWithApplePay();
     },
-    [payWithPayPal, payWithGooglePay, payWithApplePay],
+    [payWithPayPal, payWithApplePay],
   );
 
   /** Starts whichever method is already selected — for a separate "pay" button. */

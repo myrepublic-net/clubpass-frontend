@@ -69,6 +69,10 @@ const PAYMENT_METHODS = [
   { id: "paypal", label: "PayPal", icon: Wallet },
 ];
 
+// Google Pay is off for memberships: PayPal won't vault it on this account,
+// so it can't auto-renew. Same rule as SubscribeModal.
+const MEMBERSHIP_PAYMENT_METHODS = PAYMENT_METHODS.filter(({ id }) => id !== "googlepay");
+
 /**
  * On desktop, the guest email, order summary and payment method are one page
  * rather than three screens — any of those steps renders that page.
@@ -1053,7 +1057,7 @@ export default function EventTickets() {
             Charge: ${membership.price} for 1st Month Membership
           </p>
 
-          {PAYMENT_METHODS.map(({ id, label, icon: Icon }) => {
+          {MEMBERSHIP_PAYMENT_METHODS.map(({ id, label, icon: Icon }) => {
             const selected = chosen === id;
             const available = canUse(id);
 
