@@ -818,7 +818,7 @@ export default function ClubPass() {
       <p className="venue-note">Events couldn't be loaded right now. Please try again shortly.</p>
     )}
 
-    {events.map((event) => (
+    {events.slice(0, 5).map((event) => (
       <Link className="venue" key={event.id} to={`/events/${event.id}`}>
         <div className="venue-image">
           {event.images[0] && <img src={event.images[0]} alt="" />}
@@ -858,11 +858,11 @@ export default function ClubPass() {
       </Link>
     ))}
 
-    <article className="coming">
+    <Link className="coming" to="/event-list">
       <div className="plus">+</div>
-      <strong>More partners coming soon</strong>
-      <span>New venues and events added<br/>regularly.</span>
-    </article>
+      <strong>See more events</strong>
+      <span>Browse all upcoming events<br/>and venues.</span>
+    </Link>
 
   </div>
 

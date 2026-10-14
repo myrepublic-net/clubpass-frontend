@@ -1714,7 +1714,7 @@ h5.island-text-mobile {
     color: #161616;
         width: 31.5%;
         min-height: 400px;
-    
+    text-decoration: none;
 }
 .membership-section .plus {
     width: 40px;

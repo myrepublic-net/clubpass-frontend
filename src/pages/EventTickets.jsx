@@ -584,7 +584,7 @@ export default function EventTickets() {
             <img src="/images/cp-logo.png" alt="Clubpass" />
           </Link>
           <nav className="evx-nav">
-            <Link to="/#venues">Events</Link>
+            <Link to="/event-list">Events</Link>
             {userName ? (
               <UserMenu userName={userName} />
             ) : (
@@ -1416,7 +1416,7 @@ export default function EventTickets() {
             </div>
           )}
 
-          <Link className="evt-back-link" to={`/events/${event.id}`}>
+          <Link className="evt-back-link" to={`/event-list`}>
             Back to event
           </Link>
         </div>

@@ -6,6 +6,7 @@ import ClubPassApp from "./pages/ClubPassApp.jsx";
 import Dashboard from "./pages/Dashboard.jsx";
 import EventDetails from "./pages/EventDetails.jsx";
 import EventTickets from "./pages/EventTickets.jsx";
+import EventList from "./pages/EventList.jsx";
 import ScanConfirm from "./pages/ScanConfirm.jsx";
 import DriverScan from "./pages/DriverScan.jsx";
 import Login from "./pages/auth/Login.jsx";
@@ -14,6 +15,8 @@ import ForgotPassword from "./pages/auth/ForgotPassword.jsx";
 import UserGate from "./components/UserGate.jsx";
 import NotFound from "./pages/NotFound.jsx";
 import Profile from "./pages/Profile.jsx";
+import MyTickets from "./pages/MyTickets.jsx";
+import TicketDetail from "./pages/TicketDetail.jsx";
 import ManageSubscription from "./pages/ManageSubscription.jsx";
 import Terms from "./pages/Terms.jsx";
 import PrivacyPolicy from "./pages/PrivacyPolicy.jsx";
@@ -37,6 +40,8 @@ const router = createBrowserRouter([
   // UserGate; the page reads the session itself to show "Hi, {name}" vs a
   // Login / Signup prompt in its own header.
   { path: "/events/:id", element: <EventDetails /> },
+  // Every public event, with search, quick filters and Load More. Public too.
+  { path: "/event-list", element: <EventList /> },
   // The event's "Get Tickets Now" CTA. Also public — a guest can pick Early
   // Bird tickets, they just don't get the Member Price tier or the real R
   // Coins rate until they sign up / pay.
@@ -64,6 +69,11 @@ const router = createBrowserRouter([
   // The account menu's Profile entry. Public route, but it sends a signed-out
   // visitor to login rather than rendering an empty membership.
   { path: "/profile", element: <Profile /> },
+  // The account menu's My Tickets entry. Same as Profile: a signed-out visitor
+  // is sent to login.
+  { path: "/my-tickets", element: <MyTickets /> },
+  // A My Tickets card opened: one QR pass per ticket for that event.
+  { path: "/my-tickets/:key", element: <TicketDetail /> },
   // Managing an existing membership: plan, cancel, reactivate.
   { path: "/membership", element: <ManageSubscription /> },
   // Clubpass Terms & Conditions, Privacy Policy and Contact Us — public, same layout.

@@ -140,3 +140,28 @@ export function claimFreeTickets({ ticketId, quantities, userName, email, access
 export function reactivateMembership({ userName, accessToken }) {
   return call("reactivate-membership", { userName, accessToken });
 }
+
+/**
+ * My Tickets: the member's paid orders, each with its event id, line items and
+ * issued ticket numbers. Needs the live session — the Lambda verifies it.
+ */
+export async function fetchMyTickets({ userName, accessToken }) {
+  const { orders } = await call("my-tickets", { userName, accessToken });
+  return orders ?? [];
+}
+
+/**
+ * Ticket Detail: one order's QR codes, as groups of an entry ticket and the
+ * add-ons that came with it. Needs the live session, like fetchMyTickets.
+ */
+export async function fetchTicketQR({ userName, accessToken, bookingReference }) {
+  const { groups } = await call("ticket-qr", { userName, accessToken, bookingReference });
+  return groups ?? [];
+}
+
+/**
+ * Which My Tickets card an order belongs to: one card per order, even when a
+ * member has several for the same event. Ticket Detail (/my-tickets/:key)
+ * picks the order by it.
+ */
+export const cardKeyOf = (order) => order.bookingReference;

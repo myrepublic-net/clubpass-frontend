@@ -69,6 +69,9 @@ export default function UserMenu({ userName, onSignedOut }) {
           <Link className="usr-item" to="/profile" role="menuitem" onClick={() => setOpen(false)}>
             Profile
           </Link>
+          <Link className="usr-item" to="/my-tickets" role="menuitem" onClick={() => setOpen(false)}>
+            My Tickets
+          </Link>
           <button
             type="button"
             className="usr-item"
