@@ -57,7 +57,9 @@
 .evx-nav > a:not(.cp-btn):hover {
   color: var(--evx-teal);
 }
-
+header.evx-header nav.evx-nav a:hover {
+  color: #fff !important;
+}
 /* The account avatar: a teal ring, as in the design. */
 .evx-nav .usr-avatar {
   width: 48px;

@@ -217,7 +217,7 @@ export default function TicketDetail() {
 
   let content;
   if (state.status === "loading") {
-    content = <p className="mtk-note tkd-note">Loading your tickets…</p>;
+    content = <p className="mtk-note tkd-note"><img class="loader-image" src="/images/load-new.gif"/></p>;
   } else if (state.status === "error") {
     content = <p className="mtk-note tkd-note is-error">{state.message}</p>;
   } else if (!event?.passes.length) {

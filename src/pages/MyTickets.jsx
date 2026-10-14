@@ -139,7 +139,7 @@ export default function MyTickets() {
 
   let content;
   if (state.status === "loading") {
-    content = <p className="mtk-note">Loading your tickets…</p>;
+    content = <p className="mtk-note"><img class="loader-image" src="/images/load-new.gif"/></p>;
   } else if (state.status === "error") {
     content = <p className="mtk-note is-error">{state.message}</p>;
   } else if (!list.length) {
