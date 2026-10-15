@@ -95,12 +95,25 @@ export default function EventList() {
   const [filtersOpen, setFiltersOpen] = useState(false);
 
   const needle = query.trim().toLowerCase();
+  // Upcoming events first (soonest first), then past ones (most recent first).
+  // An event dated before today is past; tonight's stays upcoming all day.
   const matching = useMemo(() => {
     const { test } = FILTERS.find((item) => item.id === filter);
-    return events.filter(
-      (event) =>
-        test(event) && (!needle || `${event.title} ${event.venue}`.toLowerCase().includes(needle)),
-    );
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const time = (event) => event.startsAt?.getTime() ?? Infinity;
+
+    const found = events
+      .filter(
+        (event) =>
+          test(event) && (!needle || `${event.title} ${event.venue}`.toLowerCase().includes(needle)),
+      )
+      .map((event) => ({ ...event, isPast: Boolean(event.startsAt && event.startsAt < today) }));
+
+    return [
+      ...found.filter((event) => !event.isPast).sort((a, b) => time(a) - time(b)),
+      ...found.filter((event) => event.isPast).sort((a, b) => time(b) - time(a)),
+    ];
   }, [events, filter, needle]);
 
   // A new filter or search starts again from the first page.
@@ -148,13 +161,32 @@ export default function EventList() {
       <p className="evl-note">{needle || filter !== "all" ? "No events match your search." : "No events yet."}</p>
     );
   } else {
+    // "Load More" pages through both: past events only appear once the
+    // upcoming ones have all been shown, under their own heading.
+    const visible = matching.slice(0, shown);
+    const upcoming = visible.filter((event) => !event.isPast);
+    const past = visible.filter((event) => event.isPast);
+
     content = (
       <>
-        <div className="evl-grid">
-          {matching.slice(0, shown).map((event) => (
-            <EventCard key={event.id} event={event} />
-          ))}
-        </div>
+        {upcoming.length > 0 && (
+          <div className="evl-grid">
+            {upcoming.map((event) => (
+              <EventCard key={event.id} event={event} />
+            ))}
+          </div>
+        )}
+
+        {past.length > 0 && (
+          <>
+            <h2 className="evl-section-title">Past Events</h2>
+            <div className="evl-grid">
+              {past.map((event) => (
+                <EventCard key={event.id} event={event} />
+              ))}
+            </div>
+          </>
+        )}
 
         {shown < matching.length && (
           <div className="evl-more">

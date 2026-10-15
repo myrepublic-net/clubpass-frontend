@@ -395,7 +395,20 @@ export default function ClubPass() {
   // The venue grid is whatever events Strapi is publishing — public ones only.
   // A private event is still reachable by its own link.
   const { tickets: allEvents, status: eventsStatus } = useTickets();
-  const events = useMemo(() => allEvents.filter((event) => event.isPublic), [allEvents]);
+  // Five at most: upcoming ones first (soonest first), then past ones (most
+  // recent first) to fill whatever room is left. An event dated before today
+  // is past; tonight's stays upcoming all day.
+  const events = useMemo(() => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const isPast = (event) => event.startsAt && event.startsAt < today;
+    const time = (event) => event.startsAt?.getTime() ?? Infinity;
+
+    const listed = allEvents.filter((event) => event.isPublic);
+    const upcoming = listed.filter((event) => !isPast(event)).sort((a, b) => time(a) - time(b));
+    const past = listed.filter(isPast).sort((a, b) => time(b) - time(a));
+    return [...upcoming, ...past].slice(0, 5);
+  }, [allEvents]);
 
   // This page is public (not behind UserGate), so a signed-out visitor still
   // sees the full page — the header just reflects whichever state applies.
@@ -818,7 +831,7 @@ export default function ClubPass() {
       <p className="venue-note">Events couldn't be loaded right now. Please try again shortly.</p>
     )}
 
-    {events.slice(0, 5).map((event) => (
+    {events.map((event) => (
       <Link className="venue" key={event.id} to={`/events/${event.id}`}>
         <div className="venue-image">
           {event.images[0] && <img src={event.images[0]} alt="" />}
