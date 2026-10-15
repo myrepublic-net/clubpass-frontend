@@ -32,7 +32,7 @@
   align-items: center;
   gap: 14px;
   padding: 18px 20px;
-  background: linear-gradient(135deg, #061539 0%, #10307E 55%, #1B49AE 100%);
+      background: linear-gradient(180deg, #03061a 0%, #0a1a6b 60%, #0e46c9 100%);
   color: #fff;
   height: 82px;
 }
@@ -70,9 +70,9 @@
 /* The account avatar is shared with every other header, so it's only nudged
    to the teal ring this design uses — not restyled globally. */
 .prf-header .usr-avatar {
-  border-color: var(--prf-teal);
+  /* border-color: var(--prf-teal); */
   background: transparent;
-  color: var(--prf-teal);
+  /* color: var(--prf-teal); */
 }
 
 .prf-header .usr-avatar:hover {
