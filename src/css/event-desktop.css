@@ -31,14 +31,14 @@
   align-items: center;
   justify-content: space-between;
   max-width: 1200px;
-  height: 96px;
+  height: 82px;
   margin: 0 auto;
   padding: 0 48px;
 }
 
 .evx-logo img {
   display: block;
-  width: 260px;
+  width: 220px;
   height: auto;
 }
 
@@ -62,11 +62,11 @@ header.evx-header nav.evx-nav a:hover {
 }
 /* The account avatar: a teal ring, as in the design. */
 .evx-nav .usr-avatar {
-  width: 48px;
-  height: 48px;
-  border: 2px solid var(--evx-teal);
-  background: rgba(12, 22, 94, .6);
-  font-size: 20px;
+    width: 36px;
+    height: 36px;
+    background: rgba(12, 22, 94, .6);
+    font-size: 15px;
+    border: 1px solid rgba(255, 255, 255, .28);
 }
 
 /* --- gallery --- */
