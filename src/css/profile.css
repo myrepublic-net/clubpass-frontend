@@ -43,6 +43,7 @@
     width: 100%;
     max-width: 1200px;
     margin: auto;
+    padding: 0 48px;
 }
 
 .prf-header h1 {
@@ -89,6 +90,7 @@
     grid-template-columns: 1fr 1fr;
     align-items: center;
     gap: 20px;
+        padding: 60px 48px;
 }
 .prf-in-image img {
     width: 100%;
@@ -267,6 +269,9 @@
   color: var(--prf-navy);
 }
 @media (max-width: 600px) {
+  .prf-header-inner {
+    padding: 0 ;
+  }
 .prf-body {
     grid-template-columns: 1fr;
     padding:  20px;
