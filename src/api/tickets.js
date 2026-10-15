@@ -215,15 +215,28 @@ function normalise(row) {
       ? Math.round(((publicTier.price - memberTier.price) / publicTier.price) * 100)
       : 0;
 
+  // "Up to": a member's 3% on one ticket of the priciest tier, scaled to
+  // coins the same way the ticket flow does. Only tiers that can still be
+  // bought count: those on sale now, or, when none in the group are, those
+  // whose sale window hasn't opened yet — never ended ones. Nothing to earn
+  // → no badge.
+  const buyable = (group) => {
+    const open = group.filter((tier) => tier.status !== "ended");
+    const onSale = open.filter((tier) => tier.status === "active");
+    return onSale.length ? onSale : open;
+  };
+  const coinPrices = [...buyable(memberTiers), ...buyable(listed.filter((tier) => !tier.memberOnly))].map(
+    (tier) => tier.price,
+  );
+  const memberCoins = Math.round(Math.max(0, ...coinPrices) * 0.03 * 1000);
+
   return {
     id: row.documentId,
     dateBadge: dateBadge(startsAt),
     memberTier,
     publicTier,
     memberSaving,
-    // The best rate anyone could earn on this ticket — a member's 3%, scaled
-    // to coins the same way the ticket flow does.
-    memberCoins: memberTier ? Math.round(memberTier.price * 0.03 * 1000) : null,
+    memberCoins: memberCoins > 0 ? memberCoins : null,
     title: row.title ?? "",
     // Private events stay off the home page grid but keep working by link.
     // Entries saved before this field existed have it empty: treat as public.
