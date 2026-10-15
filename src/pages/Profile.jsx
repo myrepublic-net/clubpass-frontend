@@ -132,7 +132,7 @@ export default function Profile() {
             className="prf-stat prf-stat--coins"
             onClick={() => setCoinsSheetOpen(true)}
           >
-            <span className="prf-stat-label">R Coin Balance</span>
+            <span className="prf-stat-label">R Coin Balance</span>    
             <b className="prf-coins">
               {coins.status === "loading" ? (
                 "…"
