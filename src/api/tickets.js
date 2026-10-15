@@ -304,3 +304,43 @@ export async function fetchTicketById(id) {
   const tickets = await fetchTickets();
   return tickets.find((ticket) => ticket.id === id) ?? null;
 }
+
+/**
+ * The site-wide handling charges (the "Platform Fee" single type). Not cached:
+ * it's read once per ticket page, and checkout can't go ahead without it.
+ */
+export async function fetchPlatformFee() {
+  const res = await fetch(`${BASE_URL}/api/platfrom-fee`, {
+    headers: {
+      "Content-Type": "application/json",
+      ...(TOKEN && { Authorization: `Bearer ${TOKEN}` }),
+    },
+  });
+
+  const body = await res.json().catch(() => null);
+
+  if (!res.ok || !body?.data) {
+    throw new Error(body?.error?.message ?? `Couldn't load handling charges (${res.status})`);
+  }
+
+  return body.data;
+}
+
+/**
+ * The handling charges on a ticket subtotal: a percentage of it plus a flat
+ * amount, each rounded to cents. `*_for_member: false` waives that part for a
+ * paying member. `full` is before any waiver, `due` is what's charged — the
+ * same as the Lambda's handlingCharges.
+ */
+export function handlingChargesOf(config, subtotal, { member }) {
+  const variable = Math.round(Math.round(Number(subtotal) * 100) * ((Number(config?.variable_fees) || 0) / 100)) / 100;
+  const flat = Math.round((Number(config?.flat_fee) || 0) * 100) / 100;
+
+  const variableDue = member && config?.variable_fee_for_member !== true ? 0 : variable;
+  const flatDue = member && config?.flat_fee_for_member !== true ? 0 : flat;
+
+  return {
+    full: Math.round((variable + flat) * 100) / 100,
+    due: Math.round((variableDue + flatDue) * 100) / 100,
+  };
+}
