@@ -259,7 +259,7 @@ export default function EventTickets() {
   const handlingRow = (className) =>
     handling.full > 0 && (
       <div className={className}>
-        <span>Handling Charges</span>
+        <span>Fees</span>
         <span>
           {handling.due < handling.full && <s>{money(handling.full, { fixed: true })}</s>}{" "}
           {money(handling.due, { fixed: true })}
