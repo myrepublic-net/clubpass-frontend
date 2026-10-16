@@ -176,7 +176,10 @@ export default function EventTickets() {
     );
     return () => { cancelled = true; };
   }, []);
-  const feeReady = platformFee.status === "ready";
+  // An event with the platform fee turned off has no handling charges, so
+  // checkout doesn't wait on (or fail over) the fee settings.
+  const feeApplies = event?.platformFeeEnabled !== false;
+  const feeReady = !feeApplies || platformFee.status === "ready";
 
   // Ticks over whenever a tier is due to appear, hide, open or close, so a
   // page left open updates without a reload.
@@ -247,7 +250,7 @@ export default function EventTickets() {
 
   // Handling Charges on the order summary: `full` struck through when a
   // member waiver brings it down to `due`. Worked the same way as the Lambda.
-  const handling = feeReady
+  const handling = feeApplies && feeReady
     ? handlingChargesOf(platformFee.config, subtotal, { member: paid })
     : { full: 0, due: 0 };
   // What is actually charged: tickets, fees and handling charges.
@@ -263,7 +266,7 @@ export default function EventTickets() {
         </span>
       </div>
     );
-  const handlingError = platformFee.status === "error" && (
+  const handlingError = feeApplies && platformFee.status === "error" && (
     <p className="evt-pay-error" role="alert">
       Handling charges couldn't be loaded. Please refresh the page and try again.
     </p>

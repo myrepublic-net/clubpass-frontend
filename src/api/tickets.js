@@ -241,6 +241,9 @@ function normalise(row) {
     // Private events stay off the home page grid but keep working by link.
     // Entries saved before this field existed have it empty: treat as public.
     isPublic: row.isPublic !== false,
+    // Whether the site-wide handling charges apply. Entries saved before this
+    // field existed have it empty: treat as on.
+    platformFeeEnabled: row.enable_platform_fee !== false,
     description: row.description ?? "",
     startsAt,
     date: startsAt ? dayFormat.format(startsAt) : "",
