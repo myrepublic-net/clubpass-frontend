@@ -103,6 +103,7 @@ export default function Profile() {
   return (
     <div className="prf-page">
       <header className="prf-header">
+        <div className="prf-header-inner">
         <button
           type="button"
           className="prf-back"
@@ -113,6 +114,7 @@ export default function Profile() {
         </button>
         <h1>My Account</h1>
         <UserMenu userName={userName} />
+        </div>
       </header>
 
       <div className="prf-body">
@@ -132,7 +134,7 @@ export default function Profile() {
             className="prf-stat prf-stat--coins"
             onClick={() => setCoinsSheetOpen(true)}
           >
-            <span className="prf-stat-label">R Coin Balance</span>
+            <span className="prf-stat-label">R Coin Balance</span>  
             <b className="prf-coins">
               {coins.status === "loading" ? (
                 "…"

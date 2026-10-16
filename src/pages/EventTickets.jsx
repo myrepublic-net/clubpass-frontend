@@ -19,7 +19,14 @@ import {
 import { readMemberSession } from "../api/auth.js";
 import { isPaid, resolveClubpassUser } from "../api/clubpassUser.js";
 import { useTicket } from "../hooks/useTickets.js";
-import { isTierVisible, nextTierChange, tierStatus, unitFeeOf } from "../api/tickets.js";
+import {
+  fetchPlatformFee,
+  handlingChargesOf,
+  isTierVisible,
+  nextTierChange,
+  tierStatus,
+  unitFeeOf,
+} from "../api/tickets.js";
 import SubscribeModal from "../components/SubscribeModal.jsx";
 import UserMenu from "../components/UserMenu.jsx";
 import { ClubpassUserContext } from "../components/clubpassUserContext.js";
@@ -155,6 +162,25 @@ export default function EventTickets() {
 
   const paid = isPaid(clubpassUser);
 
+  // The site-wide handling charges. Checkout can't go ahead without them —
+  // the Lambda charges them, so a total shown without them would be wrong.
+  const [platformFee, setPlatformFee] = useState({ status: "loading", config: null });
+  useEffect(() => {
+    let cancelled = false;
+    fetchPlatformFee().then(
+      (config) => { if (!cancelled) setPlatformFee({ status: "ready", config }); },
+      (error) => {
+        console.error("Handling charges failed to load", error);
+        if (!cancelled) setPlatformFee({ status: "error", config: null });
+      },
+    );
+    return () => { cancelled = true; };
+  }, []);
+  // An event with the platform fee turned off has no handling charges, so
+  // checkout doesn't wait on (or fail over) the fee settings.
+  const feeApplies = event?.platformFeeEnabled !== false;
+  const feeReady = !feeApplies || platformFee.status === "ready";
+
   // Ticks over whenever a tier is due to appear, hide, open or close, so a
   // page left open updates without a reload.
   const [now, setNow] = useState(() => new Date());
@@ -219,12 +245,32 @@ export default function EventTickets() {
   // Booking fees set per tier in the CMS, shown here as one "Platform Fees"
   // line. The Lambda works them out the same way and charges them.
   const fees = toCents(lines.reduce((sum, line) => sum + unitFeeOf(line.tier) * line.qty, 0));
-  // What is actually charged: tickets plus fees.
-  const total = toCents(subtotal + fees);
+  // Tickets plus their fees — what the ticket picker shows.
+  const ticketsTotal = toCents(subtotal + fees);
 
-  // What the same tickets would have cost undiscounted — only shown when the
-  // buyer is actually paying less than that.
-  const standardTotal = event?.fullPrice ? toCents(ticketCount * event.fullPrice) : 0;
+  // Handling Charges on the order summary: `full` struck through when a
+  // member waiver brings it down to `due`. Worked the same way as the Lambda.
+  const handling = feeApplies && feeReady
+    ? handlingChargesOf(platformFee.config, subtotal, { member: paid })
+    : { full: 0, due: 0 };
+  // What is actually charged: tickets, fees and handling charges.
+  const total = toCents(ticketsTotal + handling.due);
+
+  const handlingRow = (className) =>
+    handling.full > 0 && (
+      <div className={className}>
+        <span>Fees</span>
+        <span>
+          {handling.due < handling.full && <s>{money(handling.full, { fixed: true })}</s>}{" "}
+          {money(handling.due, { fixed: true })}
+        </span>
+      </div>
+    );
+  const handlingError = feeApplies && platformFee.status === "error" && (
+    <p className="evt-pay-error" role="alert">
+      Handling charges couldn't be loaded. Please refresh the page and try again.
+    </p>
+  );
 
   // A guest earns nothing until they have an account, so the figure they're
   // shown is what a free account would have earned — that's what the "create
@@ -665,16 +711,17 @@ export default function EventTickets() {
                 )}
                 <div className="evx-total">
                   <span>Total</span>
-                  <b>{money(total, { fixed: true })}</b>
+                  <b>{money(ticketsTotal, { fixed: true })}</b>
                 </div>
 
+                {handlingError}
                 <button
                   type="button"
                   className="evt-cta evt-cta--block"
-                  disabled={ticketCount === 0}
+                  disabled={ticketCount === 0 || !feeReady}
                   // Guests give their email on the checkout page itself; free
                   // tickets still need an account first.
-                  onClick={() => setStep(!userName && total === 0 ? "freeLogin" : "checkout")}
+                  onClick={() => setStep(!userName && ticketsTotal === 0 ? "freeLogin" : "checkout")}
                 >
                   Checkout
                 </button>
@@ -736,7 +783,7 @@ export default function EventTickets() {
               <div className="evx-subtotal">
                 <span>Subtotal</span>
                 <span>
-                  {standardTotal > subtotal && <s>${standardTotal.toFixed(2)}</s>} {money(subtotal, { fixed: true })}
+                  {money(subtotal, { fixed: true })}
                 </span>
               </div>
               {fees > 0 && (
@@ -745,6 +792,7 @@ export default function EventTickets() {
                   <span>{money(fees, { fixed: true })}</span>
                 </div>
               )}
+              {handlingRow("evx-subtotal")}
               <div className="evx-grand">
                 <span>Order Total</span>
                 <b>{money(total, { fixed: true })}</b>
@@ -777,6 +825,7 @@ export default function EventTickets() {
             </section>
 
             <aside className="evx-right">
+              {handlingError}
               {isFree ? (
                 <>
                   {freeClaim.status === "error" && (
@@ -785,7 +834,7 @@ export default function EventTickets() {
                   <button
                     type="button"
                     className="evt-cta evt-cta--block"
-                    disabled={freeClaim.status === "working"}
+                    disabled={freeClaim.status === "working" || !feeReady}
                     onClick={claimFree}
                   >
                     {freeClaim.status === "working" ? "Confirming…" : "Confirm free booking"}
@@ -815,6 +864,7 @@ export default function EventTickets() {
                     className="evt-cta evt-cta--block"
                     disabled={
                       processing ||
+                      !feeReady ||
                       (!SIMULATE && sdkStatus !== "ready") ||
                       (needsEmail && !emailValid)
                     }
@@ -1164,7 +1214,6 @@ export default function EventTickets() {
               </div>
 
               <div className="evt-summary-price">
-                {standardTotal > subtotal && <s>${standardTotal.toFixed(2)}</s>}
                 <b>{money(subtotal, { fixed: true })}</b>
               </div>
             </div>
@@ -1181,6 +1230,7 @@ export default function EventTickets() {
                 <span>{money(fees, { fixed: true })}</span>
               </div>
             )}
+            {handlingRow("evt-totals-row")}
             <div className="evt-totals-row evt-totals-row--grand">
               <span>Order Total</span>
               <b>{money(total, { fixed: true })}</b>
@@ -1189,6 +1239,7 @@ export default function EventTickets() {
         </div>
 
         <footer className="evt-footer evt-footer--single">
+          {handlingError}
           {freeClaim.status === "error" && (
             <p className="evt-pay-error" role="alert">{freeClaim.message}</p>
           )}
@@ -1198,7 +1249,7 @@ export default function EventTickets() {
             <button
               type="button"
               className="evt-cta evt-cta--block"
-              disabled={freeClaim.status === "working"}
+              disabled={freeClaim.status === "working" || !feeReady}
               onClick={claimFree}
             >
               {freeClaim.status === "working" ? "Confirming…" : "Confirm free booking"}
@@ -1207,6 +1258,7 @@ export default function EventTickets() {
             <button
               type="button"
               className="evt-cta evt-cta--block"
+              disabled={!feeReady}
               onClick={() => setStep("payment")}
             >
               Continue
@@ -1261,7 +1313,7 @@ export default function EventTickets() {
           <button
             type="button"
             className="evt-cta evt-cta--block"
-            disabled={processing || (!SIMULATE && sdkStatus !== "ready")}
+            disabled={processing || !feeReady || (!SIMULATE && sdkStatus !== "ready")}
             onClick={checkout.pay}
           >
             Pay Now (${total.toFixed(2)})
@@ -1507,16 +1559,17 @@ export default function EventTickets() {
         )}
         <div className="evt-total">
           <span>Total</span>
-          <b>{money(total, { fixed: true })}</b>
+          <b>{money(ticketsTotal, { fixed: true })}</b>
         </div>
 
+        {handlingError}
         <button
           type="button"
           className="evt-cta"
-          disabled={ticketCount === 0}
+          disabled={ticketCount === 0 || !feeReady}
           onClick={() =>
             // Free tickets need an account, so a guest with a $0 basket logs in first.
-            setStep(userName ? "checkout" : total === 0 ? "freeLogin" : "guestEmail")
+            setStep(userName ? "checkout" : ticketsTotal === 0 ? "freeLogin" : "guestEmail")
           }
         >
           Checkout
