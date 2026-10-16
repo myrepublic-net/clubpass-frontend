@@ -312,33 +312,6 @@
   font-weight: 600;
 }
 
-/* --- load more --- */
-
-.evl-more {
-  display: flex;
-  justify-content: center;
-  margin-top: 40px;
-}
-
-.evl-more-btn {
-  min-width: 178px;
-  height: 50px;
-  padding: 0 28px;
-  border: 2px solid var(--evl-navy);
-  border-radius: 999px;
-  background: #fff;
-  color: var(--evl-navy);
-  font-family: inherit;
-  font-size: 18px;
-  font-weight: 700;
-  cursor: pointer;
-}
-
-.evl-more-btn:hover {
-  background: var(--evl-navy);
-  color: #fff;
-}
-
 /* --- desktop --- */
 
 @media (min-width: 1024px) {

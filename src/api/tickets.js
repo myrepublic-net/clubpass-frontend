@@ -275,20 +275,30 @@ export function fetchTickets() {
   if (!pending) {
     fetchedAt = Date.now();
     pending = (async () => {
-      const res = await fetch(`${BASE_URL}/api/tickets?populate=*&sort=date:asc&pagination[pageSize]=100`, {
-        headers: {
-          "Content-Type": "application/json",
-          ...(TOKEN && { Authorization: `Bearer ${TOKEN}` }),
-        },
-      });
+      // Strapi caps a page at 100 entries, so keep asking until every page is in.
+      const rows = [];
+      for (let page = 1, pageCount = 1; page <= pageCount; page += 1) {
+        const res = await fetch(
+          `${BASE_URL}/api/tickets?populate=*&sort=date:asc&pagination[pageSize]=100&pagination[page]=${page}`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              ...(TOKEN && { Authorization: `Bearer ${TOKEN}` }),
+            },
+          },
+        );
 
-      const body = await res.json().catch(() => null);
+        const body = await res.json().catch(() => null);
 
-      if (!res.ok) {
-        throw new Error(body?.error?.message ?? `Couldn't load events (${res.status})`);
+        if (!res.ok) {
+          throw new Error(body?.error?.message ?? `Couldn't load events (${res.status})`);
+        }
+
+        rows.push(...(body?.data ?? []));
+        pageCount = body?.meta?.pagination?.pageCount ?? 1;
       }
 
-      return (body?.data ?? []).map(normalise);
+      return rows.map(normalise);
     })();
 
     // A failed load shouldn't be cached — the next mount should retry.

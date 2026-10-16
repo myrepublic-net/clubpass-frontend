@@ -9,9 +9,6 @@ import { useTickets } from "../hooks/useTickets.js";
 import "../css/event-desktop.css";
 import "../css/event-list.css";
 
-// One row of three on desktop; "Load More" adds the next batch.
-const PAGE_SIZE = 6;
-
 const DAY_MS = 24 * 60 * 60 * 1000;
 
 /**
@@ -79,7 +76,7 @@ function EventCard({ event }) {
   );
 }
 
-/** Every public event Strapi is publishing, with search, quick filters and paging. */
+/** Every public event Strapi is publishing, all at once, with search and quick filters. */
 export default function EventList() {
   const isDesktop = useIsDesktop();
   const userName = useMemo(() => readMemberSession()?.user?.username ?? null, []);
@@ -90,7 +87,6 @@ export default function EventList() {
 
   const [filter, setFilter] = useState("all");
   const [query, setQuery] = useState("");
-  const [shown, setShown] = useState(PAGE_SIZE);
   // Desktop keeps the filter pills behind "Browse by Filter"; mobile always shows them.
   const [filtersOpen, setFiltersOpen] = useState(false);
 
@@ -116,16 +112,6 @@ export default function EventList() {
     ];
   }, [events, filter, needle]);
 
-  // A new filter or search starts again from the first page.
-  const pickFilter = (id) => {
-    setFilter(id);
-    setShown(PAGE_SIZE);
-  };
-  const search = (value) => {
-    setQuery(value);
-    setShown(PAGE_SIZE);
-  };
-
   const account = userName ? (
     <UserMenu userName={userName} />
   ) : (
@@ -143,7 +129,7 @@ export default function EventList() {
           role="tab"
           aria-selected={filter === item.id}
           className={`evl-filter${filter === item.id ? " is-active" : ""}`}
-          onClick={() => pickFilter(item.id)}
+          onClick={() => setFilter(item.id)}
         >
           {item.label}
         </button>
@@ -161,11 +147,9 @@ export default function EventList() {
       <p className="evl-note">{needle || filter !== "all" ? "No events match your search." : "No events yet."}</p>
     );
   } else {
-    // "Load More" pages through both: past events only appear once the
-    // upcoming ones have all been shown, under their own heading.
-    const visible = matching.slice(0, shown);
-    const upcoming = visible.filter((event) => !event.isPast);
-    const past = visible.filter((event) => event.isPast);
+    // Every match is shown; past events sit under their own heading.
+    const upcoming = matching.filter((event) => !event.isPast);
+    const past = matching.filter((event) => event.isPast);
 
     content = (
       <>
@@ -186,14 +170,6 @@ export default function EventList() {
               ))}
             </div>
           </>
-        )}
-
-        {shown < matching.length && (
-          <div className="evl-more">
-            <button type="button" className="evl-more-btn" onClick={() => setShown((count) => count + PAGE_SIZE)}>
-              Load More
-            </button>
-          </div>
         )}
       </>
     );
@@ -245,7 +221,7 @@ export default function EventList() {
                   type="search"
                   placeholder="Search"
                   value={query}
-                  onChange={(event) => search(event.target.value)}
+                  onChange={(event) => setQuery(event.target.value)}
                   aria-label="Search events"
                 />
               </label>
