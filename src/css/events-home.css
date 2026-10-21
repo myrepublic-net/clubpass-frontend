@@ -238,7 +238,7 @@
   margin-top: 20px;
   padding: 18px 22px;
   border-radius: 10px;
-  background: rgba(31, 86, 214, .55);
+  background: #0070DB4D;
   color: #fff;
   text-decoration: none;
 }
@@ -754,6 +754,8 @@
 
   .evh-coins-tap {
     font-size: 12px;
+            line-height: 12px;
+            margin-top: 0;
   }
 
   .evh-coins-badge {
@@ -775,8 +777,8 @@
 
   .evh-coins-silver {
     top: -6px;
-    right: -4px;
-    width: 70px;
+        right: 10px;
+        width: 60px;
   }
 
   .evh-ticket {
@@ -946,7 +948,7 @@
 
 @media (max-width: 380px) {
   .evh-coins {
-    width: 170px;
+    width: 200px;
   }
 
   .evh-signup-copy h2,

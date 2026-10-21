@@ -270,7 +270,7 @@ export default function EventsHome() {
       {userName ? (
         <section className="evh-hero evh-hero--user">
           <div className="evh-container evh-hero-grid">
-            <img className="evh-mascot" src="/images/Group%2066.png" alt="" onError={hideOnError} />
+            <img className="evh-mascot" src="/images/event-profile.png" alt="" onError={hideOnError} />
 
             <div className="evh-hero-panel">
               <div className="evh-welcome">
