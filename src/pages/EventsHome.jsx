@@ -9,10 +9,68 @@ import RCoinsSheet from "../components/RCoinsSheet.jsx";
 import SubscribeModal from "../components/SubscribeModal.jsx";
 import UserMenu from "../components/UserMenu.jsx";
 import { ClubpassUserContext } from "../components/clubpassUserContext.js";
+import useEventHome from "../hooks/useEventHome.js";
 import useIsDesktop from "../hooks/useIsDesktop.js";
 import { useTickets } from "../hooks/useTickets.js";
 import "../css/event-desktop.css";
 import "../css/events-home.css";
+
+/** The shipped copy, shown until Strapi answers and kept if it can't be reached. */
+const FALLBACK = {
+  hero: {
+    title: "Do what you love. Get Rewarded.",
+    text: "Discover experiences you'll love, enjoy exclusive perks and earn R Coins along the way.",
+    image: "/images/hero_banner.png",
+    loggedInImage: "/images/Group%2066.png",
+  },
+  signup: {
+    title: "Get rewarded\nwhen you go out",
+    text: "Create a free account and earn 10 R Coins for every $1 spent on tickets.",
+    buttonText: "Create Free Account",
+    buttonLink: "/signup",
+    leftImage: "/images/buy.png",
+    rightImage: "/images/coin.png",
+  },
+  promo: {
+    badge: "CLUBPASS MEMBER",
+    label: "Get more with Clubpass",
+    heading: "Save up to 50% on tickets + earn 3X R Coins",
+    text: "Plus ClubPass Home Express and exclusive member perks.",
+    price: "$17.90/mth",
+    buttonText: "Explore Membership",
+  },
+};
+
+/** CMS text with its line breaks kept. */
+function Lines({ text }) {
+  return text.split("\n").map((line, index) => (
+    <span key={index}>
+      {index > 0 && <br />}
+      {line}
+    </span>
+  ));
+}
+
+/** "Do what you love. Get Rewarded." — everything after the first sentence is the teal accent line. */
+function splitTitle(title) {
+  const [lead, ...rest] = title.split(/(?<=\.)\s+/);
+  return { lead, accent: rest.join(" ") };
+}
+
+/** The sign-up copy with its "10 R Coins" picked out, as in the design. */
+function CoinsHighlight({ text }) {
+  const match = text.match(/\d[\d,]*\s+R\s+Coins/);
+  if (!match) return text;
+  const before = text.slice(0, match.index);
+  const after = text.slice(match.index + match[0].length).replace(/^\s+/, " ");
+  return (
+    <>
+      {before}
+      <span>{match[0].replace(/\s+/g, " ")} <Info size={13} /></span>
+      {after}
+    </>
+  );
+}
 
 const WEEKDAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
@@ -44,6 +102,19 @@ function SilverCoin({ className }) {
  */
 function Carousel({ children }) {
   const trackRef = useRef(null);
+  // Arrows only when the row is wider than what fits — a short row has
+  // nothing to page through.
+  const [overflows, setOverflows] = useState(false);
+
+  useEffect(() => {
+    const track = trackRef.current;
+    if (!track) return undefined;
+    const measure = () => setOverflows(track.scrollWidth > track.clientWidth + 1);
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(track);
+    return () => observer.disconnect();
+  }, [children]);
 
   const step = (direction) => {
     const track = trackRef.current;
@@ -55,15 +126,19 @@ function Carousel({ children }) {
 
   return (
     <div className="evh-carousel">
-      <button type="button" className="evh-arrow evh-arrow--prev" onClick={() => step(-1)} aria-label="Previous">
-        <ChevronLeft size={22} />
-      </button>
+      {overflows && (
+        <button type="button" className="evh-arrow evh-arrow--prev" onClick={() => step(-1)} aria-label="Previous">
+          <ChevronLeft size={22} />
+        </button>
+      )}
       <div className="evh-track" ref={trackRef}>
         {children}
       </div>
-      <button type="button" className="evh-arrow evh-arrow--next" onClick={() => step(1)} aria-label="Next">
-        <ChevronRight size={22} />
-      </button>
+      {overflows && (
+        <button type="button" className="evh-arrow evh-arrow--next" onClick={() => step(1)} aria-label="Next">
+          <ChevronRight size={22} />
+        </button>
+      )}
     </div>
   );
 }
@@ -155,7 +230,11 @@ export default function EventsHome() {
   const [coinsSheetOpen, setCoinsSheetOpen] = useState(false);
   const [subscribeOpen, setSubscribeOpen] = useState(false);
 
-  const { tickets, status } = useTickets();
+  // The rows and copy come from the event-home single type; the full ticket
+  // list is still needed to put a venue and date on the active ticket card.
+  const { status, content } = useEventHome(FALLBACK);
+  const { hero, signup, promo } = content;
+  const { tickets } = useTickets();
 
   useEffect(() => {
     if (!userName) {
@@ -189,22 +268,26 @@ export default function EventsHome() {
     [userName, clubpassUser, session],
   );
 
-  // Upcoming public events only, soonest first. An event with no public
-  // tier is members-only, so it's under Member Exclusive instead.
-  const { whatsOn, exclusive } = useMemo(() => {
+  // Each row keeps the order picked in Strapi, minus private events, ones
+  // already past and ones with nothing on sale. An empty row is dropped.
+  const sections = useMemo(() => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    const time = (event) => event.startsAt?.getTime() ?? Infinity;
 
-    const upcoming = tickets
-      .filter((event) => event.isPublic && !(event.startsAt && event.startsAt < today))
-      .sort((a, b) => time(a) - time(b));
+    return content.sections
+      .map((section) => ({
+        ...section,
+        events: section.events.filter(
+          (event) =>
+            event.isPublic &&
+            !(event.startsAt && event.startsAt < today) &&
+            (event.publicTier || event.memberTier),
+        ),
+      }))
+      .filter((section) => section.events.length);
+  }, [content.sections]);
 
-    return {
-      whatsOn: upcoming.filter((event) => event.publicTier),
-      exclusive: upcoming.filter((event) => !event.publicTier && event.memberTier),
-    };
-  }, [tickets]);
+  const heroTitle = splitTitle(hero.title);
 
   // One booking per card on My Tickets, so the count matches what's there.
   // Only bookings for events still ahead count as active.
@@ -240,11 +323,11 @@ export default function EventsHome() {
 
   const membershipCta = userName ? (
     <button type="button" className="evh-promo-cta" onClick={() => setSubscribeOpen(true)}>
-      Explore Membership
+      {promo.buttonText}
     </button>
   ) : (
     <Link className="evh-promo-cta" to="/signup">
-      Explore Membership
+      {promo.buttonText}
     </Link>
   );
 
@@ -270,7 +353,9 @@ export default function EventsHome() {
       {userName ? (
         <section className="evh-hero evh-hero--user">
           <div className="evh-container evh-hero-grid">
-            <img className="evh-mascot" src="/images/Group%2066.png" alt="" onError={hideOnError} />
+            {hero.loggedInImage && (
+              <img className="evh-mascot" src={hero.loggedInImage} alt="" onError={hideOnError} />
+            )}
 
             <div className="evh-hero-panel">
               <div className="evh-welcome">
@@ -323,77 +408,74 @@ export default function EventsHome() {
           </div>
         </section>
       ) : (
-        <section className="evh-hero evh-hero--public">
+        <section
+          className="evh-hero evh-hero--public"
+          style={hero.image ? { "--evh-hero-image": `url("${hero.image}")` } : undefined}
+        >
           <div className="evh-container">
             <h1 className="evh-hero-title">
-              Do what you love.
-              <br />
-              <span>Get Rewarded.</span>
+              {heroTitle.lead}
+              {heroTitle.accent && (
+                <>
+                  <br />
+                  <span>{heroTitle.accent}</span>
+                </>
+              )}
             </h1>
-            <p className="evh-hero-text">
-              Discover experiences you&apos;ll love, enjoy exclusive perks and earn R Coins along the way.
-            </p>
+            {hero.text && <p className="evh-hero-text">{hero.text}</p>}
           </div>
         </section>
       )}
 
       <main className="evh-body">
-        <section className="evh-section">
-          <div className="evh-container evh-section-head">
-            <h2>What&apos;s On</h2>
-            <Link className="evh-see-all" to="/event-list">
-              See All
-            </Link>
-          </div>
+        {status === "loading" && note("Loading events…")}
+        {status === "error" && note("Events couldn't be loaded right now. Please try again shortly.")}
+        {status === "ready" && !sections.length && note("No upcoming events yet.")}
 
-          {status === "loading" && note("Loading events…")}
-          {status === "error" && note("Events couldn't be loaded right now. Please try again shortly.")}
-          {status === "ready" && !whatsOn.length && note("No upcoming events yet.")}
-          {whatsOn.length > 0 && (
-            <Carousel>
-              {whatsOn.map((event) => (
-                <EventCard key={event.id} event={event} view={view} />
-              ))}
-            </Carousel>
-          )}
-        </section>
-
-        {exclusive.length > 0 && (
-          <section className="evh-section">
+        {sections.map((section) => (
+          <section key={section.id} className="evh-section">
             <div className="evh-container evh-section-head">
-              <h2>Member Exclusive</h2>
-              <Link className="evh-see-all" to="/event-list">
-                See All
-              </Link>
+              <h2>{section.title}</h2>
+              {section.seeAllText && (
+                <Link className="evh-see-all" to="/event-list">
+                  {section.seeAllText}
+                </Link>
+              )}
             </div>
 
+            {/* An event with no public tier is members-only and gets the exclusive card. */}
             <Carousel>
-              {exclusive.map((event) => (
-                <ExclusiveCard key={event.id} event={event} />
-              ))}
+              {section.events.map((event) =>
+                event.publicTier ? (
+                  <EventCard key={event.id} event={event} view={view} />
+                ) : (
+                  <ExclusiveCard key={event.id} event={event} />
+                ),
+              )}
             </Carousel>
           </section>
-        )}
+        ))}
 
         {view === "public" && (
           <section className="evh-container">
             <div className="evh-signup">
-              <img className="evh-signup-drink" src="/images/buy.png" alt="" aria-hidden="true" />
+              {signup.leftImage && (
+                <img className="evh-signup-drink" src={signup.leftImage} alt="" aria-hidden="true" onError={hideOnError} />
+              )}
               <div className="evh-signup-copy">
                 <h2>
-                  Get rewarded
-                  <br />
-                  when you go out
+                  <Lines text={signup.title} />
                 </h2>
                 <p>
-                  Create a free account and earn <span>10 R Coins <Info size={13} /></span> for every $1 spent
-                  on tickets.
+                  <CoinsHighlight text={signup.text} />
                 </p>
-                <Link className="evh-signup-cta" to="/signup">
-                  Create Free Account
+                <Link className="evh-signup-cta" to={signup.buttonLink || "/signup"}>
+                  {signup.buttonText}
                 </Link>
               </div>
-              <img className="evh-signup-coins" src="/images/coin.png" alt="" aria-hidden="true" />
+              {signup.rightImage && (
+                <img className="evh-signup-coins" src={signup.rightImage} alt="" aria-hidden="true" onError={hideOnError} />
+              )}
             </div>
           </section>
         )}
@@ -401,16 +483,15 @@ export default function EventsHome() {
         {view !== "member" && (
           <section className="evh-container">
             <div className="evh-promo">
-              <span className="evh-promo-tag">CLUBPASS MEMBER</span>
+              {promo.badge && <span className="evh-promo-tag">{promo.badge}</span>}
               <div className="evh-promo-copy">
-                <p className="evh-promo-label">Get more with Clubpass</p>
+                {promo.label && <p className="evh-promo-label">{promo.label}</p>}
                 <h2>
-                  Save up to 50% on tickets
-                  <br />+ earn 3X R Coins
+                  <Lines text={promo.heading} />
                 </h2>
-                <p className="evh-promo-text">Plus ClubPass Home Express and exclusive member perks.</p>
+                {promo.text && <p className="evh-promo-text">{promo.text}</p>}
                 <div className="evh-promo-row">
-                  <span className="evh-promo-price">$17.90/mth</span>
+                  {promo.price && <span className="evh-promo-price">{promo.price}</span>}
                   {membershipCta}
                 </div>
               </div>
