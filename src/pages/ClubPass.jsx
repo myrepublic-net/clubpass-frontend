@@ -878,7 +878,7 @@ export default function ClubPass() {
       </Link>
     ))}
 
-    <Link className="coming" to="/event-list">
+    <Link className="coming" to="/events">
       <div className="plus">+</div>
       <strong>See more events</strong>
       <span>Browse all upcoming events<br/>and venues.</span>

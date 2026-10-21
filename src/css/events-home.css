@@ -28,27 +28,6 @@
   padding: 0 16px;
 }
 
-/* --- header on mobile: logo and account only --- */
-
-@media (max-width: 1023px) {
-  .evh-page .evx-header-inner {
-    height: 64px;
-    padding: 0 20px;
-  }
-
-  .evh-page .evx-logo img {
-    width: 136px;
-  }
-
-  .evh-page .evx-nav {
-    gap: 16px;
-  }
-}
-
-.evh-page .evx-nav .usr-avatar {
-  border-color: var(--evh-teal);
-}
-
 /* --- hero --- */
 
 .evh-hero {
@@ -955,4 +934,70 @@
     margin-left: 50px;
     margin-right: 40px;
   }
+}
+
+/* --- loading skeleton --- */
+
+.evh-skel {
+  display: block;
+  border-radius: 8px;
+  background: linear-gradient(90deg, #e6e8f2 0%, #f3f4f9 40%, #e6e8f2 80%) 0 0 / 200% 100%;
+  animation: evh-shimmer 1.4s ease-in-out infinite;
+}
+
+.evh-skel--heading {
+  width: 180px;
+  height: 30px;
+}
+
+/* On the navy card the placeholders are a lighter navy, not grey. */
+.evh-card--skeleton {
+  pointer-events: none;
+}
+
+.evh-card--skeleton .evh-skel {
+  background-image: linear-gradient(90deg, #1b2672 0%, #2a3688 40%, #1b2672 80%);
+}
+
+.evh-card--skeleton .evh-card-image {
+  border-radius: 0;
+}
+
+.evh-skel--line {
+  height: 18px;
+  margin-bottom: 10px;
+}
+
+.evh-skel--short {
+  width: 60%;
+}
+
+.evh-skel--price {
+  height: 44px;
+  margin-top: 14px;
+}
+
+@keyframes evh-shimmer {
+  from {
+    background-position: 100% 0;
+  }
+
+  to {
+    background-position: -100% 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .evh-skel {
+    animation: none;
+  }
+}
+
+.evh-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
 }
