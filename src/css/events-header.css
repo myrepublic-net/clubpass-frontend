@@ -1,0 +1,97 @@
+/* ==========================================================================
+   EventsHeader — shared by /events, /event-list, /my-tickets and /profile.
+   The bar itself (.evx-header, logo, account) is in event-desktop.css; this
+   adds the links and, below 1024px, the home page's hamburger dropdown.
+   ========================================================================== */
+
+.evx-links {
+  display: flex;
+  align-items: center;
+  gap: 48px;
+}
+
+.evx-links a {
+  color: #fff;
+  font-size: 18px;
+  text-decoration: none;
+}
+
+.evx-nav .usr-avatar {
+  border-color: #1FDBDA;
+}
+
+.evx-nav-toggle {
+  display: none;
+  padding: 6px;
+  border: 0;
+  background: none;
+  color: #fff;
+  cursor: pointer;
+}
+
+@media (max-width: 1023px) {
+  .evx-header-inner {
+    height: 64px;
+    padding: 0 20px;
+  }
+
+  .evx-logo img {
+    width: 136px;
+  }
+
+  .evx-nav {
+    gap: 12px;
+  }
+
+  .evx-links {
+    display: none;
+  }
+
+  /* Drops down under the bar, full width, as on the home page. The header
+     is sticky, so it's the positioned box this hangs from. */
+  .evx-links.is-open {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    padding: 8px 20px 16px;
+    background: #0a1a6b;
+    box-shadow: 0 18px 30px -22px rgba(3, 6, 26, .6);
+  }
+
+  .evx-links.is-open a {
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, .15);
+    font-size: 16px;
+  }
+
+  .evx-nav-toggle {
+    display: inline-flex;
+  }
+}
+
+/* --- footer at the bottom ---
+   The pages with this header carry the site footer. A column at least a
+   screen tall, with the footer taking whatever room is left above it, keeps
+   it at the bottom on a short page (an empty My Tickets, a short search). */
+
+.with-footer {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.with-footer > .site-footer {
+  flex-shrink: 0;
+  margin-top: auto;
+}
+
+/* As flex items, blocks centred with margin: 0 auto would shrink to their
+   content — keep them full width up to their max-width, as before. */
+.with-footer > :is(.evl-main, .mtk-main, .prf-top, .prf-body) {
+  width: 100%;
+}

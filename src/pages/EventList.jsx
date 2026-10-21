@@ -3,7 +3,8 @@ import { Link } from "react-router";
 import { Search, SlidersHorizontal, Star } from "lucide-react";
 
 import { readMemberSession } from "../api/auth.js";
-import UserMenu from "../components/UserMenu.jsx";
+import EventsHeader from "../components/EventsHeader.jsx";
+import SiteFooter from "../components/SiteFooter.jsx";
 import useIsDesktop from "../hooks/useIsDesktop.js";
 import { useTickets } from "../hooks/useTickets.js";
 import "../css/event-desktop.css";
@@ -112,14 +113,6 @@ export default function EventList() {
     ];
   }, [events, filter, needle]);
 
-  const account = userName ? (
-    <UserMenu userName={userName} />
-  ) : (
-    <Link className="cp-btn cp-btn-purple cp-btn-sm" to="/login" state={{ from: "/event-list" }}>
-      Login / Sign up
-    </Link>
-  );
-
   const pills = (
     <div className="evl-filters" role="tablist" aria-label="Filter events">
       {FILTERS.map((item) => (
@@ -176,31 +169,13 @@ export default function EventList() {
   }
 
   return (
-    <div className="evl-page">
+    <div className="evl-page with-footer">
       <title>Clubpass | What's On</title>
 
-      {isDesktop ? (
-        <header className="evx-header">
-          <div className="evx-header-inner">
-            <Link className="evx-logo" to="/" aria-label="Clubpass home">
-              <img src="/images/cp-logo.png" alt="Clubpass" />
-            </Link>
-            <nav className="evx-nav">
-              <Link to="/event-list">Events</Link>
-              {userName && <Link to="/my-tickets">My Tickets</Link>}
-              {account}
-            </nav>
-          </div>
-        </header>
-      ) : (
-        <header className="evl-header">
-          <h1>What's On</h1>
-          {account}
-        </header>
-      )}
+      <EventsHeader userName={userName} loginFrom="/event-list" />
 
       <main className="evl-main">
-        {isDesktop && <h1 className="evl-title">What's On</h1>}
+        <h1 className="evl-title">What's On</h1>
 
         {isDesktop ? (
           <>
@@ -234,6 +209,8 @@ export default function EventList() {
 
         {content}
       </main>
+
+      <SiteFooter />
     </div>
   );
 }

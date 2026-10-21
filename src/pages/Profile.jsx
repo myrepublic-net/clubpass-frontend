@@ -6,7 +6,8 @@ import { fetchPointsBalance, readMemberSession } from "../api/auth.js";
 import { isPaid, resolveClubpassUser } from "../api/clubpassUser.js";
 import RCoinsSheet from "../components/RCoinsSheet.jsx";
 import SubscribeModal from "../components/SubscribeModal.jsx";
-import UserMenu from "../components/UserMenu.jsx";
+import EventsHeader from "../components/EventsHeader.jsx";
+import SiteFooter from "../components/SiteFooter.jsx";
 import { ClubpassUserContext } from "../components/clubpassUserContext.js";
 import "../css/profile.css";
 
@@ -101,21 +102,16 @@ export default function Profile() {
   const status = membershipStatus(user, paid);
 
   return (
-    <div className="prf-page">
-      <header className="prf-header">
-        <div className="prf-header-inner">
-        <button
-          type="button"
-          className="prf-back"
-          onClick={() => navigate(-1)}
-          aria-label="Back" 
-        >
+    <div className="prf-page with-footer">
+      <EventsHeader userName={userName} loginFrom="/profile" />
+
+      {/* Back and the title sit in the page, not the shared header. */}
+      <div className="prf-top">
+        <button type="button" className="prf-back" onClick={() => navigate(-1)} aria-label="Back">
           <ArrowLeft size={20} />
         </button>
         <h1>My Account</h1>
-        <UserMenu userName={userName} />
-        </div>
-      </header>
+      </div>
 
       <div className="prf-body">
         <div className="prf-in-text">
@@ -207,6 +203,8 @@ export default function Profile() {
           withUpsell
         />
       </ClubpassUserContext.Provider>
+
+      <SiteFooter />
     </div>
   );
 }

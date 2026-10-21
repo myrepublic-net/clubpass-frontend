@@ -5,8 +5,8 @@ import { ChevronRight, Search, Ticket } from "lucide-react";
 import { readMemberSession } from "../api/auth.js";
 import { cardKeyOf, fetchMyTickets } from "../api/subscribe.js";
 import { fetchTickets } from "../api/tickets.js";
-import MyTicketsHeader from "../components/MyTicketsHeader.jsx";
-import useIsDesktop from "../hooks/useIsDesktop.js";
+import EventsHeader from "../components/EventsHeader.jsx";
+import SiteFooter from "../components/SiteFooter.jsx";
 import "../css/my-tickets.css";
 
 const WEEKDAYS = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
@@ -85,7 +85,6 @@ function TicketCard({ card }) {
 
 /** Reached from the account menu in any header. */
 export default function MyTickets() {
-  const isDesktop = useIsDesktop();
   const session = useMemo(() => readMemberSession(), []);
   const userName = session?.user?.username ?? null;
 
@@ -163,12 +162,12 @@ export default function MyTickets() {
   }
 
   return (
-    <div className="mtk-page">
+    <div className="mtk-page with-footer">
       <title>Clubpass | My Tickets</title>
-      <MyTicketsHeader title="My Tickets" userName={userName} />
+      <EventsHeader userName={userName} loginFrom="/my-tickets" />
 
       <main className="mtk-main">
-        {isDesktop && <h1 className="mtk-title">My Tickets</h1>}
+        <h1 className="mtk-title">My Tickets</h1>
 
         <div className="mtk-toolbar">
           <div className="mtk-tabs" role="tablist">
@@ -206,6 +205,8 @@ export default function MyTickets() {
 
         {content}
       </main>
+
+      <SiteFooter />
     </div>
   );
 }

@@ -7,10 +7,10 @@ import { isPaid, resolveClubpassUser } from "../api/clubpassUser.js";
 import { cardKeyOf, fetchMyTickets } from "../api/subscribe.js";
 import RCoinsSheet from "../components/RCoinsSheet.jsx";
 import SubscribeModal from "../components/SubscribeModal.jsx";
-import UserMenu from "../components/UserMenu.jsx";
+import EventsHeader from "../components/EventsHeader.jsx";
+import SiteFooter from "../components/SiteFooter.jsx";
 import { ClubpassUserContext } from "../components/clubpassUserContext.js";
 import useEventHome from "../hooks/useEventHome.js";
-import useIsDesktop from "../hooks/useIsDesktop.js";
 import { useTickets } from "../hooks/useTickets.js";
 import "../css/event-desktop.css";
 import "../css/events-home.css";
@@ -193,6 +193,30 @@ function EventCard({ event, view }) {
   );
 }
 
+/** A row of placeholder cards while the events load, the same size as the real ones. */
+function SkeletonSection() {
+  return (
+    <section className="evh-section" aria-hidden="true">
+      <div className="evh-container evh-section-head">
+        <span className="evh-skel evh-skel--heading" />
+      </div>
+
+      <Carousel>
+        {[0, 1, 2].map((key) => (
+          <div key={key} className="evh-card evh-card--skeleton">
+            <div className="evh-card-image evh-skel" />
+            <div className="evh-card-body">
+              <span className="evh-skel evh-skel--line" />
+              <span className="evh-skel evh-skel--line evh-skel--short" />
+              <span className="evh-skel evh-skel--price" />
+            </div>
+          </div>
+        ))}
+      </Carousel>
+    </section>
+  );
+}
+
 /** A Member Exclusive card: events with only member tiers. */
 function ExclusiveCard({ event }) {
   const price = event.memberTier?.price;
@@ -220,7 +244,6 @@ function ExclusiveCard({ event }) {
  * gets the pitch, a signed-in account their R Coins and active ticket.
  */
 export default function EventsHome() {
-  const isDesktop = useIsDesktop();
   const [session, setSession] = useState(() => readMemberSession());
   const userName = session?.user?.username ?? null;
 
@@ -313,14 +336,6 @@ export default function EventsHome() {
 
   const next = active[0];
 
-  const account = userName ? (
-    <UserMenu userName={userName} onSignedOut={() => setSession(null)} />
-  ) : (
-    <Link className="cp-btn cp-btn-purple cp-btn-sm" to="/login" state={{ from: "/events" }}>
-      Login / Sign up
-    </Link>
-  );
-
   const membershipCta = userName ? (
     <button type="button" className="evh-promo-cta" onClick={() => setSubscribeOpen(true)}>
       {promo.buttonText}
@@ -334,21 +349,14 @@ export default function EventsHome() {
   const note = (text) => <p className="evh-note">{text}</p>;
 
   return (
-    <div className={`evh-page is-${view}`}>
+    <div className={`evh-page with-footer is-${view}`}>
       <title>Clubpass | Events</title>
 
-      <header className="evx-header">
-        <div className="evx-header-inner">
-          <Link className="evx-logo" to="/" aria-label="Clubpass home">
-            <img src="/images/cp-logo.png" alt="Clubpass" />
-          </Link>
-          <nav className="evx-nav">
-            {isDesktop && <Link to="/events">Events</Link>}
-            {isDesktop && userName && <Link to="/my-tickets">My Tickets</Link>}
-            {account}
-          </nav>
-        </div>
-      </header>
+      <EventsHeader
+        userName={userName}
+        onSignedOut={() => setSession(null)}
+        loginFrom="/events"
+      />
 
       {userName ? (
         <section className="evh-hero evh-hero--user">
@@ -428,9 +436,15 @@ export default function EventsHome() {
       )}
 
       <main className="evh-body">
-        {status === "loading" && note("Loading events…")}
+        {/* No events → no rows at all; the pitches below still show. */}
+        {status === "loading" && (
+          <>
+            <p className="evh-sr-only" role="status">Loading events…</p>
+            <SkeletonSection />
+            <SkeletonSection />
+          </>
+        )}
         {status === "error" && note("Events couldn't be loaded right now. Please try again shortly.")}
-        {status === "ready" && !sections.length && note("No upcoming events yet.")}
 
         {sections.map((section) => (
           <section key={section.id} className="evh-section">
@@ -500,6 +514,8 @@ export default function EventsHome() {
           </section>
         )}
       </main>
+
+      <SiteFooter />
 
       <RCoinsSheet open={coinsSheetOpen} onClose={() => setCoinsSheetOpen(false)} />
       <ClubpassUserContext.Provider value={subscribeUser}>
