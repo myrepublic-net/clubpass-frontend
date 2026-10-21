@@ -61,7 +61,7 @@
   padding: 120px 0 230px;
   background:
     linear-gradient(90deg, rgba(3, 6, 26, .75) 0%, rgba(3, 6, 26, .2) 70%),
-    url("/images/hero_banner.png") center / cover no-repeat,
+    var(--evh-hero-image, url("/images/hero_banner.png")) center / cover no-repeat,
     linear-gradient(180deg, #03061a 0%, #0a1a6b 60%, #0e46c9 100%);
 }
 
@@ -340,7 +340,7 @@
   display: grid;
   grid-auto-flow: column;
   --evh-pad: 16px;
-  grid-auto-columns: calc((100% - 2 * var(--evh-pad) - 2 * 22px) / 3);
+  grid-auto-columns: calc((100% - 2 * var(--evh-pad) - 2 * 0px) / 3);
   gap: 22px;
   padding: 0 var(--evh-pad);
   overflow-x: auto;
