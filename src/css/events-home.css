@@ -319,8 +319,11 @@
   display: grid;
   grid-auto-flow: column;
   --evh-pad: 16px;
-  grid-auto-columns: calc((100% - 2 * var(--evh-pad) - 2 * 0px) / 3);
-  gap: 22px;
+  --evh-gap: 22px;
+  /* Three cards and the two gaps between them fill the row exactly, so a
+     row of three doesn't scroll — the gap here must be the real gap. */
+  grid-auto-columns: calc((100% - 2 * var(--evh-pad) - 2 * var(--evh-gap)) / 3);
+  gap: var(--evh-gap);
   padding: 0 var(--evh-pad);
   overflow-x: auto;
   scroll-snap-type: x mandatory;
