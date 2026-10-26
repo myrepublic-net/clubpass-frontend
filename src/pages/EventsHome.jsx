@@ -291,24 +291,20 @@ export default function EventsHome() {
     [userName, clubpassUser, session],
   );
 
-  // Each row keeps the order picked in Strapi, minus private events, ones
-  // already past and ones with nothing on sale. An empty row is dropped.
-  const sections = useMemo(() => {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-
-    return content.sections
-      .map((section) => ({
-        ...section,
-        events: section.events.filter(
-          (event) =>
-            event.isPublic &&
-            !(event.startsAt && event.startsAt < today) &&
-            (event.publicTier || event.memberTier),
-        ),
-      }))
-      .filter((section) => section.events.length);
-  }, [content.sections]);
+  // Each row keeps the order picked in Strapi, past dates included, minus
+  // private events and ones with nothing on sale. An empty row is dropped.
+  const sections = useMemo(
+    () =>
+      content.sections
+        .map((section) => ({
+          ...section,
+          events: section.events.filter(
+            (event) => event.isPublic && (event.publicTier || event.memberTier),
+          ),
+        }))
+        .filter((section) => section.events.length),
+    [content.sections],
+  );
 
   const heroTitle = splitTitle(hero.title);
 
