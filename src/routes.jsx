@@ -7,6 +7,7 @@ import Dashboard from "./pages/Dashboard.jsx";
 import EventDetails from "./pages/EventDetails.jsx";
 import EventTickets from "./pages/EventTickets.jsx";
 import EventList from "./pages/EventList.jsx";
+import EventsHome from "./pages/EventsHome.jsx";
 import ScanConfirm from "./pages/ScanConfirm.jsx";
 import DriverScan from "./pages/DriverScan.jsx";
 import Login from "./pages/auth/Login.jsx";
@@ -40,6 +41,10 @@ const router = createBrowserRouter([
   // UserGate; the page reads the session itself to show "Hi, {name}" vs a
   // Login / Signup prompt in its own header.
   { path: "/events/:id", element: <EventDetails /> },
+  // The home page's "See more events" box: What's On and Member Exclusive,
+  // with a hero for guests, free accounts and members. Public; its See All
+  // links go to /event-list.
+  { path: "/events", element: <EventsHome /> },
   // Every public event, with search, quick filters and Load More. Public too.
   { path: "/event-list", element: <EventList /> },
   // The event's "Get Tickets Now" CTA. Also public — a guest can pick Early

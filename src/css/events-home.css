@@ -1,0 +1,1011 @@
+/* ==========================================================================
+   Events (/events) — EventsHome.jsx. The header is the event pages' own
+   (event-desktop.css); everything else is scoped to .evh-*. The page has
+   three looks, set on .evh-page: is-public, is-free and is-member.
+   ========================================================================== */
+
+.evh-page {
+  --evh-navy: #0C165E;
+  --evh-teal: #1FDBDA;
+  --evh-muted: #B4B9DA;
+
+  font-family: "Outfit", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  min-height: 100vh;
+  background: #fff;
+  color: var(--evh-navy);
+  -webkit-font-smoothing: antialiased;
+}
+
+.evh-page *,
+.evh-page *::before,
+.evh-page *::after {
+  box-sizing: border-box;
+}
+
+.evh-container {
+  max-width: 1008px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+/* --- hero --- */
+
+.evh-hero {
+  position: relative;
+  background: linear-gradient(180deg, #03061a 0%, #0a1a6b 60%, #0e46c9 100%);
+  color: #fff;
+}
+
+.evh-hero--public {
+  padding: 120px 0 230px;
+  background:
+    linear-gradient(90deg, rgba(3, 6, 26, .75) 0%, rgba(3, 6, 26, .2) 70%),
+    var(--evh-hero-image, url("/images/hero_banner.png")) center / cover no-repeat,
+    linear-gradient(180deg, #03061a 0%, #0a1a6b 60%, #0e46c9 100%);
+}
+
+.evh-hero-title {
+  margin: 0;
+  font-size: 46px;
+  line-height: 1.1;
+  font-weight: 800;
+}
+
+.evh-hero-title span {
+  color: var(--evh-teal);
+}
+
+.evh-hero-text {
+  max-width: 460px;
+  margin: 22px 0 0;
+  font-size: 18px;
+  line-height: 1.5;
+}
+
+.evh-hero--user {
+  padding: 100px 0 190px;
+}
+
+.evh-hero-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  gap: 40px;
+}
+
+.evh-mascot {
+  display: block;
+  width: 100%;
+  max-width: 360px;
+  margin: 0 auto;
+}
+
+.evh-welcome-label {
+  margin: 0;
+  font-size: 20px;
+}
+
+.evh-welcome-name {
+  margin: 4px 0 0;
+  color: var(--evh-teal);
+  font-size: 40px;
+  font-weight: 800;
+  line-height: 1.15;
+  overflow-wrap: anywhere;
+}
+
+/* R Coins card — outlined for a free account, silver for a member. */
+.evh-coins {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+  margin-top: 40px;
+  padding: 16px 20px;
+  overflow: hidden;
+  border: 1px solid var(--evh-teal);
+  border-radius: 10px;
+  background: transparent;
+  color: #fff;
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+/* Not clipped, so the coin can rise out of the card. */
+.evh-coins.is-member {
+  overflow: visible;
+  border: 0;
+  background: linear-gradient(90deg, #fff 0%, #e9f1ff 55%, #a8c8ff 100%);
+  color: var(--evh-navy);
+}
+
+.evh-coins-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.evh-coins-row b {
+  font-size: 24px;
+  font-weight: 700;
+}
+
+/* coin.png is the whole stack; only its top coin shows here. */
+.evh-coins-icon {
+  flex: 0 0 auto;
+  width: 26px;
+  height: 26px;
+  overflow: hidden;
+  border-radius: 50%;
+}
+
+.evh-coins-icon img {
+  display: block;
+  width: 43px;
+  max-width: none;
+  margin-left: -14px;
+}
+
+.evh-coins-tap {
+  margin-top: 2px;
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.evh-coins-badge {
+  position: absolute;
+  top: 10px;
+  right: 16px;
+  padding: 1px 10px;
+  border: 1px solid var(--evh-teal);
+  border-radius: 999px;
+  color: var(--evh-teal);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .04em;
+}
+
+.evh-coins.is-member .evh-coins-badge {
+  top: 0;
+  right: 0;
+  padding: 6px 14px;
+  border: 0;
+  border-radius: 0 10px 0 10px;
+  background: var(--evh-navy);
+}
+
+/* The reflection would hang below the card, over the ticket card. */
+.evh-coins-silver .evh-silver-reflection {
+  display: none;
+}
+
+.evh-coins-silver {
+  position: absolute;
+  top: -12px;
+  right: 80px;
+  width: 92px;
+  pointer-events: none;
+}
+
+/* The silver coin and its reflection: the same image flipped and faded. */
+.evh-silver {
+  display: flex;
+  flex-direction: column;
+  pointer-events: none;
+}
+
+.evh-silver img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.evh-silver-reflection {
+  margin-top: 4px;
+  opacity: .35;
+  transform: scaleY(-1);
+  -webkit-mask-image: linear-gradient(to top, #000 0%, transparent 45%);
+  mask-image: linear-gradient(to top, #000 0%, transparent 45%);
+}
+
+.evh-ticket {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  margin-top: 20px;
+  padding: 18px 22px;
+  border-radius: 10px;
+  background: #0070DB4D;
+  color: #fff;
+  text-decoration: none;
+}
+
+.evh-ticket:hover {
+  color: #fff;
+}
+
+.evh-ticket-icon {
+  flex: 0 0 auto;
+  color: var(--evh-teal);
+}
+
+.evh-ticket-text {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.evh-ticket-text b {
+  font-size: 19px;
+  font-weight: 700;
+}
+
+.evh-ticket-text small {
+  font-size: 15px;
+}
+
+.evh-ticket-chevron {
+  flex: 0 0 auto;
+  color: var(--evh-teal);
+}
+
+/* --- body --- */
+
+.evh-body {
+  position: relative;
+  margin-top: -110px;
+  padding: 80px 0 100px;
+  border-radius: 110px 110px 0 0;
+  background: #fff;
+}
+
+/* The guest page fades into blue under the pitches. */
+.evh-page.is-public {
+  background: #03061a;
+}
+
+.evh-page.is-public .evh-body {
+  background: linear-gradient(180deg, #fff 0%, #fff 42%, #a9d6f5 58%, #1660d8 75%, #0a1a6b 90%, #03061a 100%);
+}
+
+.evh-section {
+  margin-bottom: 56px;
+}
+
+.evh-section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.evh-section-head h2 {
+  margin: 0;
+  font-size: 30px;
+  font-weight: 800;
+}
+
+.evh-see-all {
+  color: var(--evh-teal);
+  font-size: 15px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.evh-see-all:hover {
+  color: var(--evh-teal);
+  text-decoration: underline;
+}
+
+.evh-note {
+  max-width: 1008px;
+  margin: 0 auto;
+  padding: 0 16px;
+  color: #6B7090;
+}
+
+/* --- carousel --- */
+
+.evh-carousel {
+  position: relative;
+  max-width: 1008px;
+  margin: 0 auto;
+}
+
+.evh-track {
+  display: grid;
+  grid-auto-flow: column;
+  --evh-pad: 16px;
+  --evh-gap: 22px;
+  /* Three cards and the two gaps between them fill the row exactly, so a
+     row of three doesn't scroll — the gap here must be the real gap. */
+  grid-auto-columns: calc((100% - 2 * var(--evh-pad) - 2 * var(--evh-gap)) / 3);
+  gap: var(--evh-gap);
+  padding: 0 var(--evh-pad);
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-padding: 0 var(--evh-pad);
+  scrollbar-width: none;
+}
+
+.evh-track::-webkit-scrollbar {
+  display: none;
+}
+
+.evh-arrow {
+  position: absolute;
+  top: 50%;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 2px solid var(--evh-navy);
+  border-radius: 50%;
+  background: #fff;
+  color: var(--evh-navy);
+  transform: translateY(-50%);
+  cursor: pointer;
+}
+
+.evh-arrow--prev {
+  left: -56px;
+}
+
+.evh-arrow--next {
+  right: -56px;
+}
+
+/* Too narrow for the arrows to sit outside the row: pull them in. */
+@media (min-width: 1024px) and (max-width: 1139px) {
+  .evh-track {
+    --evh-pad: 64px;
+  }
+
+  .evh-arrow--prev {
+    left: 8px;
+  }
+
+  .evh-arrow--next {
+    right: 8px;
+  }
+}
+
+/* --- cards --- */
+
+.evh-card {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid #9aa0c4;
+  border-radius: 14px;
+  background: var(--evh-navy);
+  color: #fff;
+  text-decoration: none;
+  scroll-snap-align: start;
+}
+
+.evh-card:hover {
+  color: #fff;
+}
+
+.evh-card-image {
+  position: relative;
+  height: 160px;
+}
+
+.evh-card-image img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.evh-card-date {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: var(--evh-teal);
+  color: var(--evh-navy);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.evh-card-body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  padding: 14px 12px 22px;
+}
+
+.evh-card-coins {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin: 0 0 12px;
+  color: var(--evh-teal);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.evh-card-title {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.evh-card-venue {
+  margin: 4px 0 0;
+  color: var(--evh-muted);
+  font-size: 16px;
+}
+
+.evh-prices {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  margin-top: auto;
+  padding-top: 24px;
+}
+
+.evh-price span {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: uppercase;
+}
+
+.evh-price b {
+  display: block;
+  margin-top: 2px;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.evh-price--member {
+  padding-left: 12px;
+  border-left: 1px solid rgba(255, 255, 255, .25);
+  color: var(--evh-teal);
+}
+
+.evh-price--member:only-child {
+  padding-left: 0;
+  border-left: 0;
+}
+
+/* The struck-out standard price is mobile-only, for a member. */
+.evh-price--member s {
+  display: none;
+  margin-left: 6px;
+  color: var(--evh-muted);
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.evh-price--member small {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.evh-card-free {
+  margin: auto 0 0;
+  padding-top: 24px;
+  color: var(--evh-teal);
+  font-size: 16px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.evh-card-note {
+  margin: 2px 0 0;
+  font-size: 13px;
+}
+
+/* --- "Get rewarded when you go out" (guests) --- */
+
+.evh-signup {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 360px;
+  margin-bottom: 90px;
+  padding: 40px 230px;
+  overflow: hidden;
+  border-radius: 10px;
+  background: var(--evh-navy);
+  color: #fff;
+  text-align: center;
+}
+
+.evh-signup-drink {
+  position: absolute;
+  bottom: 40px;
+  left: 0;
+  width: 190px;
+}
+
+.evh-signup-coins {
+  position: absolute;
+  top: 70px;
+  right: 60px;
+  width: 120px;
+}
+
+.evh-signup-copy h2 {
+  margin: 0;
+  font-size: 36px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.evh-signup-copy p {
+  margin: 22px 0 28px;
+  font-size: 18px;
+  line-height: 1.5;
+}
+
+.evh-signup-copy p span {
+  color: var(--evh-teal);
+  white-space: nowrap;
+}
+
+.evh-signup-cta,
+.evh-promo-cta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 50px;
+  padding: 0 28px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--evh-teal);
+  color: var(--evh-navy);
+  font-family: inherit;
+  font-size: 17px;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.evh-signup-cta:hover,
+.evh-promo-cta:hover {
+  color: var(--evh-navy);
+}
+
+/* --- "CLUBPASS MEMBER" pitch (guests and free accounts) --- */
+
+.evh-promo {
+  position: relative;
+  min-height: 360px;
+  margin-bottom: 40px;
+  padding: 70px 32px 40px;
+  overflow: hidden;
+  border-radius: 14px;
+  background: linear-gradient(110deg, #e4efff 0%, #d6e7ff 55%, #84b9ff 100%);
+  color: var(--evh-navy);
+}
+
+.evh-promo-tag {
+  position: absolute;
+  top: 0;
+  left: 0;
+  padding: 8px 30px;
+  border-radius: 0 0 14px 0;
+  background: var(--evh-navy);
+  color: var(--evh-teal);
+  font-size: 17px;
+  font-weight: 600;
+}
+
+.evh-promo-copy {
+  position: relative;
+  z-index: 1;
+  max-width: 600px;
+}
+
+.evh-promo-label {
+  margin: 0;
+  font-size: 19px;
+  font-weight: 600;
+}
+
+.evh-promo h2 {
+  margin: 8px 0 0;
+  font-size: 38px;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.evh-promo-text {
+  margin: 14px 0 28px;
+  font-size: 18px;
+}
+
+.evh-promo-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+/* The ticket artwork: a stub on the left, the price on the body. */
+.evh-promo-price {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  width: 148px;
+  height: 50px;
+  padding-left: 30px;
+  background: url("/images/ticket_vector.svg") center / 100% 100% no-repeat;
+  color: #fff;
+  font-size: 17px;
+  font-weight: 500;
+}
+
+.evh-promo-cta {
+  flex: 1;
+  max-width: 400px;
+}
+
+.evh-promo-coin {
+  position: absolute;
+  top: 40px;
+  right: 40px;
+  width: 220px;
+}
+
+/* --- mobile --- */
+
+@media (max-width: 1023px) {
+  .evh-container {
+    padding: 0 20px;
+  }
+
+  .evh-hero--public {
+    padding: 40px 0 70px;
+  }
+
+  .evh-hero-title {
+    font-size: 32px;
+  }
+
+  .evh-hero-text {
+    margin-top: 12px;
+    font-size: 14px;
+  }
+
+  .evh-hero--user {
+    padding: 20px 0 60px;
+  }
+
+  .evh-hero-grid {
+    display: block;
+  }
+
+  .evh-mascot {
+    display: none;
+  }
+
+  .evh-welcome {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .evh-welcome-label {
+    font-size: 17px;
+  }
+
+  .evh-welcome-name {
+    font-size: 24px;
+  }
+
+  .evh-coins {
+    flex: 0 0 auto;
+    width: 210px;
+    margin-top: 0;
+    padding: 10px 12px;
+  }
+.evh-coins-row {
+  gap: 5px;
+}
+  .evh-coins-row b {
+    font-size: 16px;
+    letter-spacing: -0.3px;
+  }
+
+  .evh-coins-icon {
+    width: 20px;
+    height: 20px;
+  }
+
+  .evh-coins-icon img {
+    width: 33px;
+    margin-left: -11px;
+  }
+
+  .evh-coins-tap {
+    font-size: 12px;
+            line-height: 12px;
+            margin-top: 0;
+  }
+
+  .evh-coins-badge {
+    top: 8px;
+    right: 5px;
+    font-size: 11px;
+  }
+
+  .evh-coins.is-member {
+    padding-top: 26px;
+  }
+
+  .evh-coins.is-member .evh-coins-badge {
+    right: auto;
+    left: 0;
+    padding: 3px 12px;
+    border-radius: 10px 0 10px 0;
+  }
+
+  .evh-coins-silver {
+    top: -6px;
+        right: 10px;
+        width: 60px;
+  }
+
+  .evh-ticket {
+    margin-top: 16px;
+    padding: 16px 18px;
+  }
+
+  .evh-ticket-text b {
+    font-size: 16px;
+  }
+
+  .evh-ticket-text small {
+    font-size: 14px;
+  }
+
+  .evh-body {
+    margin-top: -26px;
+    padding: 26px 0 40px;
+    border-radius: 26px 26px 0 0;
+  }
+
+  .evh-page.is-public .evh-body {
+    background: linear-gradient(180deg, #fff 0%, #fff 48%, #a9d6f5 56%, #1660d8 70%, #0a1a6b 88%, #03061a 100%);
+  }
+
+  .evh-section {
+    margin-bottom: 30px;
+  }
+
+  .evh-section-head {
+    margin-bottom: 12px;
+  }
+
+  .evh-section-head h2 {
+    font-size: 19px;
+  }
+
+  .evh-arrow {
+    display: none;
+  }
+
+  .evh-track {
+    --evh-pad: 20px;
+    grid-auto-columns: 260px;
+    gap: 14px;
+  }
+
+  .evh-card-image {
+    height: 140px;
+  }
+
+  .evh-card-title {
+    font-size: 18px;
+  }
+
+  .evh-card-venue {
+    font-size: 14px;
+  }
+
+  .evh-prices {
+    padding-top: 14px;
+  }
+
+  /* A free account sees the standard price only; a member sees theirs against it. */
+  .evh-card.is-free .evh-price--member,
+  .evh-card.is-member .evh-price--standard {
+    display: none;
+  }
+
+  .evh-card.is-free .evh-prices,
+  .evh-card.is-member .evh-prices {
+    grid-template-columns: 1fr;
+  }
+
+  .evh-card.is-member .evh-price--member {
+    padding-left: 0;
+    border-left: 0;
+  }
+
+  .evh-card.is-member .evh-price--member b {
+    font-size: 22px;
+  }
+
+  .evh-card.is-member .evh-price--member s {
+    display: inline;
+  }
+
+  .evh-signup {
+    display: block;
+    min-height: 0;
+    margin-bottom: 24px;
+    padding: 24px 20px;
+    border-radius: 14px;
+  }
+
+  .evh-signup-drink {
+    top: 34px;
+    bottom: auto;
+    width: 80px;
+  }
+
+  .evh-signup-coins {
+    top: 34px;
+    right: 14px;
+    width: 46px;
+  }
+
+  .evh-signup-copy h2 {
+    padding: 0 60px;
+    font-size: 21px;
+  }
+
+  .evh-signup-copy p {
+    margin: 10px 60px 22px;
+    font-size: 14px;
+  }
+
+  .evh-promo {
+    min-height: 0;
+    margin-bottom: 0;
+    padding: 40px 16px 20px;
+  }
+
+  .evh-promo-tag {
+    padding: 4px 18px;
+    font-size: 12px;
+  }
+
+  .evh-promo-label {
+    font-size: 13px;
+  }
+
+  .evh-promo h2 {
+    margin-top: 4px;
+    font-size: 19px;
+  }
+
+  .evh-promo-text {
+    max-width: 230px;
+    margin: 8px 0 16px;
+    font-size: 13px;
+  }
+
+  .evh-promo-row {
+    gap: 10px;
+  }
+
+  .evh-promo-price {
+    width: 112px;
+    height: 42px;
+    padding-left: 22px;
+    font-size: 13px;
+  }
+
+  .evh-promo-cta {
+    height: 42px;
+    padding: 0 12px;
+    font-size: 15px;
+  }
+
+  .evh-promo-coin {
+    top: 24px;
+    right: 6px;
+    width: 100px;
+  }
+}
+
+@media (max-width: 380px) {
+  .evh-coins {
+    width: 200px;
+  }
+
+  .evh-signup-copy h2,
+  .evh-signup-copy p {
+    padding: 0;
+    margin-left: 50px;
+    margin-right: 40px;
+  }
+}
+
+/* --- loading skeleton --- */
+
+.evh-skel {
+  display: block;
+  border-radius: 8px;
+  background: linear-gradient(90deg, #e6e8f2 0%, #f3f4f9 40%, #e6e8f2 80%) 0 0 / 200% 100%;
+  animation: evh-shimmer 1.4s ease-in-out infinite;
+}
+
+.evh-skel--heading {
+  width: 180px;
+  height: 30px;
+}
+
+/* On the navy card the placeholders are a lighter navy, not grey. */
+.evh-card--skeleton {
+  pointer-events: none;
+}
+
+.evh-card--skeleton .evh-skel {
+  background-image: linear-gradient(90deg, #1b2672 0%, #2a3688 40%, #1b2672 80%);
+}
+
+.evh-card--skeleton .evh-card-image {
+  border-radius: 0;
+}
+
+.evh-skel--line {
+  height: 18px;
+  margin-bottom: 10px;
+}
+
+.evh-skel--short {
+  width: 60%;
+}
+
+.evh-skel--price {
+  height: 44px;
+  margin-top: 14px;
+}
+
+@keyframes evh-shimmer {
+  from {
+    background-position: 100% 0;
+  }
+
+  to {
+    background-position: -100% 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .evh-skel {
+    animation: none;
+  }
+}
+
+.evh-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}

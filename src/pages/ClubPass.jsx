@@ -389,16 +389,18 @@ export default function ClubPass() {
   const [openRoute, setOpenRoute] = useState("easties");
 
   // Everything above the venue grid is editorial, and comes from Strapi.
-  const { hero: heroSlides, beforeTickets, afterTickets, cta, faq, beta, why, howItWorks } =
+  const { hero: heroSlides, beforeTickets, afterTickets, cta, faq, beta, why, howItWorks, ticketsToShow } =
     useHome(FALLBACK_CONTENT);
 
-  // The venue grid is whatever events Strapi is publishing — public ones only.
-  // A private event is still reachable by its own link.
-  const { tickets: allEvents, status: eventsStatus } = useTickets();
+  // The venue grid shows the events picked on the home entry (ticket_to_show),
+  // as they are and in that order. With none picked it's the default below:
+  // whatever events Strapi is publishing — public ones only. A private event
+  // is still reachable by its own link.
+  const { tickets: allEvents, status: defaultStatus } = useTickets();
   // Five at most: upcoming ones first (soonest first), then past ones (most
   // recent first) to fill whatever room is left. An event dated before today
   // is past; tonight's stays upcoming all day.
-  const events = useMemo(() => {
+  const defaultEvents = useMemo(() => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     const isPast = (event) => event.startsAt && event.startsAt < today;
@@ -409,6 +411,10 @@ export default function ClubPass() {
     const past = listed.filter(isPast).sort((a, b) => time(b) - time(a));
     return [...upcoming, ...past].slice(0, 5);
   }, [allEvents]);
+
+  const events = ticketsToShow === undefined ? [] : ticketsToShow ?? defaultEvents;
+  // Still waiting on the home entry to know which list to show.
+  const eventsStatus = ticketsToShow === undefined ? "loading" : ticketsToShow ? "ready" : defaultStatus;
 
   // This page is public (not behind UserGate), so a signed-out visitor still
   // sees the full page — the header just reflects whichever state applies.
@@ -578,6 +584,7 @@ export default function ClubPass() {
               <Link
                 className="cp-btn cp-btn-purple cp-btn-sm"
                 to="/login"
+                state={{ from: "/events" }}
               >
                 Login / Sign up
               </Link>
@@ -871,7 +878,7 @@ export default function ClubPass() {
       </Link>
     ))}
 
-    <Link className="coming" to="/event-list">
+    <Link className="coming" to="/events">
       <div className="plus">+</div>
       <strong>See more events</strong>
       <span>Browse all upcoming events<br/>and venues.</span>

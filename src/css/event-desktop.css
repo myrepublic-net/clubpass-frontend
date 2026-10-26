@@ -158,7 +158,7 @@ header.evx-header nav.evx-nav a:hover {
   transform: translateY(-50%);
 }
 
-.evx-gallery-arrow:disabled {
+.evx-gallery-arrow:disabled { 
   opacity: .3;
   cursor: default;
 }

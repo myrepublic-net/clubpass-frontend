@@ -191,7 +191,7 @@ function publicTierOf(tiers) {
   return pool.reduce((cheapest, tier) => (tier.price < cheapest.price ? tier : cheapest));
 }
 
-function normalise(row) {
+export function normaliseTicket(row) {
   const startsAt = row.date ? new Date(row.date) : null;
 
   const tiers = tiersOf(row);
@@ -301,7 +301,7 @@ export function fetchTickets() {
         pageCount = body?.meta?.pagination?.pageCount ?? 1;
       }
 
-      return rows.map(normalise);
+      return rows.map(normaliseTicket);
     })();
 
     // A failed load shouldn't be cached — the next mount should retry.

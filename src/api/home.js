@@ -6,6 +6,8 @@
  * nested components and their media back in one request.
  */
 
+import { normaliseTicket } from "./tickets.js";
+
 const BASE_URL =
   import.meta.env.VITE_STRAPI_URL ?? "https://exciting-flower-bc33aab938.strapiapp.com";
 
@@ -27,7 +29,9 @@ const QUERY =
   // how_it_works[populate]=* stops one level short of each step's two images,
   // so steps is named — which means the section image has to be named too.
   "&populate[how_it_works][populate][steps][populate]=*" +
-  "&populate[how_it_works][populate][image]=true";
+  "&populate[how_it_works][populate][image]=true" +
+  // The venue grid's hand-picked events; null means "show the default list".
+  "&populate[ticket_to_show][populate][tickets][populate]=*";
 
 /**
  * The best size of an upload to show. Strapi only generates a format when the
@@ -83,8 +87,12 @@ function normalise(data) {
       pillClass: PILL_CLASS[item.color] ?? "cl-box coming-oct",
     }));
 
+  // null when nothing is picked, so the page falls back to its default list.
+  const picked = data?.ticket_to_show?.tickets ?? [];
+
   return {
     hero,
+    ticketsToShow: picked.length ? picked.map(normaliseTicket) : null,
     beforeTickets: before
       ? {
           badge: before.badge_text ?? "",

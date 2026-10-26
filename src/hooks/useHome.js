@@ -10,7 +10,9 @@ import { fetchHome } from "../api/home.js";
  * jumping while the CMS answers, and keeps it if the CMS can't be reached.
  */
 export default function useHome(fallback) {
-  const [content, setContent] = useState(fallback);
+  // ticketsToShow starts undefined — "not known yet" — so the venue grid can
+  // wait rather than flash the default events before the picked ones land.
+  const [content, setContent] = useState({ ...fallback, ticketsToShow: undefined });
 
   useEffect(() => {
     let cancelled = false;
@@ -20,6 +22,7 @@ export default function useHome(fallback) {
         if (cancelled) return;
         // Only replace the parts Strapi actually returned.
         setContent((current) => ({
+          ticketsToShow: loaded.ticketsToShow,
           hero: loaded.hero?.length ? loaded.hero : current.hero,
           beforeTickets: loaded.beforeTickets ?? current.beforeTickets,
           afterTickets: loaded.afterTickets ?? current.afterTickets,
@@ -30,7 +33,11 @@ export default function useHome(fallback) {
           howItWorks: loaded.howItWorks?.steps?.length ? loaded.howItWorks : current.howItWorks,
         }));
       },
-      (error) => console.error("ClubPass home content failed to load", error),
+      (error) => {
+        console.error("ClubPass home content failed to load", error);
+        // No CMS answer: the grid falls back to the default events.
+        if (!cancelled) setContent((current) => ({ ...current, ticketsToShow: null }));
+      },
     );
 
     return () => {

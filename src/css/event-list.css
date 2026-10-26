@@ -23,29 +23,6 @@
   box-sizing: border-box;
 }
 
-/* --- mobile header --- */
-
-.evl-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 14px;
-  padding: 20px;
-  background: linear-gradient(180deg, #03061a 0%, #0a1a6b 60%, #0e46c9 100%);
-  color: #fff;
-}
-
-.evl-header h1 {
-  margin: 0;
-  font-size: 24px;
-  font-weight: 800;
-}
-
-.evl-header .usr-avatar {
-  border-color: var(--evl-teal);
-  background: rgba(12, 22, 94, .6);
-}
-
 /* --- body --- */
 
 .evl-main {
