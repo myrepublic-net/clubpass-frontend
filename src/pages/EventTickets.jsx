@@ -28,6 +28,7 @@ import {
   unitFeeOf,
 } from "../api/tickets.js";
 import SubscribeModal from "../components/SubscribeModal.jsx";
+import SignupsClosedModal, { SIGNUPS_CLOSED } from "../components/SignupsClosedModal.jsx";
 import UserMenu from "../components/UserMenu.jsx";
 import { ClubpassUserContext } from "../components/clubpassUserContext.js";
 import useMembershipCheckout, { SIMULATE } from "../hooks/useMembershipCheckout.js";
@@ -286,6 +287,8 @@ export default function EventTickets() {
   const [coinsSheetOpen, setCoinsSheetOpen] = useState(false);
   // "Join Clubpass" on the confirmation: the same membership popup as the home page.
   const [joinOpen, setJoinOpen] = useState(false);
+  // "Unlock Member Price" while sign-ups are closed: the closed popup, not the membership step.
+  const [closedOpen, setClosedOpen] = useState(false);
 
   // Signing up leaves the site (signup, then login), so the intent to buy a
   // membership can't live in component state — it rides back on the URL that
@@ -300,7 +303,10 @@ export default function EventTickets() {
     if (!userName || !userResolved) return;
 
     resumeHandled.current = true;
-    if (!paid) setStep("membership");
+    if (!paid) {
+      if (SIGNUPS_CLOSED) setClosedOpen(true);
+      else setStep("membership");
+    }
     navigate(`/events/${id}/tickets`, { replace: true });
   }, [searchParams, userName, userResolved, paid, navigate, id]);
 
@@ -525,7 +531,10 @@ export default function EventTickets() {
           <button
             type="button"
             className="evt-unlock-btn"
-            onClick={() => setStep(userName ? "membership" : "signupPrompt")}
+            onClick={() => {
+              if (SIGNUPS_CLOSED) setClosedOpen(true);
+              else setStep(userName ? "membership" : "signupPrompt");
+            }}
           >
             Unlock Member Price
           </button>
@@ -728,6 +737,8 @@ export default function EventTickets() {
               </aside>
             </div>
           </main>
+
+          <SignupsClosedModal open={closedOpen} onClose={() => setClosedOpen(false)} />
         </div>
       );
     }
@@ -1575,6 +1586,8 @@ export default function EventTickets() {
           Checkout
         </button>
       </footer>
+
+      <SignupsClosedModal open={closedOpen} onClose={() => setClosedOpen(false)} />
     </div>
   );
 }
