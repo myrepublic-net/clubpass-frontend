@@ -2,6 +2,7 @@ import { useEffect } from "react";
 
 import useMembershipCheckout, { SIMULATE } from "../hooks/useMembershipCheckout.js";
 import BoardingQr from "./BoardingQr.jsx";
+import SignupsClosedModal, { SIGNUPS_CLOSED } from "./SignupsClosedModal.jsx";
 import { useClubpassUser } from "./clubpassUserContext.js";
 import "../css/subscribe-modal.css";
 
@@ -26,8 +27,16 @@ const UPSELL_PERKS = [
  * lives in useMembershipCheckout — this is the sheet's chrome, the method
  * tiles and the card fields' host, and it closes itself once the membership
  * is on the record.
+ *
+ * While sign-ups are closed every caller gets the sign-ups-closed popup
+ * instead — the checkout (and PayPal's SDK) never mounts.
  */
-export default function SubscribeModal({ open, onClose, withUpsell = false }) {
+export default function SubscribeModal(props) {
+  if (SIGNUPS_CLOSED) return <SignupsClosedModal open={props.open} onClose={props.onClose} />;
+  return <SubscribeSheet {...props} />;
+}
+
+function SubscribeSheet({ open, onClose, withUpsell = false }) {
   const { userName, user, profile, setUser } = useClubpassUser();
 
   const {

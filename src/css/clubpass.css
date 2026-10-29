@@ -372,7 +372,7 @@ a.cp-btn.cp-btn-ghost {
 section.cp-section.why-section {
     margin-top: -100px;
     background: #ffffff;
-    z-index: 99999;
+    z-index: 999;
     position: relative;
     border-radius: 100px 100px 0 0;
 }
