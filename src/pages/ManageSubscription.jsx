@@ -6,6 +6,7 @@ import { readMemberSession } from "../api/auth.js";
 import { isPaid, resolveClubpassUser } from "../api/clubpassUser.js";
 import { cancelSubscription, reactivateMembership } from "../api/subscribe.js";
 import SubscribeModal from "../components/SubscribeModal.jsx";
+import { SIGNUPS_CLOSED } from "../components/SignupsClosedModal.jsx";
 import UserMenu from "../components/UserMenu.jsx";
 import { ClubpassUserContext } from "../components/clubpassUserContext.js";
 import "../css/profile.css";
@@ -82,6 +83,12 @@ export default function ManageSubscription() {
    * subscription that can't be restarted) does it fall back to checkout.
    */
   const reactivate = async () => {
+    // Sign-ups closed: no resuming either — the popup shows the closed artwork.
+    if (SIGNUPS_CLOSED) {
+      setResubscribeOpen(true);
+      return;
+    }
+
     setReactivateState({ status: "working", message: "" });
 
     try {
